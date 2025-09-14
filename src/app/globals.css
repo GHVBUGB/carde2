@@ -1,0 +1,380 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 15 100% 60%;  /* 51Talk 橙色 #FF6B35 */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 60%;  /* 蓝色 #4A90E2 */
+    --secondary-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 98%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 42 100% 55%;  /* 金色 #F5A623 */
+    --accent-foreground: 222.2 84% 4.9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 15 100% 60%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 15 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 42 100% 55%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 15 100% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* 51Talk 品牌样式 */
+@layer components {
+  .brand-gradient {
+    @apply bg-gradient-to-r from-brand-primary to-brand-accent;
+  }
+  
+  .brand-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-accent;
+  }
+  
+  .card-shadow {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.06),
+                0 0 0 1px rgba(255, 107, 53, 0.1);
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+  
+  .drag-handle {
+    @apply cursor-move hover:bg-muted/50 rounded p-1 transition-colors;
+  }
+  
+  .drag-preview {
+    @apply opacity-50 rotate-3 scale-105 transition-all;
+  }
+}
+
+/* 动画样式 */
+@layer utilities {
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  .animate-bounce-gentle {
+    animation: bounceGentle 2s infinite;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes bounceGentle {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-5px);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 107, 53, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 107, 53, 0.5);
+}
+
+/* 选择文本样式 */
+::selection {
+  background: rgba(255, 107, 53, 0.2);
+  color: inherit;
+}
+
+/* 文本输入框聚焦样式 */
+.focus-brand {
+  @apply focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary;
+}
+
+/* 按钮样式 */
+.btn-primary {
+  @apply bg-brand-primary hover:bg-brand-primary/90 text-white font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-primary/20;
+}
+
+.btn-secondary {
+  @apply bg-brand-secondary hover:bg-brand-secondary/90 text-white font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-secondary/20;
+}
+
+.btn-ghost {
+  @apply hover:bg-muted/50 text-foreground font-medium px-4 py-2 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-muted;
+}
+
+/* 卡片样式 */
+.card-base {
+  @apply bg-card text-card-foreground rounded-lg border shadow-sm;
+}
+
+.card-hover {
+  @apply card-base hover:shadow-md transition-shadow cursor-pointer;
+}
+
+/* 徽章样式 */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-primary {
+  @apply badge bg-brand-primary/10 text-brand-primary;
+}
+
+.badge-secondary {
+  @apply badge bg-brand-secondary/10 text-brand-secondary;
+}
+
+.badge-success {
+  @apply badge bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply badge bg-yellow-100 text-yellow-800;
+}
+
+.badge-error {
+  @apply badge bg-red-100 text-red-800;
+}
+
+/* 加载动画 */
+.loading-spinner {
+  @apply animate-spin rounded-full border-2 border-brand-primary/20 border-t-brand-primary;
+}
+
+/* 响应式网格 */
+.grid-auto-fit {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  .grid-auto-fit {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .card-shadow {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1), 
+                0 1px 2px -1px rgba(0, 0, 0, 0.06);
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  /* 移动端表格 */
+  .mobile-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .mobile-card {
+    display: block;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    background: white;
+  }
+  
+  .mobile-card + .mobile-card {
+    border-top: none;
+  }
+}
+
+/* 超小屏幕优化 */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.25rem;
+  }
+  
+  .card-base {
+    padding: 1rem;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 平板优化 */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+}
+
+/* 触摸设备优化 */
+@media (hover: none) {
+  .hover\:bg-muted\/50:hover {
+    background-color: initial;
+  }
+  
+  .hover\:shadow-md:hover {
+    box-shadow: initial;
+  }
+  
+  /* 增大触摸目标 */
+  button, .btn-primary, .btn-secondary, a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* 高对比度模式支持 */
+@media (prefers-contrast: high) {
+  .border {
+    border-width: 2px;
+  }
+  
+  .text-brand-gray {
+    color: #000000;
+  }
+  
+  .bg-brand-light {
+    background-color: #ffffff;
+  }
+}
+
+/* 减少动画模式 */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 暗色模式优化 */
+@media (prefers-color-scheme: dark) {
+  .card-base {
+    background-color: rgb(30 41 59);
+    color: rgb(248 250 252);
+    border-color: rgb(51 65 85);
+  }
+}
+
+/* 中文字体优化 */
+.font-zh {
+  font-family: 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+}
+
+/* 打印样式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
