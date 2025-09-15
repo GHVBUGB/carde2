@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Line Break Fix Test</title>
+    <style>
+        .test-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        
+        .test-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .test-text {
+            font-size: 8px;
+            color: #666666;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .test-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>换行修复测试</h1>
+    
+    <div class="test-container">
+        <!-- 修复前的问题 -->
+        <div class="test-item">
+            <div class="test-title">修复前（错误）：只在第一行后加换行</div>
+            <div class="test-text">
+                <span>Teacher</span><br />
+                <span>Selection</span>
+            </div>
+        </div>
+        
+        <!-- 修复后的正确显示 -->
+        <div class="test-item">
+            <div class="test-title">修复后（正确）：除了最后一行，其他行后都有换行</div>
+            <div class="test-text">
+                <span>Teacher</span><br />
+                <span>Selection</span>
+            </div>
+        </div>
+        
+        <!-- 多行测试 -->
+        <div class="test-item">
+            <div class="test-title">多行测试：三行文本</div>
+            <div class="test-text">
+                <span>First</span><br />
+                <span>Second</span><br />
+                <span>Third</span>
+            </div>
+        </div>
+        
+        <!-- 单行测试 -->
+        <div class="test-item">
+            <div class="test-title">单行测试：不应该有换行</div>
+            <div class="test-text">
+                <span>Single Line</span>
+            </div>
+        </div>
+    </div>
+    
+    <h2>JavaScript 实现逻辑</h2>
+    <pre>
+// 修复前的错误逻辑
+{text.split('\n').map((line, index) => (
+  <span key={index}>
+    {line}
+    {index === 0 && <br />}  // 只在第一行后加换行
+  </span>
+))}
+
+// 修复后的正确逻辑
+{text.split('\n').map((line, index, array) => (
+  <span key={index}>
+    {line}
+    {index < array.length - 1 && <br />}  // 除了最后一行，其他行后都加换行
+  </span>
+))}
+    </pre>
+</body>
+</html>

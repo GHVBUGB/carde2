@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>坐标显示格式修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #dc3545;
+        }
+        
+        .section h2 {
+            color: #dc3545;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .success-section {
+            border-left: 4px solid #28a745;
+        }
+        
+        .success-section h2 {
+            color: #28a745;
+        }
+        
+        .problem-example {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .solution-example {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .coordinate-bad {
+            font-family: 'Courier New', monospace;
+            background: #f8d7da;
+            color: #721c24;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .coordinate-good {
+            font-family: 'Courier New', monospace;
+            background: #d4edda;
+            color: #155724;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: #6c757d;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .before {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .after {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 坐标显示格式修复</h1>
+        
+        <div class="section">
+            <h2>❌ 问题描述</h2>
+            <p>用户反馈：显示的坐标不是标准的 (x, y) 格式，而是一些复杂的数字。</p>
+            
+            <div class="problem-example">
+                <p><strong>问题示例：</strong></p>
+                <p>显示的坐标格式不正确：</p>
+                <ul>
+                    <li><span class="coordinate-bad">(81.8011474609375, 263.79827880859375)</span> - 过于精确的小数</li>
+                    <li><span class="coordinate-bad">(122.81536865 (195.81817626953125, 321.8153381347656)</span> - 格式混乱</li>
+                    <li><span class="coordinate-bad">(84.7(133.721618652 (189. (229.9090576171875, 401.9090881347656)</span> - 嵌套括号</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 解决方案</h2>
+            <p>通过使用 <code>Math.round()</code> 函数将坐标值四舍五入为整数，确保显示标准的 (x, y) 格式。</p>
+            
+            <div class="solution-example">
+                <p><strong>修复后的坐标显示：</strong></p>
+                <ul>
+                    <li><span class="coordinate-good">(82, 264)</span> - 整数坐标，清晰易读</li>
+                    <li><span class="coordinate-good">(196, 322)</span> - 标准 (x, y) 格式</li>
+                    <li><span class="coordinate-good">(230, 402)</span> - 简洁明了</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 修复代码</h2>
+            <p>在 <code>src/components/card/draggable-business-card-preview.tsx</code> 中修改了所有坐标显示：</p>
+            
+            <div class="code-block">
+// 修复前
+({textPositions.studentsServed.x}, {textPositions.studentsServed.y})
+
+// 修复后
+({Math.round(textPositions.studentsServed.x)}, {Math.round(textPositions.studentsServed.y)})
+            </div>
+            
+            <p>所有文字模块的坐标显示都已更新：</p>
+            <ul>
+                <li>姓名坐标显示</li>
+                <li>职位坐标显示</li>
+                <li>服务人数坐标显示</li>
+                <li>好评率坐标显示</li>
+                <li>联系电话坐标显示</li>
+                <li>所有业务能力标签坐标显示</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📊 修复对比</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>模块</th>
+                        <th>修复前</th>
+                        <th>修复后</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>姓名</strong></td>
+                        <td class="before">(175.123456789, 176.987654321)</td>
+                        <td class="after">(175, 177)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>职位</strong></td>
+                        <td class="before">(175.000000000, 200.000000000)</td>
+                        <td class="after">(175, 200)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>服务人数</strong></td>
+                        <td class="before">(135.123456789, 288.987654321)</td>
+                        <td class="after">(135, 289)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>好评率</strong></td>
+                        <td class="before">(195.000000000, 288.000000000)</td>
+                        <td class="after">(195, 288)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>联系电话</strong></td>
+                        <td class="before">(175.123456789, 460.987654321)</td>
+                        <td class="after">(175, 461)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 修复效果</h2>
+            <p>现在坐标显示具有以下特点：</p>
+            <ul>
+                <li><strong>标准格式</strong>：所有坐标都显示为 (x, y) 格式</li>
+                <li><strong>整数坐标</strong>：使用 Math.round() 四舍五入为整数</li>
+                <li><strong>清晰易读</strong>：不再有复杂的小数点数字</li>
+                <li><strong>格式统一</strong>：所有模块的坐标显示格式一致</li>
+                <li><strong>便于记录</strong>：整数坐标更容易记录和使用</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 测试方法</h2>
+            <p>请按以下步骤测试修复效果：</p>
+            <ol>
+                <li>进入编辑页面</li>
+                <li>点击"显示坐标"按钮</li>
+                <li>观察所有文字模块下方的坐标显示</li>
+                <li>验证坐标格式是否为 (x, y) 格式</li>
+                <li>确认坐标值为整数</li>
+                <li>拖拽模块时观察坐标变化</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h2>💡 技术说明</h2>
+            <p>修复的技术原理：</p>
+            <ul>
+                <li><strong>Math.round()</strong>：将浮点数四舍五入为最接近的整数</li>
+                <li><strong>实时更新</strong>：在拖拽过程中坐标会实时更新</li>
+                <li><strong>性能优化</strong>：整数计算比浮点数计算更高效</li>
+                <li><strong>用户体验</strong>：整数坐标更符合用户的直觉</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

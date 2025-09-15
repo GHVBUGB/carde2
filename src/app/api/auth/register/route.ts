@@ -1,3 +1,4 @@
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteClient, createAdminClient } from '@/lib/supabase/server'
 import { emailVerificationService } from '@/lib/supabase/server'
@@ -149,7 +150,7 @@ export async function PUT(request: NextRequest) {
           id: authData.user.id,
           email,
           name,
-        })
+        } as any)
 
       if (profileError) {
         console.error('Profile creation error:', profileError)
@@ -163,7 +164,7 @@ export async function PUT(request: NextRequest) {
           user_id: authData.user.id,
           action_type: 'register',
           details: { email, name },
-        })
+        } as any)
     }
 
     return NextResponse.json({

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文字模块编辑器优化测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .success-section {
+            border-left: 4px solid #28a745;
+        }
+        
+        .success-section h2 {
+            color: #28a745;
+        }
+        
+        .optimization-section {
+            border-left: 4px solid #ff6b35;
+        }
+        
+        .optimization-section h2 {
+            color: #ff6b35;
+        }
+        
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .before, .after {
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        
+        .before {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .after {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .before-title, .after-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .before .before-title {
+            color: #721c24;
+        }
+        
+        .after .after-title {
+            color: #155724;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .field-group {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: white;
+        }
+        
+        .field-group h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .select-field {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .number-field {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .number-field.no-leading-zero {
+            border-color: #28a745;
+        }
+        
+        .style-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            margin-top: 10px;
+        }
+        
+        .style-control {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .title-options {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .title-options h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        
+        .option-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .option-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .option-list li:before {
+            content: "📋 ";
+            color: #4caf50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 文字模块编辑器优化</h1>
+        
+        <div class="section optimization-section">
+            <h2>🎯 优化内容</h2>
+            <p>根据用户要求，对文字模块编辑器进行了以下优化：</p>
+            <ul class="feature-list">
+                <li>去掉"文字模块编辑器"标题</li>
+                <li>优化布局为2列网格布局</li>
+                <li>头衔改成四个选择项（不可自己填写）</li>
+                <li>数字输入时去掉前面的0</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📋 头衔选择项</h2>
+            <p>头衔现在改为下拉选择，包含四个预设选项：</p>
+            
+            <div class="title-options">
+                <h3>可选择的职位头衔：</h3>
+                <ul class="option-list">
+                    <li>首席成长伙伴</li>
+                    <li>金牌成长顾问</li>
+                    <li>五星服务官</li>
+                    <li>学习领航官</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔢 数字输入优化</h2>
+            <p>数字输入字段现在会自动去掉前面的0：</p>
+            
+            <div class="before-after">
+                <div class="before">
+                    <div class="before-title">优化前</div>
+                    <p>输入：<span class="highlight">01222</span></p>
+                    <p>显示：<span class="highlight">01222</span></p>
+                    <p>问题：前面有不需要的0</p>
+                </div>
+                
+                <div class="after">
+                    <div class="after-title">优化后</div>
+                    <p>输入：<span class="highlight">01222</span></p>
+                    <p>显示：<span class="highlight">1222</span></p>
+                    <p>效果：自动去掉前面的0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 布局优化</h2>
+            <p>基本信息模块现在使用2列网格布局，更加紧凑：</p>
+            
+            <div class="grid-layout">
+                <div class="field-group">
+                    <h4>姓名</h4>
+                    <input type="text" class="input-field" placeholder="请输入您的姓名">
+                    <div class="style-controls">
+                        <div class="style-control">字体大小</div>
+                        <div class="style-control">颜色</div>
+                        <div class="style-control">粗细</div>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <h4>职位头衔</h4>
+                    <select class="select-field">
+                        <option>请选择职位</option>
+                        <option>首席成长伙伴</option>
+                        <option>金牌成长顾问</option>
+                        <option>五星服务官</option>
+                        <option>学习领航官</option>
+                    </select>
+                    <div class="style-controls">
+                        <div class="style-control">字体大小</div>
+                        <div class="style-control">颜色</div>
+                        <div class="style-control">粗细</div>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <h4>已服务学员数</h4>
+                    <input type="number" class="number-field no-leading-zero" placeholder="请输入服务人数">
+                    <div class="style-controls">
+                        <div class="style-control">字体大小</div>
+                        <div class="style-control">颜色</div>
+                        <div class="style-control">粗细</div>
+                    </div>
+                </div>
+                
+                <div class="field-group">
+                    <h4>好评率 (%)</h4>
+                    <input type="number" class="number-field no-leading-zero" placeholder="请输入好评率">
+                    <div class="style-controls">
+                        <div class="style-control">字体大小</div>
+                        <div class="style-control">颜色</div>
+                        <div class="style-control">粗细</div>
+                    </div>
+                </div>
+            </div>
+            
+            <p><strong>联系电话</strong>字段跨越两列，充分利用空间。</p>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 优化效果</h2>
+            <p>优化后的文字模块编辑器具有以下特点：</p>
+            <ul class="feature-list">
+                <li><strong>界面简洁</strong> - 去掉了冗余的标题</li>
+                <li><strong>布局紧凑</strong> - 2列网格布局，空间利用更高效</li>
+                <li><strong>操作便捷</strong> - 头衔选择更简单，不需要手动输入</li>
+                <li><strong>数据准确</strong> - 数字输入自动去掉前导0</li>
+                <li><strong>响应式设计</strong> - 在移动端自动变为单列布局</li>
+                <li><strong>功能完整</strong> - 保留了所有样式编辑功能</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 技术实现</h2>
+            <p>主要的技术修改：</p>
+            
+            <h3>1. 去掉标题</h3>
+            <div class="code-block">
+// 去掉的代码
+&lt;div className="text-center"&gt;
+  &lt;h2 className="text-lg font-semibold"&gt;文字模块编辑器&lt;/h2&gt;
+  &lt;p className="text-sm text-gray-600"&gt;编辑名片上的文字内容和样式&lt;/p&gt;
+&lt;/div&gt;
+            </div>
+            
+            <h3>2. 头衔改为选择项</h3>
+            <div class="code-block">
+// 修改前：输入框
+&lt;Input
+  value={textModules.title}
+  onChange={(e) => handleTextChange('title', e.target.value)}
+  placeholder="请输入您的职位"
+/&gt;
+
+// 修改后：选择框
+&lt;select
+  value={textModules.title}
+  onChange={(e) => handleTextChange('title', e.target.value)}
+&gt;
+  &lt;option value=""&gt;请选择职位&lt;/option&gt;
+  &lt;option value="首席成长伙伴"&gt;首席成长伙伴&lt;/option&gt;
+  &lt;option value="金牌成长顾问"&gt;金牌成长顾问&lt;/option&gt;
+  &lt;option value="五星服务官"&gt;五星服务官&lt;/option&gt;
+  &lt;option value="学习领航官"&gt;学习领航官&lt;/option&gt;
+&lt;/select&gt;
+            </div>
+            
+            <h3>3. 数字输入去掉前导0</h3>
+            <div class="code-block">
+// 修改前
+onChange={(e) => handleTextChange('studentsServed', Number(e.target.value))}
+
+// 修改后
+onChange={(e) => {
+  const value = e.target.value.replace(/^0+/, '') || '0'
+  handleTextChange('studentsServed', Number(value))
+}}
+            </div>
+            
+            <h3>4. 布局优化</h3>
+            <div class="code-block">
+// 修改前：垂直布局
+&lt;div className="space-y-4"&gt;
+  &lt;div className="space-y-2 mb-4"&gt;...&lt;/div&gt;
+  &lt;div className="space-y-2 mb-4"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+
+// 修改后：网格布局
+&lt;div className="grid grid-cols-1 md:grid-cols-2 gap-4"&gt;
+  &lt;div className="space-y-2"&gt;...&lt;/div&gt;
+  &lt;div className="space-y-2"&gt;...&lt;/div&gt;
+&lt;/div&gt;
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 测试方法</h2>
+            <p>请按以下步骤测试优化效果：</p>
+            <ol>
+                <li>进入编辑页面</li>
+                <li>观察文字模块编辑器区域</li>
+                <li>确认没有"文字模块编辑器"标题</li>
+                <li>测试头衔选择功能（应该是下拉选择）</li>
+                <li>测试数字输入（输入01222应该显示1222）</li>
+                <li>观察布局是否为2列网格</li>
+                <li>在移动端测试响应式布局</li>
+            </ol>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 功能完整性确认</h2>
+            <p>优化后，所有功能保持完整：</p>
+            <ul class="feature-list">
+                <li>姓名编辑和样式控制</li>
+                <li>职位选择（4个预设选项）</li>
+                <li>服务学员数编辑（自动去掉前导0）</li>
+                <li>好评率编辑（自动去掉前导0）</li>
+                <li>联系电话编辑和样式控制</li>
+                <li>业务能力标签编辑</li>
+                <li>所有字段的样式编辑功能</li>
+                <li>实时预览功能</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

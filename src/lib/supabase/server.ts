@@ -40,15 +40,22 @@ export const emailVerificationService = {
     const code = Math.random().toString().slice(2, 8)
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000) // 10分钟后过期
 
+    // 检查环境变量是否存在
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase环境变量未配置，请检查.env.local文件')
+    }
+
     const supabase = createAdminClient()
     
-    // 删除之前的验证码（忽略错误，但记录日志，便于排查）
+    // 删除之前的验证码
     const { error: delError } = await supabase
       .from('verification_codes')
       .delete()
       .eq('email', email)
+    
     if (delError) {
-      console.error('verification_codes delete error:', delError)
+      console.error('删除旧验证码失败:', delError)
+      throw new Error('数据库操作失败')
     }
 
     // 插入新验证码
@@ -61,11 +68,8 @@ export const emailVerificationService = {
       })
 
     if (error) {
-      console.error('verification_codes insert error:', error)
-      // 将 Postgres 错误码透出到上层，便于给出更友好的提示
-      // 例如 42P01 = relation does not exist（表不存在）
-      const code = (error as any).code || 'UNKNOWN'
-      throw new Error(`FAILED_TO_GENERATE_CODE:${code}`)
+      console.error('插入验证码失败:', error)
+      throw new Error('数据库操作失败')
     }
 
     return code
@@ -73,6 +77,11 @@ export const emailVerificationService = {
 
   // 验证码校验
   async verifyCode(email: string, code: string): Promise<boolean> {
+    // 检查环境变量是否存在
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase环境变量未配置，请检查.env.local文件')
+    }
+
     const supabase = createAdminClient()
     
     const { data, error } = await supabase

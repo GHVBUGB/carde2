@@ -7,14 +7,14 @@ import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/auth'
 import { useCardStore } from '@/store/card'
 import { supabase } from '@/lib/supabase/client'
-import BusinessCardPreview from '@/components/card/business-card-preview'
+import DraggableBusinessCardPreview from '@/components/card/draggable-business-card-preview'
 import AvatarUpload from '@/components/editor/avatar-upload'
 import AbilitiesSelector from '@/components/editor/abilities-selector'
 import TextModulesEditor from '@/components/editor/text-modules-editor'
 
 export default function EditorPage() {
   const { user, updateUser } = useAuthStore()
-  const { cardData, updateCardData, textModules, updateTextModules, textStyles, updateTextStyles, markAsSaved, hasUnsavedChanges } = useCardStore()
+  const { cardData, updateCardData, textModules, updateTextModules, textStyles, updateTextStyles, textPositions, updateTextPositions, setTextPositions, markAsSaved, hasUnsavedChanges } = useCardStore()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [backgroundImage, setBackgroundImage] = useState('/ditu.png')
@@ -46,6 +46,19 @@ export default function EditorPage() {
       })
     }
   }, [user]) // 移除其他依赖项避免循环
+
+  // 同步 cardData 到 textModules - 当基本信息编辑时
+  useEffect(() => {
+    if (cardData.name) { // 确保已经初始化
+      updateTextModules({
+        name: cardData.name,
+        title: cardData.title,
+        phone: cardData.phone,
+        studentsServed: cardData.studentsServed,
+        positiveRating: Math.round(cardData.rating * 20), // 转换5分制为百分制
+      })
+    }
+  }, [cardData.name, cardData.title, cardData.phone, cardData.studentsServed, cardData.rating, updateTextModules])
 
   const handleSave = async () => {
     if (!user) return
@@ -102,6 +115,23 @@ export default function EditorPage() {
     reader.readAsDataURL(file)
   }
 
+  // 重置文字模块位置到初始位置
+  const handleResetPositions = () => {
+    const initialPositions = {
+      companyName: { x: 16, y: 16 },
+      name: { x: 175, y: 176 },
+      title: { x: 175, y: 200 },
+      studentsServed: { x: 135, y: 288 },
+      positiveRating: { x: 195, y: 288 },
+      phone: { x: 175, y: 460 },
+      teacherSelectionLabel: { x: 40, y: 400 },
+      progressFeedbackLabel: { x: 120, y: 400 },
+      planningLabel: { x: 200, y: 400 },
+      resourceSharingLabel: { x: 280, y: 400 }
+    }
+    setTextPositions(initialPositions)
+  }
+
   const titleOptions = [
     { value: '首席成长伙伴', label: '首席成长伙伴' },
     { value: '金牌成长顾问', label: '金牌成长顾问' },
@@ -141,56 +171,6 @@ export default function EditorPage() {
       <div className="grid lg:grid-cols-2 gap-6">
         {/* 编辑表单 */}
         <div className="space-y-6">
-          {/* 基本信息 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>基本信息</CardTitle>
-              <CardDescription>
-                设置您的姓名、职位等基本信息
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-brand-dark mb-2">
-                  姓名 *
-                </label>
-                <Input
-                  value={cardData.name}
-                  onChange={(e) => updateCardData({ name: e.target.value })}
-                  placeholder="请输入您的姓名"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-brand-dark mb-2">
-                  职位头衔 *
-                </label>
-                <select
-                  value={cardData.title}
-                  onChange={(e) => updateCardData({ title: e.target.value })}
-                  className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm focus-brand"
-                >
-                  <option value="">请选择职位</option>
-                  {titleOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-brand-dark mb-2">
-                  联系电话
-                </label>
-                <Input
-                  value={cardData.phone}
-                  onChange={(e) => updateCardData({ phone: e.target.value })}
-                  placeholder="请输入联系电话"
-                />
-              </div>
-            </CardContent>
-          </Card>
 
           {/* 头像上传 */}
           <AvatarUpload 
@@ -198,55 +178,7 @@ export default function EditorPage() {
             onAvatarUpdate={(url) => updateCardData({ avatarUrl: url })}
           />
 
-          {/* 业绩数据 */}
-          <Card>
-            <CardHeader>
-              <CardTitle>业绩数据</CardTitle>
-              <CardDescription>
-                展示您的工作成果和专业水平
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-brand-dark mb-2">
-                  已服务学员数
-                </label>
-                <Input
-                  type="number"
-                  value={cardData.studentsServed}
-                  onChange={(e) => updateCardData({ studentsServed: parseInt(e.target.value) || 0 })}
-                  placeholder="请输入已服务的学员总数"
-                  min="0"
-                />
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-brand-dark mb-2">
-                  好评率 (0-5.0)
-                </label>
-                <Input
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  max="5"
-                  value={cardData.rating}
-                  onChange={(e) => updateCardData({ rating: parseFloat(e.target.value) || 0 })}
-                  placeholder="请输入好评率"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* 业务能力 */}
-          <AbilitiesSelector
-            abilities={{
-              teacherScreening: cardData.teacherScreening,
-              feedbackAbility: cardData.feedbackAbility,
-              planningAbility: cardData.planningAbility,
-              resourceSharing: cardData.resourceSharing,
-            }}
-            onAbilitiesChange={(abilities) => updateCardData(abilities)}
-          />
 
           {/* 文字模块编辑器 */}
           <TextModulesEditor
@@ -267,7 +199,7 @@ export default function EditorPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <BusinessCardPreview
+              <DraggableBusinessCardPreview
                 user={{
                   ...user,
                   name: cardData.name,
@@ -283,6 +215,7 @@ export default function EditorPage() {
                 }}
                 textModules={textModules}
                 textStyles={textStyles}
+                textPositions={textPositions}
                 abilities={{
                   teacherScreening: cardData.teacherScreening,
                   feedbackAbility: cardData.feedbackAbility,
@@ -291,10 +224,15 @@ export default function EditorPage() {
                 }}
                 backgroundImage={backgroundImage}
                 onBackgroundUpload={handleBackgroundUpload}
+                onPositionChange={(moduleId, x, y) => {
+                  updateTextPositions({
+                    [moduleId]: { x, y }
+                  })
+                }}
               />
               
               <div className="mt-4 pt-4 border-t border-gray-100">
-                <div className="flex gap-2">
+                <div className="flex gap-2 mb-3">
                   <Button
                     variant="outline"
                     className="flex-1"
@@ -313,6 +251,16 @@ export default function EditorPage() {
                     }}
                   >
                     导出图片
+                  </Button>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={handleResetPositions}
+                    title="将所有文字模块位置重置为初始位置"
+                  >
+                    🔄 重置位置
                   </Button>
                 </div>
               </div>

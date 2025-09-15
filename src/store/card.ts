@@ -52,6 +52,20 @@ interface CardState {
     resourceSharingLabel: { fontSize: number; color: string; fontWeight: string }
   }
   
+  // 文字模块位置配置
+  textPositions: {
+    companyName: { x: number; y: number }
+    name: { x: number; y: number }
+    title: { x: number; y: number }
+    studentsServed: { x: number; y: number }
+    positiveRating: { x: number; y: number }
+    phone: { x: number; y: number }
+    teacherSelectionLabel: { x: number; y: number }
+    progressFeedbackLabel: { x: number; y: number }
+    planningLabel: { x: number; y: number }
+    resourceSharingLabel: { x: number; y: number }
+  }
+  
   // UI状态
   isPreviewMode: boolean
   isEditing: boolean
@@ -76,6 +90,10 @@ interface CardActions {
   // 文字样式操作
   updateTextStyles: (updates: Partial<CardState['textStyles']>) => void
   setTextStyles: (data: CardState['textStyles']) => void
+  
+  // 文字位置操作
+  updateTextPositions: (updates: Partial<CardState['textPositions']>) => void
+  setTextPositions: (data: CardState['textPositions']) => void
   
   // UI状态操作
   setPreviewMode: (isPreview: boolean) => void
@@ -108,10 +126,10 @@ const initialTextModules = {
   studentsServed: 5000,
   positiveRating: 99,
   phone: '050-XXXX-XXAB',
-  teacherSelectionLabel: 'Teacher Selection',
-  progressFeedbackLabel: 'Progress Feedback',
-  planningLabel: 'Progress Feedback',
-  resourceSharingLabel: 'Curriculum Learning Resources'
+  teacherSelectionLabel: 'Teacher\nSelection',
+  progressFeedbackLabel: 'Progress\nFeedback',
+  planningLabel: 'Study\nPlan',
+  resourceSharingLabel: 'Learning\nResources'
 }
 
 const initialTextStyles = {
@@ -127,6 +145,19 @@ const initialTextStyles = {
   resourceSharingLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' }
 }
 
+const initialTextPositions = {
+  companyName: { x: 16, y: 16 },
+  name: { x: 145, y: 238 },
+  title: { x: 99, y: 264 },
+  studentsServed: { x: 125, y: 322 },
+  positiveRating: { x: 197, y: 322 },
+  phone: { x: 106, y: 430 },
+  teacherSelectionLabel: { x: 88, y: 401 },
+  progressFeedbackLabel: { x: 135, y: 400 },
+  planningLabel: { x: 190, y: 400 },
+  resourceSharingLabel: { x: 233, y: 401 }
+}
+
 export const useCardStore = create<CardState & CardActions>((set, get) => ({
   // 初始状态
   layouts: [],
@@ -135,6 +166,7 @@ export const useCardStore = create<CardState & CardActions>((set, get) => ({
   cardData: initialCardData,
   textModules: initialTextModules,
   textStyles: initialTextStyles,
+  textPositions: initialTextPositions,
   isPreviewMode: false,
   isEditing: false,
   hasUnsavedChanges: false,
@@ -177,6 +209,14 @@ export const useCardStore = create<CardState & CardActions>((set, get) => ({
 
   setTextStyles: (data) => set({ textStyles: data }),
 
+  // 文字位置操作
+  updateTextPositions: (updates) => {
+    const textPositions = { ...get().textPositions, ...updates }
+    set({ textPositions, hasUnsavedChanges: true })
+  },
+
+  setTextPositions: (data) => set({ textPositions: data }),
+
   // UI状态操作
   setPreviewMode: (isPreviewMode) => set({ isPreviewMode }),
 
@@ -194,6 +234,7 @@ export const useCardStore = create<CardState & CardActions>((set, get) => ({
     cardData: initialCardData,
     textModules: initialTextModules,
     textStyles: initialTextStyles,
+    textPositions: initialTextPositions,
     isPreviewMode: false,
     isEditing: false,
     hasUnsavedChanges: false,

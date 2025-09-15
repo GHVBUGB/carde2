@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文字模块坐标显示功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .coordinate-example {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .coordinate-example .coordinate {
+            font-family: 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #d32f2f;
+        }
+        
+        .button-demo {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+            display: inline-block;
+        }
+        
+        .button-demo button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px;
+        }
+        
+        .button-demo button:hover {
+            background: #0056b3;
+        }
+        
+        .button-demo button.active {
+            background: #ff6b35;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📍 文字模块坐标显示功能</h1>
+        
+        <div class="section">
+            <h2>🎯 功能说明</h2>
+            <p>现在您可以在名片预览中显示每个文字模块的x、y坐标，这对于：</p>
+            <ul class="feature-list">
+                <li>精确了解每个模块的当前位置</li>
+                <li>方便手动调整和记录坐标值</li>
+                <li>调试和优化布局设计</li>
+                <li>为其他开发者提供准确的坐标信息</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 实现方案</h2>
+            <p>在 <code>src/components/card/draggable-business-card-preview.tsx</code> 中添加了坐标显示功能：</p>
+            
+            <h3>1. 添加状态控制</h3>
+            <div class="code-block">
+const [showCoordinates, setShowCoordinates] = useState(false)
+            </div>
+            
+            <h3>2. 修改渲染函数</h3>
+            <div class="code-block">
+const renderDraggableText = (
+  moduleId: keyof TextPositions,
+  text: string,
+  style: TextStyles[keyof TextStyles],
+  position: TextPositions[keyof TextPositions],
+  showCoordinates: boolean = false  // 新增参数
+) => {
+  return (
+    &lt;div&gt;
+      {text}
+      {showCoordinates && (
+        &lt;div style={{...}}&gt;
+          ({position.x}, {position.y})
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  )
+}
+            </div>
+            
+            <h3>3. 添加切换按钮</h3>
+            <div class="code-block">
+&lt;button
+  onClick={() => setShowCoordinates(!showCoordinates)}
+  className={`px-3 py-1 rounded text-sm transition-colors ${
+    showCoordinates 
+      ? 'bg-orange-500 text-white hover:bg-orange-600' 
+      : 'bg-gray-500 text-white hover:bg-gray-600'
+  }`}
+&gt;
+  {showCoordinates ? '隐藏坐标' : '显示坐标'}
+&lt;/button&gt;
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📋 支持的模块</h2>
+            <p>以下所有文字模块都支持坐标显示：</p>
+            <ul class="feature-list">
+                <li><strong>姓名</strong> - 显示在文字下方</li>
+                <li><strong>职位头衔</strong> - 显示在文字下方</li>
+                <li><strong>服务人数</strong> - 显示在徽章下方居中</li>
+                <li><strong>好评率</strong> - 显示在徽章下方居中</li>
+                <li><strong>联系电话</strong> - 显示在文字下方</li>
+                <li><strong>外教筛选标签</strong> - 显示在标签下方居中</li>
+                <li><strong>学情反馈标签</strong> - 显示在标签下方居中</li>
+                <li><strong>学习计划标签</strong> - 显示在标签下方居中</li>
+                <li><strong>学习资源标签</strong> - 显示在标签下方居中</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 坐标显示样式</h2>
+            <p>坐标显示具有以下特点：</p>
+            <div class="coordinate-example">
+                <p><strong>示例坐标显示：</strong></p>
+                <p>姓名文字 <span class="coordinate">(175, 176)</span></p>
+                <p>职位文字 <span class="coordinate">(175, 200)</span></p>
+                <p>服务人数 <span class="coordinate">(135, 288)</span></p>
+            </div>
+            <ul class="feature-list">
+                <li>小字体（10px）显示，不干扰主要内容</li>
+                <li>半透明白色背景，确保可读性</li>
+                <li>圆角边框，美观简洁</li>
+                <li>居中对齐，位置统一</li>
+                <li>不响应鼠标事件，不影响拖拽操作</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 使用方法</h2>
+            <p>使用坐标显示功能非常简单：</p>
+            <ol>
+                <li>进入编辑页面</li>
+                <li>在预览区域上方找到工具栏</li>
+                <li>点击 <strong>"显示坐标"</strong> 按钮</li>
+                <li>所有文字模块下方都会显示其坐标</li>
+                <li>再次点击 <strong>"隐藏坐标"</strong> 按钮可关闭显示</li>
+            </ol>
+            
+            <div class="button-demo">
+                <p><strong>按钮状态演示：</strong></p>
+                <button>显示坐标</button>
+                <button class="active">隐藏坐标</button>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>💡 使用场景</h2>
+            <p>这个功能特别适用于：</p>
+            <ul class="feature-list">
+                <li><strong>精确调整</strong>：当您需要精确调整某个模块位置时</li>
+                <li><strong>记录坐标</strong>：当您想记录当前布局的坐标值</li>
+                <li><strong>调试布局</strong>：当布局出现问题时快速定位</li>
+                <li><strong>分享设计</strong>：向其他开发者提供准确的坐标信息</li>
+                <li><strong>批量修改</strong>：当您需要批量修改多个模块位置时</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 技术细节</h2>
+            <p>坐标显示的技术实现：</p>
+            <ul>
+                <li><strong>状态管理</strong>：使用 React useState 控制显示状态</li>
+                <li><strong>条件渲染</strong>：通过 showCoordinates 状态控制是否显示</li>
+                <li><strong>绝对定位</strong>：坐标显示在模块下方，不影响原布局</li>
+                <li><strong>响应式设计</strong>：坐标显示会根据模块位置自动调整</li>
+                <li><strong>性能优化</strong>：只在需要时渲染坐标显示元素</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>✅ 功能特点</h2>
+            <ul class="feature-list">
+                <li>一键切换显示/隐藏</li>
+                <li>实时显示当前坐标</li>
+                <li>不影响拖拽操作</li>
+                <li>美观的显示样式</li>
+                <li>支持所有文字模块</li>
+                <li>响应式布局</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

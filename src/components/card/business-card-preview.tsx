@@ -66,10 +66,22 @@ export default function BusinessCardPreview({
   // 获取启用的能力标签
   const getActiveAbilities = () => {
     const activeAbilities = []
-    if (abilities.teacherScreening) activeAbilities.push(textModules.teacherSelectionLabel)
-    if (abilities.feedbackAbility) activeAbilities.push(textModules.progressFeedbackLabel)
-    if (abilities.planningAbility) activeAbilities.push(textModules.planningLabel)
-    if (abilities.resourceSharing) activeAbilities.push(textModules.resourceSharingLabel)
+    if (abilities.teacherScreening) activeAbilities.push({
+      text: textModules.teacherSelectionLabel,
+      key: 'teacherSelectionLabel'
+    })
+    if (abilities.feedbackAbility) activeAbilities.push({
+      text: textModules.progressFeedbackLabel,
+      key: 'progressFeedbackLabel'
+    })
+    if (abilities.planningAbility) activeAbilities.push({
+      text: textModules.planningLabel,
+      key: 'planningLabel'
+    })
+    if (abilities.resourceSharing) activeAbilities.push({
+      text: textModules.resourceSharingLabel,
+      key: 'resourceSharingLabel'
+    })
     return activeAbilities
   }
 
@@ -116,18 +128,6 @@ export default function BusinessCardPreview({
             backgroundRepeat: 'no-repeat'
           }}
         >
-          {/* 品牌标识 - 左上角 */}
-          <div className="absolute top-4 left-4">
-            <div 
-              style={{
-                fontSize: `${textStyles?.companyName?.fontSize || 14}px`,
-                color: textStyles?.companyName?.color || '#ffffff',
-                fontWeight: textStyles?.companyName?.fontWeight || 'bold'
-              }}
-            >
-              {textModules.companyName}
-            </div>
-          </div>
 
           {/* 头像 - 中上部位置 */}
           {user.avatar_url && (
@@ -166,13 +166,13 @@ export default function BusinessCardPreview({
             </p>
           </div>
 
-          {/* 数据统计圆形标签 - 中间位置 */}
-          <div className="absolute top-72 left-1/2 transform -translate-x-1/2 flex gap-4">
+          {/* 数据统计 - 无边框横排显示 */}
+          <div className="absolute top-72 left-1/2 transform -translate-x-1/2 flex gap-8">
             {/* 学员数量 */}
             <div className="flex flex-col items-center justify-center text-center">
               <div 
                 style={{
-                  fontSize: `${textStyles?.studentsServed?.fontSize || 12}px`,
+                  fontSize: `${textStyles?.studentsServed?.fontSize || 16}px`,
                   color: textStyles?.studentsServed?.color || '#000000',
                   fontWeight: textStyles?.studentsServed?.fontWeight || 'bold'
                 }}
@@ -183,9 +183,10 @@ export default function BusinessCardPreview({
                 }
               </div>
               <div 
-                className="text-[8px] leading-tight"
+                className="text-[6px] leading-tight"
                 style={{
-                  color: textStyles?.studentsServed?.color || '#000000'
+                  color: textStyles?.studentsServed?.color || '#000000',
+                  fontWeight: textStyles?.studentsServed?.fontWeight || 'normal'
                 }}
               >
                 STUDENTS<br />SERVED
@@ -196,7 +197,7 @@ export default function BusinessCardPreview({
             <div className="flex flex-col items-center justify-center text-center">
               <div 
                 style={{
-                  fontSize: `${textStyles?.positiveRating?.fontSize || 12}px`,
+                  fontSize: `${textStyles?.positiveRating?.fontSize || 16}px`,
                   color: textStyles?.positiveRating?.color || '#000000',
                   fontWeight: textStyles?.positiveRating?.fontWeight || 'bold'
                 }}
@@ -204,9 +205,10 @@ export default function BusinessCardPreview({
                 {textModules.positiveRating}%
               </div>
               <div 
-                className="text-[8px] leading-tight"
+                className="text-[6px] leading-tight"
                 style={{
-                  color: textStyles?.positiveRating?.color || '#000000'
+                  color: textStyles?.positiveRating?.color || '#000000',
+                  fontWeight: textStyles?.positiveRating?.fontWeight || 'normal'
                 }}
               >
                 POSITIVE<br />RATING
@@ -214,56 +216,84 @@ export default function BusinessCardPreview({
             </div>
           </div>
 
-          {/* 业务能力图标区域 - 下方 */}
-          {activeAbilities.length > 0 && (
-            <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80">
-              <div className="grid grid-cols-4 gap-2 px-4">
-                {activeAbilities.slice(0, 4).map((ability, index) => {
-                  const icons = [
-                    // Teacher Selection
-                    <svg key="teacher" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>,
-                    // Progress Feedback  
-                    <svg key="feedback" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                    </svg>,
-                    // Planning
-                    <svg key="planning" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
-                    </svg>,
-                    // Resource Sharing
-                    <svg key="resource" className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M12.316 3.051a1 1 0 01.633 1.265l-4 12a1 1 0 11-1.898-.632l4-12a1 1 0 011.265-.633zM5.707 6.293a1 1 0 010 1.414L3.414 10l2.293 2.293a1 1 0 11-1.414 1.414l-3-3a1 1 0 010-1.414l3-3a1 1 0 011.414 0zm8.586 0a1 1 0 011.414 0l3 3a1 1 0 010 1.414l-3 3a1 1 0 11-1.414-1.414L16.586 10l-2.293-2.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                    </svg>
-                  ]
+          {/* 业务能力标签区域 - 无图标，英文两排显示 */}
+          <div className="absolute bottom-20 left-1/2 transform -translate-x-1/2 w-80">
+            <div className="grid grid-cols-2 gap-4 px-4">
+              {/* 第一行：教师筛选和进度反馈 */}
+              <div className="flex flex-col items-center text-center">
+                <div 
+                  className="leading-tight text-center"
+                  style={{
+                    fontSize: `${textStyles?.teacherSelectionLabel?.fontSize || 8}px`,
+                    color: textStyles?.teacherSelectionLabel?.color || '#666666',
+                    fontWeight: textStyles?.teacherSelectionLabel?.fontWeight || 'normal'
+                  }}
+                >
+                  {(textModules.teacherSelectionLabel || 'Teacher\nSelection').split('\n').map((line, index, array) => (
+                    <span key={index}>
+                      {line}
+                      {index < array.length - 1 && <br />}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-                  // 获取对应的样式键
-                  const styleKeys = ['teacherSelectionLabel', 'progressFeedbackLabel', 'planningLabel', 'resourceSharingLabel']
-                  const styleKey = styleKeys[index] as keyof typeof textStyles
+              <div className="flex flex-col items-center text-center">
+                <div 
+                  className="leading-tight text-center"
+                  style={{
+                    fontSize: `${textStyles?.progressFeedbackLabel?.fontSize || 8}px`,
+                    color: textStyles?.progressFeedbackLabel?.color || '#666666',
+                    fontWeight: textStyles?.progressFeedbackLabel?.fontWeight || 'normal'
+                  }}
+                >
+                  {(textModules.progressFeedbackLabel || 'Progress\nFeedback').split('\n').map((line, index, array) => (
+                    <span key={index}>
+                      {line}
+                      {index < array.length - 1 && <br />}
+                    </span>
+                  ))}
+                </div>
+              </div>
 
-                  return (
-                    <div key={index} className="flex flex-col items-center text-center">
-                      <div className="w-8 h-8 flex items-center justify-center mb-1"
-                           style={{ color: textStyles?.[styleKey]?.color || '#000000' }}>
-                        {icons[index] || icons[0]}
-                      </div>
-                      <div 
-                        className="leading-tight max-w-16"
-                        style={{
-                          fontSize: `${textStyles?.[styleKey]?.fontSize || 8}px`,
-                          color: textStyles?.[styleKey]?.color || '#000000',
-                          fontWeight: textStyles?.[styleKey]?.fontWeight || 'normal'
-                        }}
-                      >
-                        {ability}
-                      </div>
-                    </div>
-                  )
-                })}
+              {/* 第二行：学习计划和学习资源 */}
+              <div className="flex flex-col items-center text-center">
+                <div 
+                  className="leading-tight text-center"
+                  style={{
+                    fontSize: `${textStyles?.planningLabel?.fontSize || 8}px`,
+                    color: textStyles?.planningLabel?.color || '#666666',
+                    fontWeight: textStyles?.planningLabel?.fontWeight || 'normal'
+                  }}
+                >
+                  {(textModules.planningLabel || 'Study\nPlan').split('\n').map((line, index, array) => (
+                    <span key={index}>
+                      {line}
+                      {index < array.length - 1 && <br />}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center text-center">
+                <div 
+                  className="leading-tight text-center"
+                  style={{
+                    fontSize: `${textStyles?.resourceSharingLabel?.fontSize || 8}px`,
+                    color: textStyles?.resourceSharingLabel?.color || '#666666',
+                    fontWeight: textStyles?.resourceSharingLabel?.fontWeight || 'normal'
+                  }}
+                >
+                  {(textModules.resourceSharingLabel || 'Learning\nResources').split('\n').map((line, index, array) => (
+                    <span key={index}>
+                      {line}
+                      {index < array.length - 1 && <br />}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* 联系方式 - 底部 */}
           <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">

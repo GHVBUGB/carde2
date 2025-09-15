@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>文字模块编辑器修复测试</title>
+    <style>
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .test-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .test-description {
+            color: #666;
+            margin-bottom: 15px;
+        }
+        
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>文字模块编辑器修复测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">✅ 问题分析</div>
+            <div class="test-description">
+                用户反馈：在编辑模块中编写名字、头衔、服务人数和好评率时，名片中的模块没有反应。
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🔍 根本原因</div>
+            <div class="test-description">
+                发现了两个主要问题：
+            </div>
+            <ul>
+                <li><strong>缺少基本信息编辑功能</strong>：文字模块编辑器只编辑业务能力标签，没有编辑姓名、职位、服务人数、好评率等基本信息</li>
+                <li><strong>数据同步问题</strong>：编辑器的 <code>cardData</code> 和 <code>textModules</code> 之间没有同步，预览组件优先使用 <code>textModules</code> 数据</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🛠️ 修复方案</div>
+            <div class="test-description">
+                实施了以下修复：
+            </div>
+            <ol>
+                <li><strong>扩展文字模块编辑器</strong>：添加了基本信息编辑功能
+                    <div class="code-block">
+// 新增的基本信息编辑字段
+- 姓名 (name)
+- 职位头衔 (title)  
+- 已服务学员数 (studentsServed)
+- 好评率 (positiveRating)
+- 联系电话 (phone)
+                    </div>
+                </li>
+                <li><strong>添加数据同步机制</strong>：确保 cardData 和 textModules 同步
+                    <div class="code-block">
+// 同步 cardData 到 textModules
+useEffect(() => {
+  if (cardData.name) {
+    updateTextModules({
+      name: cardData.name,
+      title: cardData.title,
+      phone: cardData.phone,
+      studentsServed: cardData.studentsServed,
+      positiveRating: Math.round(cardData.rating * 20),
+    })
+  }
+}, [cardData.name, cardData.title, cardData.phone, cardData.studentsServed, cardData.rating])
+                    </div>
+                </li>
+                <li><strong>修复换行显示问题</strong>：确保多行文本正确显示
+                    <div class="code-block">
+// 修复前：只在第一行后加换行
+{index === 0 && <br />}
+
+// 修复后：除了最后一行，其他行后都加换行  
+{index < array.length - 1 && <br />}
+                    </div>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">✅ 修复效果</div>
+            <div class="test-description">
+                现在用户可以：
+            </div>
+            <ul>
+                <li class="success">在文字模块编辑器中编辑姓名、职位、服务人数、好评率</li>
+                <li class="success">实时看到预览中的变化</li>
+                <li class="success">调整字体大小、颜色、粗细等样式</li>
+                <li class="success">多行文本正确显示换行</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">🧪 测试步骤</div>
+            <div class="test-description">
+                请按以下步骤测试修复效果：
+            </div>
+            <ol>
+                <li>进入编辑页面</li>
+                <li>在左侧"文字模块编辑器"中找到"基本信息"部分</li>
+                <li>修改姓名、职位、服务人数、好评率等字段</li>
+                <li>观察右侧预览是否实时更新</li>
+                <li>调整字体大小、颜色等样式设置</li>
+                <li>验证多行文本（如业务能力标签）是否正确换行</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <div class="test-title">📝 修改的文件</div>
+            <div class="test-description">
+                以下文件已被修改：
+            </div>
+            <ul>
+                <li><code>src/components/editor/text-modules-editor.tsx</code> - 添加基本信息编辑功能</li>
+                <li><code>src/app/dashboard/editor/page.tsx</code> - 添加数据同步机制</li>
+                <li><code>src/components/card/business-card-preview.tsx</code> - 修复换行显示</li>
+                <li><code>src/components/card/draggable-business-card-preview.tsx</code> - 修复换行显示</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

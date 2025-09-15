@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>隐藏重复模块功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .success-section {
+            border-left: 4px solid #28a745;
+        }
+        
+        .success-section h2 {
+            color: #28a745;
+        }
+        
+        .problem-section {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .problem-section h2 {
+            color: #dc3545;
+        }
+        
+        .module-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .module-before, .module-after {
+            padding: 15px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+        }
+        
+        .module-before {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        
+        .module-after {
+            background: #d4edda;
+            border-color: #c3e6cb;
+        }
+        
+        .module-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .module-before .module-title {
+            color: #721c24;
+        }
+        
+        .module-after .module-title {
+            color: #155724;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .hidden-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .hidden-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .hidden-list li:before {
+            content: "❌ ";
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .comparison-table th {
+            background: #6c757d;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .comparison-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .before {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .after {
+            color: #28a745;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 隐藏重复模块功能</h1>
+        
+        <div class="section problem-section">
+            <h2>❌ 问题描述</h2>
+            <p>用户反馈：编辑名片页面中有模块重复了，需要隐藏重复的模块，保证功能不缺失。</p>
+            
+            <p><strong>重复的模块包括：</strong></p>
+            <ul class="hidden-list">
+                <li>基本信息模块 - 姓名、职位、联系电话</li>
+                <li>业绩数据模块 - 服务学员数、好评率</li>
+                <li>文字模块编辑器 - 也包含上述所有字段</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔍 问题分析</h2>
+            <p>编辑页面中存在功能重复的模块：</p>
+            
+            <div class="module-comparison">
+                <div class="module-before">
+                    <div class="module-title">重复模块（已隐藏）</div>
+                    <ul>
+                        <li>基本信息模块</li>
+                        <li>业绩数据模块</li>
+                        <li>功能简单，只有基本输入</li>
+                    </ul>
+                </div>
+                
+                <div class="module-after">
+                    <div class="module-title">保留模块（文字模块编辑器）</div>
+                    <ul>
+                        <li>包含所有基本信息字段</li>
+                        <li>包含样式编辑功能</li>
+                        <li>功能更完整</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 解决方案</h2>
+            <p>隐藏重复的基本信息和业绩数据模块，只保留功能更完整的文字模块编辑器。</p>
+            
+            <div class="code-block">
+// 隐藏的模块
+{/* 基本信息 */}
+&lt;Card&gt;
+  &lt;CardHeader&gt;
+    &lt;CardTitle&gt;基本信息&lt;/CardTitle&gt;
+    // ... 姓名、职位、联系电话输入
+  &lt;/CardHeader&gt;
+&lt;/Card&gt;
+
+{/* 业绩数据 */}
+&lt;Card&gt;
+  &lt;CardHeader&gt;
+    &lt;CardTitle&gt;业绩数据&lt;/CardTitle&gt;
+    // ... 服务学员数、好评率输入
+  &lt;/CardHeader&gt;
+&lt;/Card&gt;
+
+// 保留的模块
+{/* 文字模块编辑器 */}
+&lt;TextModulesEditor
+  textModules={textModules}
+  textStyles={textStyles}
+  onTextModulesChange={updateTextModules}
+  onTextStylesChange={updateTextStyles}
+/&gt;
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📊 功能对比</h2>
+            <table class="comparison-table">
+                <thead>
+                    <tr>
+                        <th>功能</th>
+                        <th>隐藏前</th>
+                        <th>隐藏后</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>姓名编辑</strong></td>
+                        <td class="before">基本信息模块 + 文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                    <tr>
+                        <td><strong>职位编辑</strong></td>
+                        <td class="before">基本信息模块 + 文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                    <tr>
+                        <td><strong>联系电话编辑</strong></td>
+                        <td class="before">基本信息模块 + 文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                    <tr>
+                        <td><strong>服务学员数编辑</strong></td>
+                        <td class="before">业绩数据模块 + 文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                    <tr>
+                        <td><strong>好评率编辑</strong></td>
+                        <td class="before">业绩数据模块 + 文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                    <tr>
+                        <td><strong>样式编辑</strong></td>
+                        <td class="before">仅文字模块编辑器</td>
+                        <td class="after">仅文字模块编辑器</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 保留的功能</h2>
+            <p>文字模块编辑器包含所有必要的功能：</p>
+            <ul class="feature-list">
+                <li><strong>姓名编辑</strong> - 输入框 + 字体大小、颜色、粗细控制</li>
+                <li><strong>职位编辑</strong> - 输入框 + 字体大小、颜色、粗细控制</li>
+                <li><strong>联系电话编辑</strong> - 输入框 + 字体大小、颜色、粗细控制</li>
+                <li><strong>服务学员数编辑</strong> - 数字输入框 + 字体大小、颜色、粗细控制</li>
+                <li><strong>好评率编辑</strong> - 数字输入框 + 字体大小、颜色、粗细控制</li>
+                <li><strong>业务能力标签编辑</strong> - 文本输入 + 样式控制</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🎯 优化效果</h2>
+            <p>隐藏重复模块后的优化效果：</p>
+            <ul class="feature-list">
+                <li><strong>界面简洁</strong> - 消除了重复的输入字段</li>
+                <li><strong>功能集中</strong> - 所有文字编辑功能集中在一个模块</li>
+                <li><strong>样式统一</strong> - 所有字段都有统一的样式控制</li>
+                <li><strong>操作便捷</strong> - 用户不需要在多个地方编辑相同内容</li>
+                <li><strong>功能完整</strong> - 保留了所有必要的编辑功能</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 测试方法</h2>
+            <p>请按以下步骤测试隐藏重复模块的效果：</p>
+            <ol>
+                <li>进入编辑页面</li>
+                <li>观察左侧编辑区域</li>
+                <li>确认只显示以下模块：
+                    <ul>
+                        <li>头像上传</li>
+                        <li>业务能力选择</li>
+                        <li>文字模块编辑器（包含所有基本信息编辑）</li>
+                    </ul>
+                </li>
+                <li>验证所有编辑功能仍然可用</li>
+                <li>确认界面更加简洁</li>
+            </ol>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 功能保证</h2>
+            <p>隐藏重复模块后，所有功能都得到保留：</p>
+            <ul class="feature-list">
+                <li>姓名、职位、联系电话编辑功能完整</li>
+                <li>服务学员数、好评率编辑功能完整</li>
+                <li>所有字段的样式编辑功能完整</li>
+                <li>业务能力选择功能完整</li>
+                <li>头像上传功能完整</li>
+                <li>实时预览功能完整</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>当前文字模块位置信息</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .positions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .positions-table th {
+            background: #007bff;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        .positions-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .positions-table tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        
+        .positions-table tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .file-path {
+            background: #e8f5e8;
+            color: #2d5a2d;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+        
+        .coordinate {
+            font-family: 'Courier New', monospace;
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📍 当前文字模块位置信息</h1>
+        
+        <div class="section">
+            <h2>🎯 当前初始位置设置</h2>
+            <p>以下是所有文字模块的当前初始位置坐标：</p>
+            
+            <table class="positions-table">
+                <thead>
+                    <tr>
+                        <th>模块名称</th>
+                        <th>X坐标</th>
+                        <th>Y坐标</th>
+                        <th>说明</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>companyName</strong></td>
+                        <td><span class="coordinate">16</span></td>
+                        <td><span class="coordinate">16</span></td>
+                        <td>公司名称（左上角）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>name</strong></td>
+                        <td><span class="coordinate">175</span></td>
+                        <td><span class="coordinate">176</span></td>
+                        <td>姓名（名片中央）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>title</strong></td>
+                        <td><span class="coordinate">175</span></td>
+                        <td><span class="coordinate">200</span></td>
+                        <td>职位头衔（姓名下方）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>studentsServed</strong></td>
+                        <td><span class="coordinate">135</span></td>
+                        <td><span class="coordinate">288</span></td>
+                        <td>服务人数（左侧徽章）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>positiveRating</strong></td>
+                        <td><span class="coordinate">195</span></td>
+                        <td><span class="coordinate">288</span></td>
+                        <td>好评率（右侧徽章）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>phone</strong></td>
+                        <td><span class="coordinate">175</span></td>
+                        <td><span class="coordinate">460</span></td>
+                        <td>联系电话（底部）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>teacherSelectionLabel</strong></td>
+                        <td><span class="coordinate">40</span></td>
+                        <td><span class="coordinate">400</span></td>
+                        <td>外教筛选标签（左下）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>progressFeedbackLabel</strong></td>
+                        <td><span class="coordinate">120</span></td>
+                        <td><span class="coordinate">400</span></td>
+                        <td>学情反馈标签（左中）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>planningLabel</strong></td>
+                        <td><span class="coordinate">200</span></td>
+                        <td><span class="coordinate">400</span></td>
+                        <td>学习计划标签（右中）</td>
+                    </tr>
+                    <tr>
+                        <td><strong>resourceSharingLabel</strong></td>
+                        <td><span class="coordinate">280</span></td>
+                        <td><span class="coordinate">400</span></td>
+                        <td>学习资源标签（右下）</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="section">
+            <h2>📝 修改初始位置的方法</h2>
+            <p>要修改初始位置，您需要编辑以下文件：</p>
+            
+            <div class="file-path">src/store/card.ts</div>
+            
+            <p>在该文件中找到 <span class="highlight">initialTextPositions</span> 常量，然后修改相应的坐标值：</p>
+            
+            <div class="code-block">
+const initialTextPositions = {
+  companyName: { x: 16, y: 16 },
+  name: { x: 175, y: 176 },
+  title: { x: 175, y: 200 },
+  studentsServed: { x: 135, y: 288 },
+  positiveRating: { x: 195, y: 288 },
+  phone: { x: 175, y: 460 },
+  teacherSelectionLabel: { x: 40, y: 400 },
+  progressFeedbackLabel: { x: 120, y: 400 },
+  planningLabel: { x: 200, y: 400 },
+  resourceSharingLabel: { x: 280, y: 400 }
+}
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 修改步骤</h2>
+            <ol>
+                <li><strong>打开文件</strong>：在您的代码编辑器中打开 <code>src/store/card.ts</code></li>
+                <li><strong>找到位置</strong>：搜索 <code>initialTextPositions</code>（大约在第148行）</li>
+                <li><strong>修改坐标</strong>：将您想要的坐标值替换到对应的 <code>x</code> 和 <code>y</code> 属性中</li>
+                <li><strong>保存文件</strong>：保存修改后的文件</li>
+                <li><strong>重新加载</strong>：刷新浏览器页面，新的初始位置就会生效</li>
+            </ol>
+        </div>
+        
+        <div class="section">
+            <h2>💡 修改示例</h2>
+            <p>例如，如果您想将姓名位置向右移动50像素，向下移动20像素：</p>
+            
+            <div class="code-block">
+// 修改前
+name: { x: 175, y: 176 },
+
+// 修改后
+name: { x: 225, y: 196 },
+            </div>
+        </div>
+        
+        <div class="note">
+            <strong>⚠️ 注意事项：</strong>
+            <ul>
+                <li>坐标值以像素为单位</li>
+                <li>X坐标：从左到右，0为最左边</li>
+                <li>Y坐标：从上到下，0为最上边</li>
+                <li>修改后需要刷新页面才能看到效果</li>
+                <li>建议先备份原始值，以便需要时恢复</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 名片尺寸参考</h2>
+            <p>名片预览区域的尺寸为：<strong>350px × 500px</strong></p>
+            <p>建议的坐标范围：</p>
+            <ul>
+                <li>X坐标：0 - 350</li>
+                <li>Y坐标：0 - 500</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

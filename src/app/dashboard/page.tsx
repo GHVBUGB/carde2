@@ -146,10 +146,10 @@ export default function DashboardPage() {
                 studentsServed: user.students_served || 5000,
                 positiveRating: Math.round((user.rating || 0) * 20) || 99,
                 phone: user.phone || '050-XXXX-XXAB',
-                teacherSelectionLabel: 'Teacher Selection',
-                progressFeedbackLabel: 'Progress Feedback',
-                planningLabel: 'Progress Feedback',
-                resourceSharingLabel: 'Curriculum Learning Resources'
+                teacherSelectionLabel: 'Teacher\nSelection',
+                progressFeedbackLabel: 'Progress\nFeedback',
+                planningLabel: 'Study\nPlan',
+                resourceSharingLabel: 'Learning\nResources'
               }}
               abilities={{
                 teacherScreening: user.teacher_screening || false,
