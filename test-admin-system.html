@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员系统测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .test-title {
+            font-weight: bold;
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        .button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #2563eb;
+        }
+        .button.success {
+            background-color: #10b981;
+        }
+        .button.danger {
+            background-color: #ef4444;
+        }
+        .log {
+            background-color: #1f2937;
+            color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 5px;
+            border-left: 4px solid #3b82f6;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1e40af;
+        }
+        .stat-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+        .admin-link {
+            background-color: #f59e0b;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        .admin-link:hover {
+            background-color: #d97706;
+        }
+        .status-ok {
+            color: #10b981;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #ef4444;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ 管理员系统测试</h1>
+        
+        <div class="test-section">
+            <div class="test-title">📊 当前系统状态</div>
+            <div id="systemStatus">正在检查系统状态...</div>
+            <button class="button" onclick="checkSystemStatus()">刷新状态</button>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🎭 模拟用户行为</div>
+            <p>点击下面的按钮模拟不同的用户行为，这些操作会被记录到管理员系统中：</p>
+            
+            <button class="button" onclick="simulateUserLogin()">模拟用户登录</button>
+            <button class="button" onclick="simulateDownload()">模拟名片下载</button>
+            <button class="button" onclick="simulateRemoveBackground()">模拟背景移除</button>
+            <button class="button" onclick="simulateCardCreate()">模拟创建名片</button>
+            <button class="button success" onclick="simulateMultipleActions()">批量模拟（10次操作）</button>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📈 实时统计数据</div>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalUsers">-</div>
+                    <div class="stat-label">总用户数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayRegistrations">-</div>
+                    <div class="stat-label">今日注册</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalDownloads">-</div>
+                    <div class="stat-label">总下载次数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayDownloads">-</div>
+                    <div class="stat-label">今日下载</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="totalApiCalls">-</div>
+                    <div class="stat-label">总API调用</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="todayApiCalls">-</div>
+                    <div class="stat-label">今日API调用</div>
+                </div>
+            </div>
+            <button class="button" onclick="refreshStats()">刷新统计</button>
+            <button class="button" onclick="autoRefresh()">自动刷新(30秒)</button>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🚨 警报测试</div>
+            <p>测试管理员警报系统是否正常工作：</p>
+            <button class="button danger" onclick="triggerHighUsageAlert()">触发高使用量警报</button>
+            <button class="button danger" onclick="checkAlerts()">检查当前警报</button>
+            <div id="alertStatus" style="margin-top: 10px;"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🔗 管理员面板访问</div>
+            <p>测试完成后，访问管理员面板查看记录的数据：</p>
+            <a href="http://localhost:3000/admin/login" class="admin-link" target="_blank">管理员登录</a>
+            <a href="http://localhost:3000/admin/dashboard" class="admin-link" target="_blank">管理员面板</a>
+            <p><strong>管理员密码：</strong> <code>GhJ2537652940</code></p>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📋 操作日志</div>
+            <div class="log" id="logOutput">等待操作...</div>
+            <button class="button" onclick="clearLog()">清空日志</button>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+
+        function log(message) {
+            const logElement = document.getElementById('logOutput');
+            const timestamp = new Date().toLocaleString();
+            logElement.innerHTML += `[${timestamp}] ${message}\n`;
+            logElement.scrollTop = logElement.scrollHeight;
+        }
+
+        function clearLog() {
+            document.getElementById('logOutput').innerHTML = '日志已清空\n';
+        }
+
+        async function checkSystemStatus() {
+            log('🔍 检查系统状态...');
+            try {
+                // 检查API是否可用
+                const response = await fetch('/api/admin/stats');
+                if (response.ok) {
+                    document.getElementById('systemStatus').innerHTML = 
+                        '<span class="status-ok">✅ 系统正常运行</span>';
+                    log('✅ 管理员API系统正常');
+                } else {
+                    document.getElementById('systemStatus').innerHTML = 
+                        '<span class="status-error">❌ 系统异常</span>';
+                    log('❌ 管理员API系统异常: ' + response.status);
+                }
+            } catch (error) {
+                document.getElementById('systemStatus').innerHTML = 
+                    '<span class="status-error">❌ 无法连接系统</span>';
+                log('❌ 无法连接到管理员系统: ' + error.message);
+            }
+        }
+
+        async function simulateUserLogin() {
+            log('🔑 模拟用户登录...');
+            try {
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'login',
+                        user_id: 'test-user-' + Date.now(),
+                        details: { simulation: true }
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ 用户登录模拟成功');
+                } else {
+                    log('⚠️ 用户登录模拟失败，可能是演示模式');
+                }
+            } catch (error) {
+                log('⚠️ 模拟登录：' + error.message);
+            }
+        }
+
+        async function simulateDownload() {
+            log('📥 模拟名片下载...');
+            try {
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'download',
+                        user_id: 'test-user-' + Date.now(),
+                        details: { 
+                            simulation: true,
+                            file_format: 'png',
+                            file_size: Math.floor(Math.random() * 1000000) + 500000
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ 名片下载模拟成功');
+                } else {
+                    log('⚠️ 名片下载模拟失败，可能是演示模式');
+                }
+            } catch (error) {
+                log('⚠️ 模拟下载：' + error.message);
+            }
+        }
+
+        async function simulateRemoveBackground() {
+            log('🎨 模拟背景移除...');
+            try {
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'remove_background',
+                        user_id: 'test-user-' + Date.now(),
+                        details: { 
+                            simulation: true,
+                            processing_time: Math.floor(Math.random() * 5000) + 1000,
+                            image_size: Math.floor(Math.random() * 2000000) + 500000
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ 背景移除模拟成功');
+                } else {
+                    log('⚠️ 背景移除模拟失败，可能是演示模式');
+                }
+            } catch (error) {
+                log('⚠️ 模拟背景移除：' + error.message);
+            }
+        }
+
+        async function simulateCardCreate() {
+            log('🆕 模拟创建名片...');
+            try {
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'card_create',
+                        user_id: 'test-user-' + Date.now(),
+                        details: { 
+                            simulation: true,
+                            card_type: 'business',
+                            template: 'default'
+                        }
+                    })
+                });
+                
+                if (response.ok) {
+                    log('✅ 创建名片模拟成功');
+                } else {
+                    log('⚠️ 创建名片模拟失败，可能是演示模式');
+                }
+            } catch (error) {
+                log('⚠️ 模拟创建名片：' + error.message);
+            }
+        }
+
+        async function simulateMultipleActions() {
+            log('🔄 开始批量模拟操作...');
+            const actions = ['login', 'download', 'remove_background', 'card_create'];
+            
+            for (let i = 0; i < 10; i++) {
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                await new Promise(resolve => setTimeout(resolve, 500)); // 延迟500ms
+                
+                switch (action) {
+                    case 'login':
+                        await simulateUserLogin();
+                        break;
+                    case 'download':
+                        await simulateDownload();
+                        break;
+                    case 'remove_background':
+                        await simulateRemoveBackground();
+                        break;
+                    case 'card_create':
+                        await simulateCardCreate();
+                        break;
+                }
+            }
+            log('🎉 批量模拟操作完成！');
+        }
+
+        async function refreshStats() {
+            log('📊 刷新统计数据...');
+            try {
+                const response = await fetch('/api/admin/stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('totalUsers').textContent = data.totalUsers || 0;
+                    document.getElementById('todayRegistrations').textContent = data.todayRegistrations || 0;
+                    document.getElementById('totalDownloads').textContent = data.totalDownloads || 0;
+                    document.getElementById('todayDownloads').textContent = data.todayDownloads || 0;
+                    document.getElementById('totalApiCalls').textContent = data.totalApiCalls || 0;
+                    document.getElementById('todayApiCalls').textContent = data.todayApiCalls || 0;
+                    log('✅ 统计数据已更新');
+                } else {
+                    log('❌ 获取统计数据失败: ' + response.status);
+                }
+            } catch (error) {
+                log('❌ 获取统计数据异常: ' + error.message);
+            }
+        }
+
+        async function checkAlerts() {
+            log('🚨 检查警报状态...');
+            try {
+                const response = await fetch('/api/admin/today-stats');
+                if (response.ok) {
+                    const data = await response.json();
+                    const alertDiv = document.getElementById('alertStatus');
+                    
+                    if (data.alerts && data.alerts.length > 0) {
+                        alertDiv.innerHTML = '<div style="color: #ef4444; font-weight: bold;">🚨 警报: ' + 
+                            data.alerts.map(alert => alert.message).join(', ') + '</div>';
+                        log('🚨 发现警报: ' + data.alerts.length + ' 个');
+                    } else {
+                        alertDiv.innerHTML = '<div style="color: #10b981;">✅ 无警报</div>';
+                        log('✅ 当前无警报');
+                    }
+                } else {
+                    log('❌ 检查警报失败: ' + response.status);
+                }
+            } catch (error) {
+                log('❌ 检查警报异常: ' + error.message);
+            }
+        }
+
+        async function triggerHighUsageAlert() {
+            log('⚡ 触发高使用量警报测试...');
+            // 连续触发多次操作以达到警报阈值
+            for (let i = 0; i < 8; i++) {
+                await simulateDownload();
+                await simulateRemoveBackground();
+                await new Promise(resolve => setTimeout(resolve, 200));
+            }
+            log('🚨 高使用量操作已完成，检查是否触发警报...');
+            setTimeout(checkAlerts, 2000);
+        }
+
+        function autoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                log('⏹️ 自动刷新已停止');
+                return;
+            }
+            
+            autoRefreshInterval = setInterval(() => {
+                refreshStats();
+                checkAlerts();
+            }, 30000);
+            log('🔄 自动刷新已启动（每30秒）');
+        }
+
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            refreshStats();
+            log('🚀 管理员系统测试页面已加载');
+        });
+    </script>
+</body>
+</html>

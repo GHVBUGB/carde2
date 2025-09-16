@@ -148,6 +148,43 @@ export default function DomExportDebug({
         }
       })
       
+      // 🎯 确保文字内容一致性 - 修复阿拉伯语头衔问题
+      setDebugInfo('检查并修复文字内容...')
+      
+      // 检查并修复头衔显示
+      const titleElements = clonedCard.querySelectorAll('[data-module-id="title"]')
+      titleElements.forEach((titleEl: any) => {
+        const currentText = titleEl.textContent || titleEl.innerText || ''
+        console.log('📝 当前头衔文字:', currentText)
+        
+        // 如果头衔为空或显示错误，使用正确的默认值
+        if (!currentText || currentText.trim() === '' || currentText === 'SENIOR LANGUAGE COACH') {
+          titleEl.textContent = 'شريك النمو الرئيسي'
+          console.log('✅ 已修复头衔为阿拉伯语默认值')
+        }
+
+        // 阿拉伯语渲染修正：强制单行、RTL 与单词内断行
+        if (titleEl && titleEl.style) {
+          titleEl.style.whiteSpace = 'nowrap'
+          titleEl.style.direction = 'rtl'
+          titleEl.style.wordBreak = 'keep-all'
+          titleEl.style.lineHeight = '1.2'
+        }
+      })
+      
+      // 检查并修复姓名显示
+      const nameElements = clonedCard.querySelectorAll('[data-module-id="name"]')
+      nameElements.forEach((nameEl: any) => {
+        const currentText = nameEl.textContent || nameEl.innerText || ''
+        console.log('📝 当前姓名文字:', currentText)
+        
+        // 如果姓名为空，使用正确的默认值
+        if (!currentText || currentText.trim() === '') {
+          nameEl.textContent = 'أحمد'
+          console.log('✅ 已修复姓名为默认值')
+        }
+      })
+      
       setDebugInfo('正在添加到DOM...')
       exportContainer.appendChild(clonedCard)
       document.body.appendChild(exportContainer)

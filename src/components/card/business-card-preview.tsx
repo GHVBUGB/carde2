@@ -4,8 +4,6 @@ import { User } from '@/lib/types'
 import { useState, useRef, useEffect } from 'react'
 import html2canvas from 'html2canvas'
 import { saveAs } from 'file-saver'
-import DualExportMethods from '@/components/export/dual-export-methods'
-import DomExportDebug from '@/components/export/dom-export-debug'
 
 interface TextModules {
   companyName: string
@@ -54,7 +52,7 @@ export default function BusinessCardPreview({
   textStyles,
   abilities,
   className, 
-  backgroundImage = '/ditu.png',
+  backgroundImage = '/底图.png',
   onBackgroundUpload 
 }: BusinessCardPreviewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -216,7 +214,7 @@ export default function BusinessCardPreview({
             }
           }
           img.onerror = () => reject(new Error('头像加载失败'))
-          img.src = user.avatar_url
+          img.src = user.avatar_url || ''
         })
       }
       
@@ -244,14 +242,14 @@ export default function BusinessCardPreview({
 
       // 姓名
       drawText(
-        textModules.name || user.name || 'AHMED AL-FAWAZ',
-        175, 176, 20, '#000000', 'bold'
+        textModules.name || user.name || 'أحمد',
+        152, 244, 20, '#000000', 'bold'
       )
 
       // 职位
       drawText(
-        textModules.title || user.title || 'SENIOR LANGUAGE COACH',
-        175, 200, 14, '#666666'
+        textModules.title || user.title || 'شريك النمو الرئيسي',
+        124, 270, 14, '#666666'
       )
 
       // 统计数据
@@ -267,10 +265,10 @@ export default function BusinessCardPreview({
 
       // 业务能力标签
       const abilities = [
-        { text: 'Teacher\nSelection', x: 110, y: 380 },
-        { text: 'Progress\nFeedback', x: 240, y: 380 },
-        { text: 'Study\nPlan', x: 110, y: 420 },
-        { text: 'Learning\nResources', x: 240, y: 420 }
+        { text: 'اختيار\nالمعلم', x: 110, y: 380 },
+        { text: 'تعليقات\nالتقدم', x: 240, y: 380 },
+        { text: 'خطة\nالدراسة', x: 110, y: 420 },
+        { text: 'موارد\nالتعلم', x: 240, y: 420 }
       ]
 
       abilities.forEach(ability => {
@@ -280,7 +278,7 @@ export default function BusinessCardPreview({
       // 电话
       drawText(
         `电话: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
-        175, 472, 14, '#000000', 'bold'
+        106, 430, 14, '#000000', 'bold'
       )
 
       console.log('Canvas绘制完成，开始导出...')
@@ -470,7 +468,7 @@ export default function BusinessCardPreview({
                 fontWeight: textStyles?.name?.fontWeight || 'bold'
               }}
             >
-              {textModules.name || user.name || 'AHMED AL-FAWAZ'}
+              {textModules.name || user.name || 'أحمد'}
             </h1>
             {/* 职位头衔 */}
             <p 
@@ -480,7 +478,7 @@ export default function BusinessCardPreview({
                 fontWeight: textStyles?.title?.fontWeight || 'normal'
               }}
             >
-              {textModules.title || user.title || 'SENIOR LANGUAGE COACH'}
+              {textModules.title || user.title || 'شريك النمو الرئيسي'}
             </p>
           </div>
 
@@ -547,7 +545,7 @@ export default function BusinessCardPreview({
                     fontWeight: textStyles?.teacherSelectionLabel?.fontWeight || 'normal'
                   }}
                 >
-                  {(textModules.teacherSelectionLabel || 'Teacher\nSelection').split('\n').map((line, index, array) => (
+                  {(textModules.teacherSelectionLabel || 'اختيار\nالمعلم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -565,7 +563,7 @@ export default function BusinessCardPreview({
                     fontWeight: textStyles?.progressFeedbackLabel?.fontWeight || 'normal'
                   }}
                 >
-                  {(textModules.progressFeedbackLabel || 'Progress\nFeedback').split('\n').map((line, index, array) => (
+                  {(textModules.progressFeedbackLabel || 'تعليقات\nالتقدم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -584,7 +582,7 @@ export default function BusinessCardPreview({
                     fontWeight: textStyles?.planningLabel?.fontWeight || 'normal'
                   }}
                 >
-                  {(textModules.planningLabel || 'Study\nPlan').split('\n').map((line, index, array) => (
+                  {(textModules.planningLabel || 'خطة\nالدراسة').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -602,7 +600,7 @@ export default function BusinessCardPreview({
                     fontWeight: textStyles?.resourceSharingLabel?.fontWeight || 'normal'
                   }}
                 >
-                  {(textModules.resourceSharingLabel || 'Learning\nResources').split('\n').map((line, index, array) => (
+                  {(textModules.resourceSharingLabel || 'موارد\nالتعلم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -629,27 +627,13 @@ export default function BusinessCardPreview({
           </div>
         </div>
 
-      {/* 双重导出引擎 */}
-      <DualExportMethods 
-        user={user}
-        cardRef={cardRef}
-        className="mt-4"
-      />
-
-      {/* DOM导出调试工具 */}
-      <DomExportDebug 
-        user={user}
-        cardRef={cardRef}
-        className="mt-4"
-      />
 
       {/* 使用说明 */}
       <div className="text-xs text-gray-500 space-y-1">
-        <p>🎯 <strong>双重导出引擎</strong> - 原生Canvas + DOM-to-image</p>
-        <p>• Canvas: 完全控制，标准化输出，适合批量使用</p>
+        <p>🎯 <strong>DOM导出工具</strong> - 专门解决导出编移和近框问题</p>
+        <p>• PNG保真: 完全保真，最高质量，适合高要求场景</p>
+        <p>• JPG兼容: 文件较小，兼容性佳，适合分享使用</p>
         <p>• DOM-to-image: 保真样式，兼容性好，适合复杂布局</p>
-        <p>• 对比模式: 同时导出，性能测试，选择最佳方案</p>
-        <p>• 多格式支持: PNG高质量 + JPG小文件</p>
       </div>
     </div>
   )

@@ -59,21 +59,21 @@ export default function TextModulesEditor({
     <div className="space-y-4">
       {/* 基本信息编辑 */}
       <Card className="p-4">
-        <h3 className="font-medium text-sm mb-4">基本信息</h3>
+        <h3 className="font-medium text-sm mb-4">المعلومات الأساسية</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* 姓名 */}
           <div className="space-y-2">
-            <label className="text-xs text-gray-600">姓名</label>
+            <label className="text-xs text-gray-600">الاسم</label>
             <Input
               value={textModules.name}
               onChange={(e) => handleTextChange('name', e.target.value)}
-              placeholder="请输入您的姓名"
+              placeholder="يرجى إدخال اسمك"
               className="w-full"
             />
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="text-xs text-gray-600">字体大小</label>
+                <label className="text-xs text-gray-600">حجم الخط</label>
                 <input
                   type="range"
                   min="12"
@@ -84,7 +84,7 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">颜色</label>
+                <label className="text-xs text-gray-600">اللون</label>
                 <input
                   type="color"
                   value={textStyles.name?.color || '#000000'}
@@ -93,14 +93,14 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">粗细</label>
+                <label className="text-xs text-gray-600">السمك</label>
                 <select
                   value={textStyles.name?.fontWeight || 'bold'}
                   onChange={(e) => handleStyleChange('name', 'fontWeight', e.target.value)}
                   className="w-full text-xs border rounded px-2 py-1"
                 >
-                  <option value="normal">正常</option>
-                  <option value="bold">粗体</option>
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
                 </select>
               </div>
             </div>
@@ -108,21 +108,21 @@ export default function TextModulesEditor({
 
           {/* 职位 */}
           <div className="space-y-2">
-            <label className="text-xs text-gray-600">职位头衔</label>
+            <label className="text-xs text-gray-600">المسمى الوظيفي</label>
             <select
               value={textModules.title}
               onChange={(e) => handleTextChange('title', e.target.value)}
               className="w-full h-10 px-3 py-2 border border-input bg-background rounded-md text-sm focus:ring-2 focus:ring-brand-primary/20 focus:border-brand-primary"
             >
-              <option value="">请选择职位</option>
-              <option value="首席成长伙伴">首席成长伙伴</option>
-              <option value="金牌成长顾问">金牌成长顾问</option>
-              <option value="五星服务官">五星服务官</option>
-              <option value="学习领航官">学习领航官</option>
+              <option value="">يرجى اختيار المنصب</option>
+              <option value="شريك النمو الرئيسي">شريك النمو الرئيسي</option>
+              <option value="مستشار النمو الذهبي">مستشار النمو الذهبي</option>
+              <option value="مسؤول الخدمة خمس نجوم">مسؤول الخدمة خمس نجوم</option>
+              <option value="مسؤول الملاحة التعليمية">مسؤول الملاحة التعليمية</option>
             </select>
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <label className="text-xs text-gray-600">字体大小</label>
+                <label className="text-xs text-gray-600">حجم الخط</label>
                 <input
                   type="range"
                   min="10"
@@ -133,7 +133,7 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">颜色</label>
+                <label className="text-xs text-gray-600">اللون</label>
                 <input
                   type="color"
                   value={textStyles.title?.color || '#666666'}
@@ -142,14 +142,14 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">粗细</label>
+                <label className="text-xs text-gray-600">السمك</label>
                 <select
                   value={textStyles.title?.fontWeight || 'normal'}
                   onChange={(e) => handleStyleChange('title', 'fontWeight', e.target.value)}
                   className="w-full text-xs border rounded px-2 py-1"
                 >
-                  <option value="normal">正常</option>
-                  <option value="bold">粗体</option>
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
                 </select>
               </div>
             </div>
@@ -157,7 +157,7 @@ export default function TextModulesEditor({
 
           {/* 服务人数 */}
           <div className="space-y-2">
-            <label className="text-xs text-gray-600">已服务学员数</label>
+            <label className="text-xs text-gray-600">عدد الطلاب المخدومين</label>
             <Input
               type="number"
               min="0"
@@ -170,12 +170,12 @@ export default function TextModulesEditor({
                   handleTextChange('studentsServed', numValue)
                 }
               }}
-              placeholder="请输入服务人数（最多5000人）"
+              placeholder="يرجى إدخال عدد الأشخاص المخدومين (حد أقصى 5000 شخص)"
               className="w-full"
             />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 hidden">
               <div>
-                <label className="text-xs text-gray-600">字体大小</label>
+                <label className="text-xs text-gray-600">حجم الخط</label>
                 <input
                   type="range"
                   min="8"
@@ -186,7 +186,7 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">颜色</label>
+                <label className="text-xs text-gray-600">اللون</label>
                 <input
                   type="color"
                   value={textStyles.studentsServed?.color || '#000000'}
@@ -195,14 +195,14 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">粗细</label>
+                <label className="text-xs text-gray-600">السمك</label>
                 <select
                   value={textStyles.studentsServed?.fontWeight || 'bold'}
                   onChange={(e) => handleStyleChange('studentsServed', 'fontWeight', e.target.value)}
                   className="w-full text-xs border rounded px-2 py-1"
                 >
-                  <option value="normal">正常</option>
-                  <option value="bold">粗体</option>
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
                 </select>
               </div>
             </div>
@@ -210,7 +210,7 @@ export default function TextModulesEditor({
 
           {/* 好评率 */}
           <div className="space-y-2">
-            <label className="text-xs text-gray-600">好评率 (%)</label>
+            <label className="text-xs text-gray-600">معدل التقييم الإيجابي (%)</label>
             <Input
               type="number"
               min="0"
@@ -223,12 +223,12 @@ export default function TextModulesEditor({
                   handleTextChange('positiveRating', numValue)
                 }
               }}
-              placeholder="请输入好评率（最多99%）"
+              placeholder="يرجى إدخال معدل التقييم الإيجابي (حد أقصى 99%)"
               className="w-full"
             />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 hidden">
               <div>
-                <label className="text-xs text-gray-600">字体大小</label>
+                <label className="text-xs text-gray-600">حجم الخط</label>
                 <input
                   type="range"
                   min="8"
@@ -239,7 +239,7 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">颜色</label>
+                <label className="text-xs text-gray-600">اللون</label>
                 <input
                   type="color"
                   value={textStyles.positiveRating?.color || '#000000'}
@@ -248,14 +248,14 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">粗细</label>
+                <label className="text-xs text-gray-600">السمك</label>
                 <select
                   value={textStyles.positiveRating?.fontWeight || 'bold'}
                   onChange={(e) => handleStyleChange('positiveRating', 'fontWeight', e.target.value)}
                   className="w-full text-xs border rounded px-2 py-1"
                 >
-                  <option value="normal">正常</option>
-                  <option value="bold">粗体</option>
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
                 </select>
               </div>
             </div>
@@ -263,16 +263,16 @@ export default function TextModulesEditor({
       
           {/* 联系电话 */}
           <div className="space-y-2 md:col-span-2">
-            <label className="text-xs text-gray-600">联系电话</label>
+            <label className="text-xs text-gray-600">رقم الهاتف</label>
             <Input
               value={textModules.phone}
               onChange={(e) => handleTextChange('phone', e.target.value)}
-              placeholder="请输入联系电话"
+              placeholder="يرجى إدخال رقم الهاتف"
               className="w-full"
             />
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-3 gap-2 hidden">
               <div>
-                <label className="text-xs text-gray-600">字体大小</label>
+                <label className="text-xs text-gray-600">حجم الخط</label>
                 <input
                   type="range"
                   min="10"
@@ -283,7 +283,7 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">颜色</label>
+                <label className="text-xs text-gray-600">اللون</label>
                 <input
                   type="color"
                   value={textStyles.phone?.color || '#000000'}
@@ -292,14 +292,14 @@ export default function TextModulesEditor({
                 />
               </div>
               <div>
-                <label className="text-xs text-gray-600">粗细</label>
+                <label className="text-xs text-gray-600">السمك</label>
                 <select
                   value={textStyles.phone?.fontWeight || 'bold'}
                   onChange={(e) => handleStyleChange('phone', 'fontWeight', e.target.value)}
                   className="w-full text-xs border rounded px-2 py-1"
                 >
-                  <option value="normal">正常</option>
-                  <option value="bold">粗体</option>
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
                 </select>
               </div>
             </div>

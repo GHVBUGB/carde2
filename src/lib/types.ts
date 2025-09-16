@@ -4,7 +4,7 @@ export interface User {
   email: string;
   name?: string;
   avatar_url?: string;
-  title?: '首席成长伙伴' | '金牌成长顾问' | '五星服务官' | '学习领航官';
+  title?: 'شريك النمو الرئيسي' | 'مستشار النمو الذهبي' | 'مسؤول الخدمة خمس نجوم' | 'مسؤول الملاحة التعليمية';
   students_served?: number;
   rating?: number;
   phone?: string;
@@ -33,8 +33,18 @@ export interface LayoutModule {
 export interface UsageStats {
   id: string;
   user_id: string;
-  action_type: 'api_call' | 'download' | 'login' | 'register' | 'edit_profile';
+  action_type: 'api_call' | 'download' | 'login' | 'register' | 'edit_profile' | 'remove_bg_api' | 'avatar_upload' | 'export';
   details?: Record<string, any>;
+  created_at: string;
+}
+
+// 验证码类型
+export interface VerificationCode {
+  id: string;
+  email: string;
+  code: string;
+  used: boolean;
+  expires_at: string;
   created_at: string;
 }
 
@@ -145,6 +155,11 @@ export interface Database {
         Row: UsageStats;
         Insert: Omit<UsageStats, 'id' | 'created_at'>;
         Update: Partial<Omit<UsageStats, 'id' | 'created_at'>>;
+      };
+      verification_codes: {
+        Row: VerificationCode;
+        Insert: Omit<VerificationCode, 'id' | 'created_at'>;
+        Update: Partial<Omit<VerificationCode, 'id' | 'created_at'>>;
       };
     };
   };

@@ -295,6 +295,43 @@ export default function DualExportMethods({
         }
       })
       
+      // 🎯 确保文字内容一致性 - 修复阿拉伯语头衔问题
+      console.log('🔍 DOM导出前检查文字内容...')
+      
+      // 检查并修复头衔显示
+      const titleElements = clonedCard.querySelectorAll('[data-module-id="title"]')
+      titleElements.forEach((titleEl: any) => {
+        const currentText = titleEl.textContent || titleEl.innerText || ''
+        console.log('📝 当前头衔文字:', currentText)
+        
+        // 如果头衔为空或显示错误，使用正确的默认值
+        if (!currentText || currentText.trim() === '' || currentText === 'SENIOR LANGUAGE COACH') {
+          titleEl.textContent = 'شريك النمو الرئيسي'
+          console.log('✅ 已修复头衔为阿拉伯语默认值')
+        }
+
+        // 阿拉伯语渲染修正：强制单行、RTL 与单词内断行
+        if (titleEl && titleEl.style) {
+          titleEl.style.whiteSpace = 'nowrap'
+          titleEl.style.direction = 'rtl'
+          titleEl.style.wordBreak = 'keep-all'
+          titleEl.style.lineHeight = '1.2'
+        }
+      })
+      
+      // 检查并修复姓名显示
+      const nameElements = clonedCard.querySelectorAll('[data-module-id="name"]')
+      nameElements.forEach((nameEl: any) => {
+        const currentText = nameEl.textContent || nameEl.innerText || ''
+        console.log('📝 当前姓名文字:', currentText)
+        
+        // 如果姓名为空，使用正确的默认值
+        if (!currentText || currentText.trim() === '') {
+          nameEl.textContent = 'أحمد'
+          console.log('✅ 已修复姓名为默认值')
+        }
+      })
+      
       // 添加到临时容器
       tempContainer.appendChild(clonedCard)
       document.body.appendChild(tempContainer)
@@ -482,86 +519,61 @@ export default function DualExportMethods({
     <Card className={`p-6 ${className}`}>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">🚀 双重导出引擎</h3>
+          <h3 className="text-lg font-semibold">🌐 DOM导出引擎</h3>
           <div className="flex gap-2">
-            <Badge variant="outline">Canvas</Badge>
             <Badge variant="outline">DOM-to-image</Badge>
           </div>
         </div>
         
         <div className="text-sm text-gray-600">
-          提供原生Canvas和DOM-to-image两种导出方法，可单独使用或对比测试
+          提供DOM-to-image导出方法，保持样式兼容性
         </div>
         
-        {/* 单一方法导出 */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-blue-600">🎨 Canvas导出</h4>
-            <div className="space-y-1">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleSingleExport('canvas', 'png')}
-                disabled={exporting}
-                className="w-full"
-              >
-                PNG高质量
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleSingleExport('canvas', 'jpg')}
-                disabled={exporting}
-                className="w-full"
-              >
-                JPG小文件
-              </Button>
-            </div>
-          </div>
-          
-          <div className="space-y-2">
-            <h4 className="text-sm font-medium text-green-600">🌐 DOM导出</h4>
-            <div className="space-y-1">
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleSingleExport('dom', 'png')}
-                disabled={exporting}
-                className="w-full"
-              >
-                PNG保真
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => handleSingleExport('dom', 'jpg')}
-                disabled={exporting}
-                className="w-full"
-              >
-                JPG兼容
-              </Button>
-            </div>
-          </div>
-        </div>
-        
-        {/* 对比导出 */}
-        <div className="border-t pt-4">
-          <h4 className="text-sm font-medium text-purple-600 mb-2">🔥 对比导出</h4>
+        {/* DOM导出 */}
+        <div className="space-y-2">
+          <h4 className="text-sm font-medium text-green-600">🌐 DOM导出</h4>
           <div className="grid grid-cols-2 gap-2">
             <Button
-              onClick={() => handleCompareExport('png')}
+              size="sm"
+              variant="outline"
+              onClick={() => handleSingleExport('dom', 'png')}
               disabled={exporting}
-              className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+              className="w-full"
             >
-              {exporting ? '对比中...' : 'PNG对比'}
+              PNG保真
             </Button>
             <Button
-              onClick={() => handleCompareExport('jpg')}
+              size="sm"
+              variant="outline"
+              onClick={() => handleSingleExport('dom', 'jpg')}
               disabled={exporting}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              className="w-full"
             >
-              {exporting ? '对比中...' : 'JPG对比'}
+              JPG兼容
             </Button>
+          </div>
+        </div>
+        
+        {/* 对比导出 - 已隐藏 */}
+        <div className="hidden">
+          <div className="border-t pt-4">
+            <h4 className="text-sm font-medium text-purple-600 mb-2">🔥 对比导出</h4>
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                onClick={() => handleCompareExport('png')}
+                disabled={exporting}
+                className="bg-gradient-to-r from-blue-500 to-green-500 hover:from-blue-600 hover:to-green-600"
+              >
+                {exporting ? '对比中...' : 'PNG对比'}
+              </Button>
+              <Button
+                onClick={() => handleCompareExport('jpg')}
+                disabled={exporting}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+              >
+                {exporting ? '对比中...' : 'JPG对比'}
+              </Button>
+            </div>
           </div>
         </div>
         

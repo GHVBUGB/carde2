@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简化管理员登录测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            color: #1f2937;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .test-link {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 8px 12px 8px 0;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+        .test-link:hover {
+            background: #b91c1c;
+        }
+        .test-link.secondary {
+            background: #3b82f6;
+        }
+        .test-link.secondary:hover {
+            background: #2563eb;
+        }
+        .password-info {
+            background: #fef3c7;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .password-info h4 {
+            color: #92400e;
+            margin-top: 0;
+        }
+        .success-info {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .success-info h4 {
+            color: #065f46;
+            margin-top: 0;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: #d1fae5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <h1 class="test-header">🎯 简化管理员登录流程测试</h1>
+        <p><strong>状态:</strong> <span class="status-badge">✅ 简化完成</span></p>
+        <p><strong>更新内容:</strong> 移除邮箱输入，仅需密码即可登录</p>
+        
+        <div class="success-info">
+            <h4>✅ 修改完成</h4>
+            <ul>
+                <li>管理员登录页面不再需要输入邮箱</li>
+                <li>只需要输入管理员密码即可登录</li>
+                <li>登录成功后直接跳转到管理员仪表板</li>
+                <li>添加了返回用户登录的链接</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🔑 登录信息</h2>
+        
+        <div class="password-info">
+            <h4>管理员密码</h4>
+            <p><strong>密码:</strong> <span class="code">GhJ2537652940</span></p>
+            <p><strong>注意:</strong> 密码区分大小写，请准确输入</p>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🧪 测试流程</h2>
+        
+        <h3>方法1: 从用户登录页面进入</h3>
+        <ol>
+            <li>访问 <a href="http://localhost:3001/login" class="test-link secondary">用户登录页面</a></li>
+            <li>向下滚动到页面底部</li>
+            <li>点击 "🔐 管理员登录" 链接</li>
+            <li>进入管理员登录页面</li>
+            <li>只需要输入密码: <span class="code">GhJ2537652940</span></li>
+            <li>点击"登录管理面板"按钮</li>
+            <li>成功跳转到管理员仪表板</li>
+        </ol>
+
+        <h3>方法2: 直接访问管理员登录</h3>
+        <div style="margin: 16px 0;">
+            <a href="http://localhost:3001/admin/login" class="test-link">🔐 直接访问管理员登录</a>
+        </div>
+
+        <h3>方法3: 从主页进入</h3>
+        <ol>
+            <li>访问 <a href="http://localhost:3001" class="test-link secondary">主页</a></li>
+            <li>点击导航栏的 "管理员" 按钮</li>
+            <li>或者点击管理员专区的 "🔐 管理员登录" 按钮</li>
+        </ol>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">✅ 验证要点</h2>
+        
+        <h3>登录页面检查:</h3>
+        <ul>
+            <li>[ ] 只显示一个密码输入框</li>
+            <li>[ ] 没有邮箱输入框</li>
+            <li>[ ] 页面标题显示"管理员登录"</li>
+            <li>[ ] 说明文字"无需账号，仅需密码即可登录"</li>
+            <li>[ ] 有"← 返回用户登录"链接</li>
+        </ul>
+
+        <h3>登录功能检查:</h3>
+        <ul>
+            <li>[ ] 输入错误密码显示错误提示</li>
+            <li>[ ] 输入正确密码 <span class="code">GhJ2537652940</span></li>
+            <li>[ ] 显示"登录中..."加载状态</li>
+            <li>[ ] 成功后跳转到 <span class="code">/admin/dashboard</span></li>
+            <li>[ ] 管理员仪表板正常显示</li>
+        </ul>
+
+        <h3>权限验证检查:</h3>
+        <ul>
+            <li>[ ] 登录后 localStorage 保存登录状态</li>
+            <li>[ ] 可以正常退出登录</li>
+            <li>[ ] 退出后无法直接访问仪表板</li>
+        </ul>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🔧 技术细节</h2>
+        
+        <h3>修改的文件:</h3>
+        <ul>
+            <li><span class="code">src/app/admin/login/page.tsx</span> - 简化登录表单</li>
+            <li>移除了邮箱输入字段</li>
+            <li>简化了验证逻辑</li>
+            <li>固定管理员邮箱为 <span class="code">admin@51talk.com</span></li>
+        </ul>
+
+        <h3>登录流程:</h3>
+        <ol>
+            <li>用户访问管理员登录页面</li>
+            <li>输入管理员密码</li>
+            <li>系统验证密码是否正确</li>
+            <li>验证成功后设置登录状态到 localStorage</li>
+            <li>跳转到管理员仪表板</li>
+        </ol>
+
+        <h3>会话管理:</h3>
+        <ul>
+            <li><span class="code">admin_logged_in: 'true'</span> - 登录状态</li>
+            <li><span class="code">admin_email: 'admin@51talk.com'</span> - 固定邮箱</li>
+            <li><span class="code">admin_login_time</span> - 登录时间戳</li>
+        </ul>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🚀 快速测试</h2>
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <a href="http://localhost:3001/admin/login" class="test-link" style="font-size: 18px; padding: 16px 32px;">
+                🎯 开始测试管理员登录
+            </a>
+        </div>
+        
+        <div class="password-info" style="text-align: center;">
+            <h4>记住密码</h4>
+            <p style="font-size: 20px; font-weight: bold; color: #92400e;">GhJ2537652940</p>
+        </div>
+    </div>
+
+    <script>
+        // 页面加载时检查状态
+        window.addEventListener('load', function() {
+            console.log('🔍 简化管理员登录测试页面加载完成');
+            console.log('当前登录状态:', localStorage.getItem('admin_logged_in'));
+            
+            // 如果已经登录，显示提示
+            if (localStorage.getItem('admin_logged_in') === 'true') {
+                const banner = document.createElement('div');
+                banner.innerHTML = `
+                    <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 1000;">
+                        ✅ 已登录管理员账号
+                        <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 10px; cursor: pointer;">×</button>
+                    </div>
+                `;
+                document.body.appendChild(banner);
+            }
+        });
+
+        // 为测试链接添加点击事件
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log(`🔗 点击测试链接: ${this.textContent} → ${this.href}`);
+            });
+        });
+    </script>
+</body>
+</html>
+

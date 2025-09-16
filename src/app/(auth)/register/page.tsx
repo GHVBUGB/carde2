@@ -349,11 +349,18 @@ export default function RegisterPage() {
             </div>
           )}
 
-          <div className="text-center text-sm text-brand-gray">
-            已有账户？{' '}
-            <Link href="/login" className="text-brand-primary hover:underline font-medium">
-              立即登录
-            </Link>
+          <div className="text-center text-sm text-brand-gray space-y-2">
+            <div>
+              已有账户？{' '}
+              <Link href="/login" className="text-brand-primary hover:underline font-medium">
+                立即登录
+              </Link>
+            </div>
+            <div className="pt-2 border-t border-gray-200">
+              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium">
+                🔐 管理员登录
+              </Link>
+            </div>
           </div>
 
           <div className="text-xs text-brand-gray/80 text-center leading-relaxed">

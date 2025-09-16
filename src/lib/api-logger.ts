@@ -1,0 +1,219 @@
+import { createServerClient } from '@/lib/supabase/server'
+
+export interface ApiLogEntry {
+  user_id?: string
+  action: 'download' | 'remove_background' | 'login' | 'register' | 'card_create'
+  details?: any
+  ip_address?: string
+  user_agent?: string
+}
+
+export class ApiLogger {
+  private static async getSupabase() {
+    return createServerClient()
+  }
+
+  /**
+   * 记录API调用
+   */
+  static async log(entry: ApiLogEntry): Promise<boolean> {
+    try {
+      const supabase = await this.getSupabase()
+
+      // 尝试插入到api_logs表
+      const { error } = await supabase
+        .from('api_logs')
+        .insert({
+          user_id: entry.user_id,
+          action: entry.action,
+          details: entry.details || {},
+          ip_address: entry.ip_address,
+          user_agent: entry.user_agent,
+          created_at: new Date().toISOString()
+        })
+
+      if (error) {
+        console.error('Failed to log API call:', error)
+        return false
+      }
+
+      return true
+    } catch (error) {
+      console.error('API logger error:', error)
+      return false
+    }
+  }
+
+  /**
+   * 记录用户下载
+   */
+  static async logDownload(userId?: string, details?: any, request?: Request): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action: 'download',
+      details: {
+        format: details?.format || 'png',
+        method: details?.method || 'dom',
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 记录抠图API调用
+   */
+  static async logRemoveBackground(userId?: string, details?: any, request?: Request): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action: 'remove_background',
+      details: {
+        image_size: details?.imageSize,
+        processing_time: details?.processingTime,
+        success: details?.success !== false,
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 记录用户登录
+   */
+  static async logLogin(userId: string, details?: any, request?: Request): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action: 'login',
+      details: {
+        login_method: details?.method || 'email',
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 记录用户注册
+   */
+  static async logRegister(userId: string, details?: any, request?: Request): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action: 'register',
+      details: {
+        registration_method: details?.method || 'email',
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 记录名片创建
+   */
+  static async logCardCreate(userId?: string, details?: any, request?: Request): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action: 'card_create',
+      details: {
+        template_used: details?.template,
+        customization_level: details?.customizations || 'basic',
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 获取今日API调用统计
+   */
+  static async getTodayStats(): Promise<{
+    downloads: number
+    removeBg: number
+    logins: number
+    registers: number
+    cardCreates: number
+    total: number
+  }> {
+    try {
+      const supabase = await this.getSupabase()
+      
+      const today = new Date()
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
+      const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString()
+
+      const { data: logs, error } = await supabase
+        .from('api_logs')
+        .select('action')
+        .gte('created_at', todayStart)
+        .lt('created_at', todayEnd)
+
+      if (error) throw error
+
+      const stats = {
+        downloads: 0,
+        removeBg: 0,
+        logins: 0,
+        registers: 0,
+        cardCreates: 0,
+        total: 0
+      }
+
+      if (logs) {
+        stats.total = logs.length
+        stats.downloads = logs.filter(log => log.action === 'download').length
+        stats.removeBg = logs.filter(log => log.action === 'remove_background').length
+        stats.logins = logs.filter(log => log.action === 'login').length
+        stats.registers = logs.filter(log => log.action === 'register').length
+        stats.cardCreates = logs.filter(log => log.action === 'card_create').length
+      }
+
+      return stats
+
+    } catch (error) {
+      console.error('Failed to get today stats:', error)
+      return {
+        downloads: 0,
+        removeBg: 0,
+        logins: 0,
+        registers: 0,
+        cardCreates: 0,
+        total: 0
+      }
+    }
+  }
+}

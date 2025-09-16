@@ -132,23 +132,23 @@ const initialCardData = {
 
 const initialTextModules = {
   companyName: '51Talk',
-  name: 'AHMED AL-FAWAZ',
+  name: 'أحمد',
   title: 'SENIOR LANGUAGE COACH',
   studentsServed: 5000,
   positiveRating: 99,
   phone: '050-XXXX-XXAB',
-  teacherSelectionLabel: 'Teacher\nSelection',
-  progressFeedbackLabel: 'Progress\nFeedback',
-  planningLabel: 'Study\nPlan',
-  resourceSharingLabel: 'Learning\nResources'
+  teacherSelectionLabel: 'اختيار\nالمعلم',
+  progressFeedbackLabel: 'تعليقات\nالتقدم',
+  planningLabel: 'خطة\nالدراسة',
+  resourceSharingLabel: 'موارد\nالتعلم'
 }
 
 const initialTextStyles = {
   companyName: { fontSize: 14, color: '#ffffff', fontWeight: 'bold' },
   name: { fontSize: 20, color: '#000000', fontWeight: 'bold' },
   title: { fontSize: 14, color: '#666666', fontWeight: 'normal' },
-  studentsServed: { fontSize: 12, color: '#000000', fontWeight: 'bold' },
-  positiveRating: { fontSize: 12, color: '#000000', fontWeight: 'bold' },
+  studentsServed: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
+  positiveRating: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
   phone: { fontSize: 14, color: '#000000', fontWeight: 'bold' },
   teacherSelectionLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
   progressFeedbackLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
@@ -158,15 +158,15 @@ const initialTextStyles = {
 
 const initialTextPositions = {
   companyName: { x: 16, y: 16 },
-  name: { x: 145, y: 238 },
-  title: { x: 99, y: 264 },
-  studentsServed: { x: 125, y: 322 },
-  positiveRating: { x: 197, y: 322 },
-  phone: { x: 106, y: 430 },
-  teacherSelectionLabel: { x: 88, y: 401 },
-  progressFeedbackLabel: { x: 135, y: 400 },
-  planningLabel: { x: 190, y: 400 },
-  resourceSharingLabel: { x: 233, y: 401 }
+  name: { x: 150, y: 241 },
+  title: { x: 267, y:126 },
+  studentsServed: { x: 121, y: 322 },
+  positiveRating: { x: 192, y: 322 },
+  phone: { x: 94, y: 432 },
+  teacherSelectionLabel: { x: 95, y: 402 },
+  progressFeedbackLabel: { x: 142, y: 402 },
+  planningLabel: { x: 190, y: 402 },
+  resourceSharingLabel: { x: 241, y: 402 }
 }
 
 const initialAvatarConfig = {

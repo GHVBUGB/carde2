@@ -116,10 +116,10 @@ export function isValidPhone(phone: string): boolean {
 // 获取头衔的显示文本
 export function getTitleDisplay(title: string): string {
   const titleMap: Record<string, string> = {
-    '首席成长伙伴': '首席成长伙伴',
-    '金牌成长顾问': '金牌成长顾问',
-    '五星服务官': '五星服务官',
-    '学习领航官': '学习领航官'
+    'شريك النمو الرئيسي': 'شريك النمو الرئيسي',
+    'مستشار النمو الذهبي': 'مستشار النمو الذهبي',
+    'مسؤول الخدمة خمس نجوم': 'مسؤول الخدمة خمس نجوم',
+    'مسؤول الملاحة التعليمية': 'مسؤول الملاحة التعليمية'
   }
   return titleMap[title] || title
 }

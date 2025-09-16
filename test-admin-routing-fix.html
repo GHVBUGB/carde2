@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员路由修复测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 8px 12px 8px 0;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+        .test-link:hover {
+            background: #b91c1c;
+        }
+        .test-link.secondary {
+            background: #3b82f6;
+        }
+        .test-link.secondary:hover {
+            background: #2563eb;
+        }
+        .fix-info {
+            background: #d1fae5;
+            border: 1px solid #a7f3d0;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .fix-info h4 {
+            color: #065f46;
+            margin-top: 0;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <h1>🔧 管理员路由修复测试</h1>
+        <p><strong>问题:</strong> 点击管理员登录还是显示用户登录页面</p>
+        <p><strong>原因:</strong> admin/layout.tsx 拦截了所有 /admin/* 路由</p>
+        
+        <div class="fix-info">
+            <h4>✅ 已修复</h4>
+            <p>移除了 admin/layout.tsx 中的权限检查和重定向逻辑</p>
+            <p>现在 /admin/login 路由应该能正常访问专门的管理员登录页面</p>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🧪 立即测试</h2>
+        
+        <h3>直接访问管理员登录页面:</h3>
+        <div style="margin: 16px 0;">
+            <a href="http://localhost:3001/admin/login" class="test-link">
+                🔐 管理员登录页面
+            </a>
+        </div>
+        
+        <h3>从用户登录页面跳转:</h3>
+        <ol>
+            <li>访问 <a href="http://localhost:3001/login" class="test-link secondary">用户登录页面</a></li>
+            <li>滚动到底部</li>
+            <li>点击 "🔐 管理员登录" 链接</li>
+        </ol>
+
+        <h3>从主页跳转:</h3>
+        <ol>
+            <li>访问 <a href="http://localhost:3001" class="test-link secondary">主页</a></li>
+            <li>点击导航栏的 "管理员" 按钮</li>
+            <li>应该跳转到 /admin，然后重定向到 /admin/login</li>
+        </ol>
+    </div>
+
+    <div class="test-card">
+        <h2>🎯 预期结果</h2>
+        
+        <h3>管理员登录页面应该显示:</h3>
+        <ul>
+            <li>🔵 蓝色渐变背景</li>
+            <li>🔐 盾牌图标</li>
+            <li>📝 标题: "管理员登录"</li>
+            <li>🔑 只有一个密码输入框</li>
+            <li>📄 说明: "无需账号，仅需密码即可登录"</li>
+            <li>🔙 底部有 "← 返回用户登录" 链接</li>
+        </ul>
+
+        <h3>与用户登录页面的区别:</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 16px 0;">
+            <div style="background: #fee2e2; padding: 16px; border-radius: 8px;">
+                <h4 style="color: #dc2626; margin-top: 0;">用户登录页面</h4>
+                <ul style="margin: 8px 0; font-size: 14px;">
+                    <li>橙色主题</li>
+                    <li>邮箱输入框</li>
+                    <li>验证码登录</li>
+                    <li>注册链接</li>
+                </ul>
+            </div>
+            <div style="background: #dbeafe; padding: 16px; border-radius: 8px;">
+                <h4 style="color: #2563eb; margin-top: 0;">管理员登录页面</h4>
+                <ul style="margin: 8px 0; font-size: 14px;">
+                    <li>蓝色主题</li>
+                    <li>只有密码框</li>
+                    <li>直接密码登录</li>
+                    <li>返回用户登录</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🔑 测试密码</h2>
+        
+        <div style="background: #fef3c7; border: 1px solid #fcd34d; border-radius: 8px; padding: 16px; text-align: center;">
+            <h4 style="color: #92400e; margin-top: 0;">管理员密码</h4>
+            <p style="font-size: 24px; font-weight: bold; color: #92400e; margin: 8px 0;">
+                GhJ2537652940
+            </p>
+            <p style="font-size: 14px; color: #92400e;">请复制这个密码进行测试</p>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2>🛠️ 如果仍然有问题</h2>
+        
+        <h3>可能的原因和解决方案:</h3>
+        <ol>
+            <li><strong>浏览器缓存:</strong> 按 Ctrl+F5 硬刷新页面</li>
+            <li><strong>服务器编译:</strong> 检查终端是否有编译错误</li>
+            <li><strong>路由冲突:</strong> 重启开发服务器</li>
+        </ol>
+
+        <h3>重启开发服务器:</h3>
+        <div style="background: #1f2937; color: #f9fafb; padding: 12px; border-radius: 6px; font-family: monospace;">
+            Ctrl + C (停止服务器)<br>
+            npm run dev (重新启动)
+        </div>
+
+        <button onclick="clearCache()" style="background: #dc2626; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 16px 8px 0 0;">
+            清除浏览器缓存
+        </button>
+        
+        <button onclick="testRoutes()" style="background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 16px 0;">
+            测试所有路由
+        </button>
+    </div>
+
+    <script>
+        function clearCache() {
+            // 清除缓存
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+            
+            // 清除 localStorage
+            localStorage.clear();
+            
+            alert('缓存已清除，请刷新页面重新测试');
+        }
+
+        function testRoutes() {
+            const routes = [
+                'http://localhost:3001/admin/login',
+                'http://localhost:3001/admin',
+                'http://localhost:3001/login'
+            ];
+            
+            routes.forEach((route, index) => {
+                setTimeout(() => {
+                    console.log(`🔗 测试路由 ${index + 1}: ${route}`);
+                    // 在新标签页中打开
+                    window.open(route, '_blank');
+                }, index * 1000);
+            });
+        }
+
+        // 页面加载时的检查
+        window.addEventListener('load', function() {
+            console.log('🔍 管理员路由修复测试页面加载完成');
+            
+            // 检查当前页面URL
+            const currentUrl = window.location.href;
+            console.log('当前页面:', currentUrl);
+            
+            // 添加提示
+            const banner = document.createElement('div');
+            banner.innerHTML = `
+                <div style="position: fixed; top: 20px; right: 20px; background: #10b981; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 1000;">
+                    🚀 路由修复完成，请测试管理员登录
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 10px; cursor: pointer;">×</button>
+                </div>
+            `;
+            document.body.appendChild(banner);
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                const bannerElement = banner.querySelector('div');
+                if (bannerElement && bannerElement.parentElement) {
+                    bannerElement.remove();
+                }
+            }, 5000);
+        });
+
+        // 为测试链接添加点击事件
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log(`🔗 点击测试链接: ${this.textContent} → ${this.href}`);
+            });
+        });
+    </script>
+</body>
+</html>
+

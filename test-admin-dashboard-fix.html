@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员面板修复测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-header {
+            color: #1f2937;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .test-link {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 8px 12px 8px 0;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .test-link:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+        }
+        .test-link.primary {
+            background: #2563eb;
+            font-size: 18px;
+            padding: 16px 32px;
+        }
+        .test-link.primary:hover {
+            background: #1d4ed8;
+        }
+        .test-link.secondary {
+            background: #3b82f6;
+        }
+        .test-link.secondary:hover {
+            background: #2563eb;
+        }
+        .fix-info {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .fix-info h4 {
+            color: #065f46;
+            margin-top: 0;
+        }
+        .port-notice {
+            background: #fef3c7;
+            border: 2px solid #fcd34d;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .port-notice h4 {
+            color: #92400e;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        .port-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #92400e;
+            margin: 12px 0;
+            padding: 10px;
+            background: #fffbeb;
+            border-radius: 8px;
+            border: 1px dashed #fcd34d;
+            font-family: 'Courier New', monospace;
+        }
+        .checklist {
+            background: #f0f9ff;
+            border: 1px solid #e0f2fe;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .checklist h4 {
+            color: #0c4a6e;
+            margin-top: 0;
+        }
+        .checklist ul {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .checklist li {
+            margin: 6px 0;
+            color: #075985;
+        }
+        .status-indicator {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .status-fixed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-card">
+        <h1 class="test-header">🔧 管理员面板修复完成</h1>
+        <p><strong>状态:</strong> <span class="status-indicator status-fixed">✅ 组件错误已修复</span></p>
+        
+        <div class="port-notice">
+            <h4>⚠️ 重要：服务器端口已更改</h4>
+            <div class="port-text">http://localhost:3002</div>
+            <p style="color: #92400e; margin: 8px 0;">
+                请使用新的端口号进行测试
+            </p>
+        </div>
+        
+        <div class="fix-info">
+            <h4>🛠️ 已修复的问题</h4>
+            <ul>
+                <li>✅ 修复了 UserMonitoringTable 组件缺少 users 参数的问题</li>
+                <li>✅ 添加了模拟用户数据用于展示</li>
+                <li>✅ 修复了组件导入和类型定义问题</li>
+                <li>✅ 确保管理员面板能正常显示</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🚀 快速测试管理员面板</h2>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <a href="http://localhost:3002/admin/login" class="test-link primary">
+                🔐 管理员登录页面
+            </a>
+        </div>
+        
+        <div class="checklist">
+            <h4>完整测试流程:</h4>
+            <ol>
+                <li>访问管理员登录页面（蓝色主题）</li>
+                <li>输入密码: <code>GhJ2537652940</code></li>
+                <li>点击"登录管理面板"</li>
+                <li>成功跳转到管理员仪表板</li>
+                <li>验证所有组件正常显示</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">📋 管理员面板功能验证</h2>
+        
+        <h3>应该正常显示的组件:</h3>
+        <div class="checklist">
+            <h4>✅ 顶部导航栏</h4>
+            <ul>
+                <li>[ ] "51Talk 管理员面板" 标题</li>
+                <li>[ ] "欢迎, admin@51talk.com" 文字</li>
+                <li>[ ] "退出登录" 按钮</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>✅ 统计卡片区域</h4>
+            <ul>
+                <li>[ ] 总用户数: 156</li>
+                <li>[ ] 活跃用户: 89</li>
+                <li>[ ] 总下载数: 234</li>
+                <li>[ ] API调用: 445</li>
+                <li>[ ] 抠图次数: 167</li>
+                <li>[ ] 今日新注册: 12</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>✅ 实时监控系统</h4>
+            <ul>
+                <li>[ ] 实时监控组件正常加载</li>
+                <li>[ ] 显示监控状态和数据</li>
+                <li>[ ] 告警系统信息正确显示</li>
+            </ul>
+        </div>
+
+        <div class="checklist">
+            <h4>✅ 用户活动监控</h4>
+            <ul>
+                <li>[ ] 用户监控表格正常显示</li>
+                <li>[ ] 显示模拟用户数据：张三、李四、王五</li>
+                <li>[ ] 每个用户的统计数据正确显示</li>
+                <li>[ ] 表格列包括：姓名、邮箱、职位、注册时间等</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🔄 其他测试入口</h2>
+        
+        <h3>多种访问方式:</h3>
+        
+        <div style="margin: 16px 0;">
+            <a href="http://localhost:3002" class="test-link secondary">🏠 主页</a>
+            <a href="http://localhost:3002/login" class="test-link secondary">👤 用户登录</a>
+            <a href="http://localhost:3002/admin" class="test-link secondary">📊 管理面板(/admin)</a>
+        </div>
+
+        <h3>测试路径:</h3>
+        <ol>
+            <li><strong>从主页:</strong> 点击导航栏"管理员"按钮</li>
+            <li><strong>从用户登录:</strong> 点击底部"🔐 管理员登录"链接</li>
+            <li><strong>直接访问:</strong> 访问 /admin/login</li>
+            <li><strong>登录后:</strong> 自动跳转到 /admin/dashboard</li>
+        </ol>
+    </div>
+
+    <div class="test-card">
+        <h2 class="test-header">🛠️ 如果仍有问题</h2>
+        
+        <h3>检查浏览器控制台:</h3>
+        <ol>
+            <li>按 F12 打开开发者工具</li>
+            <li>点击 Console 标签</li>
+            <li>查看是否有 JavaScript 错误</li>
+            <li>查看是否有组件加载失败的信息</li>
+        </ol>
+
+        <h3>常见问题排查:</h3>
+        <div class="checklist">
+            <ul>
+                <li>[ ] 确认访问的端口号是 3002</li>
+                <li>[ ] 清除浏览器缓存 (Ctrl+F5)</li>
+                <li>[ ] 检查开发服务器是否正常运行</li>
+                <li>[ ] 验证管理员登录状态</li>
+            </ul>
+        </div>
+
+        <div style="margin: 16px 0;">
+            <button onclick="clearCache()" class="test-link" style="background: #f59e0b;">
+                🧹 清除缓存
+            </button>
+            <button onclick="checkLoginStatus()" class="test-link" style="background: #06b6d4;">
+                🔍 检查登录状态
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function clearCache() {
+            localStorage.clear();
+            sessionStorage.clear();
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => caches.delete(name));
+                });
+            }
+            alert('✅ 缓存已清除！\n请刷新页面重新测试。');
+        }
+
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('admin_logged_in');
+            const adminEmail = localStorage.getItem('admin_email');
+            const loginTime = localStorage.getItem('admin_login_time');
+            
+            alert(`🔍 管理员登录状态检查：
+
+登录状态: ${isLoggedIn || '未登录'}
+管理员邮箱: ${adminEmail || '无'}
+登录时间: ${loginTime ? new Date(loginTime).toLocaleString() : '无'}
+
+${isLoggedIn === 'true' ? '✅ 已登录，可以直接访问仪表板' : '❌ 未登录，需要先登录'}`);
+        }
+
+        // 页面加载时检查
+        window.addEventListener('load', function() {
+            console.log('🔧 管理员面板修复测试页面加载完成');
+            console.log('当前服务器地址: http://localhost:3002');
+            console.log('管理员登录状态:', localStorage.getItem('admin_logged_in'));
+            
+            // 添加端口提醒
+            const portBanner = document.createElement('div');
+            portBanner.innerHTML = `
+                <div style="position: fixed; top: 20px; right: 20px; background: #f59e0b; color: white; padding: 12px 20px; border-radius: 8px; font-size: 14px; z-index: 1000; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+                    🚨 注意：端口已更改为 3002
+                    <button onclick="this.parentElement.remove()" style="background: none; border: none; color: white; margin-left: 10px; cursor: pointer;">×</button>
+                </div>
+            `;
+            document.body.appendChild(portBanner);
+
+            // 10秒后自动消失
+            setTimeout(() => {
+                const banner = portBanner.querySelector('div');
+                if (banner && banner.parentElement) {
+                    banner.remove();
+                }
+            }, 10000);
+        });
+
+        // 为测试链接添加点击事件
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log(`🔗 点击测试链接: ${this.textContent.trim()} → ${this.href}`);
+            });
+        });
+    </script>
+</body>
+</html>
+

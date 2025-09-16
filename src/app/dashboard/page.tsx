@@ -6,7 +6,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth'
 import { supabase } from '@/lib/supabase/client'
-import ImprovedBusinessCardPreview from '@/components/card/improved-business-card-preview'
 import StatsCards from '@/components/dashboard/stats-cards'
 
 export default function DashboardPage() {
@@ -120,6 +119,15 @@ export default function DashboardPage() {
             >
               个人设置
             </Button>
+            {user.is_admin && (
+              <Button 
+                variant="outline"
+                onClick={() => router.push('/admin')}
+                className="border-orange-200 text-orange-600 hover:bg-orange-50"
+              >
+                🔐 管理面板
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -127,40 +135,7 @@ export default function DashboardPage() {
       {/* 统计卡片 */}
       <StatsCards stats={stats} />
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* 名片预览 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>名片预览与导出</CardTitle>
-            <CardDescription>
-              预览名片效果并使用新的高质量导出功能（已修复头像变形问题）
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <ImprovedBusinessCardPreview
-              user={user}
-              textModules={{
-                companyName: '51Talk',
-                name: user.name || 'AHMED AL-FAWAZ',
-                title: user.title || 'SENIOR LANGUAGE COACH',
-                studentsServed: user.students_served || 5000,
-                positiveRating: Math.round((user.rating || 0) * 20) || 99,
-                phone: user.phone || '050-XXXX-XXAB',
-                teacherSelectionLabel: 'Teacher\nSelection',
-                progressFeedbackLabel: 'Progress\nFeedback',
-                planningLabel: 'Study\nPlan',
-                resourceSharingLabel: 'Learning\nResources'
-              }}
-              abilities={{
-                teacherScreening: user.teacher_screening || false,
-                feedbackAbility: user.feedback_ability || false,
-                planningAbility: user.planning_ability || false,
-                resourceSharing: user.resource_sharing || false,
-              }}
-              showExportButtons={true}
-            />
-          </CardContent>
-        </Card>
+      <div className="grid lg:grid-cols-1 gap-6">
         {/* 快速操作 - 已隐藏 */}
         <Card className="hidden">
           <CardHeader>

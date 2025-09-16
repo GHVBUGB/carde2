@@ -52,8 +52,8 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      // 发送登录链接/验证码
-      const response = await fetch('/api/auth/login', {
+      // 检查用户是否存在
+      const response = await fetch('/api/auth/check-user', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: step.email }),
@@ -66,11 +66,11 @@ export default function LoginPage() {
           setError('该邮箱尚未注册，请先注册账号')
           return
         }
-        throw new Error(data.error || '发送失败')
+        throw new Error(data.error || '检查失败')
       }
 
-      setSuccess(data.message)
-      setStep(prev => ({ ...prev, showVerificationInput: true }))
+      // 直接跳转到密码输入
+      setStep(prev => ({ ...prev, showPasswordInput: true }))
 
     } catch (err) {
       setError(err instanceof Error ? err.message : '网络错误，请稍后重试')
@@ -183,7 +183,7 @@ export default function LoginPage() {
             </div>
           )}
 
-          {!step.showVerificationInput && (
+          {!step.showPasswordInput && (
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-brand-dark mb-2">
@@ -205,52 +205,12 @@ export default function LoginPage() {
                 className="w-full btn-primary"
                 disabled={loading}
               >
-                {loading ? '发送中...' : '发送登录链接'}
+                {loading ? '检查账户中...' : '下一步'}
               </Button>
             </form>
           )}
 
-          {step.showVerificationInput && (
-            <form onSubmit={handleVerificationSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="code" className="block text-sm font-medium text-brand-dark mb-2">
-                  验证码
-                </label>
-                <Input
-                  id="code"
-                  type="text"
-                  placeholder="请输入邮箱中收到的验证码"
-                  value={step.verificationCode}
-                  onChange={(e) => setStep(prev => ({ ...prev, verificationCode: e.target.value }))}
-                  disabled={loading}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="flex gap-2">
-                <Button 
-                  type="button" 
-                  variant="ghost" 
-                  onClick={() => setStep(prev => ({ 
-                    ...prev, 
-                    showVerificationInput: false,
-                    verificationCode: '' 
-                  }))}
-                  disabled={loading}
-                  className="flex-1"
-                >
-                  返回
-                </Button>
-                <Button 
-                  type="submit" 
-                  className="flex-1 btn-primary"
-                  disabled={loading}
-                >
-                  {loading ? '验证中...' : '验证登录'}
-                </Button>
-              </div>
-            </form>
-          )}
+          {/* 验证码登录功能已隐藏 */}
 
           {!step.showVerificationInput && !step.showPasswordInput && (
             <div className="text-center">
@@ -306,11 +266,18 @@ export default function LoginPage() {
             </form>
           )}
 
-          <div className="text-center text-sm text-brand-gray">
-            还没有账户？{' '}
-            <Link href="/register" className="text-brand-primary hover:underline font-medium">
-              立即注册
-            </Link>
+          <div className="text-center text-sm text-brand-gray space-y-2">
+            <div>
+              还没有账户？{' '}
+              <Link href="/register" className="text-brand-primary hover:underline font-medium">
+                立即注册
+              </Link>
+            </div>
+            <div className="pt-2 border-t border-gray-200">
+              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium">
+                🔐 管理员登录
+              </Link>
+            </div>
           </div>
         </CardContent>
       </Card>

@@ -68,7 +68,7 @@ export function generateOptimizedSVG(options: SvgExportOptions): string {
     textStyles,
     textPositions,
     abilities,
-    backgroundImage = '/ditu.png',
+    backgroundImage = '/底图.png',
     scale = 2
   } = options
 
@@ -335,6 +335,8 @@ export function svgToHighQualityImage(svgString: string, width: number, height: 
     img.src = url
   })
 }
+
+
 
 
 

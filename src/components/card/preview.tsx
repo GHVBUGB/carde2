@@ -21,7 +21,7 @@ interface BusinessCardPreviewProps {
 export default function BusinessCardPreview({ 
   user, 
   className, 
-  backgroundImage = '/ditu.png',
+  backgroundImage = '/底图.png',
   onBackgroundUpload 
 }: BusinessCardPreviewProps) {
   const [textElements, setTextElements] = useState<TextElement[]>([])

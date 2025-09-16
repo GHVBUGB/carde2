@@ -2,16 +2,18 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
-import { Database } from '../types'
+
+// 简化的类型定义，不依赖复杂的Database类型
+type SupabaseClient = ReturnType<typeof createClient>
 
 // 服务端组件客户端
 export const createServerClient = () => {
-  return createServerComponentClient<Database>({ cookies })
+  return createServerComponentClient({ cookies })
 }
 
 // API路由客户端
 export const createRouteClient = () => {
-  return createRouteHandlerClient<Database>({ cookies })
+  return createRouteHandlerClient({ cookies })
 }
 
 // 管理端客户端（使用服务端密钥）
@@ -28,7 +30,7 @@ export const createAdminClient = () => {
   }
 
   // Use the service role key for privileged server-side operations only.
-  return createClient<Database>(supabaseUrl, serviceRoleKey, {
+  return createClient(supabaseUrl, serviceRoleKey, {
     auth: { persistSession: false },
   })
 }
@@ -160,10 +162,117 @@ export const adminStatsService = {
 
     return {
       totalUsers: totalUsers || 0,
-      activeUsersToday: activeUsersToday || 0,
+      activeUsers: activeUsersToday || 0,
       totalDownloads: totalDownloads || 0,
-      apiCallsToday: apiCallsToday || 0,
+      apiCalls: apiCallsToday || 0,
+      todayRegistrations: 0, // 临时设为0，后续添加查询
     }
+  },
+
+  // 获取使用统计信息
+  async getUsageStatistics() {
+    const supabase = createAdminClient()
+    const today = new Date().toISOString().split('T')[0]
+    
+    const [
+      { count: removeBgCallsToday },
+      { count: downloadsToday },
+      { count: totalApiCalls },
+      { count: totalRemoveBgCalls },
+    ] = await Promise.all([
+      // 今日抠图API调用
+      supabase
+        .from('usage_stats')
+        .select('*', { count: 'exact', head: true })
+        .eq('action_type', 'remove_bg_api')
+        .gte('created_at', today),
+      
+      // 今日下载次数
+      supabase
+        .from('usage_stats')
+        .select('*', { count: 'exact', head: true })
+        .eq('action_type', 'download')
+        .gte('created_at', today),
+      
+      // 总API调用
+      supabase
+        .from('usage_stats')
+        .select('*', { count: 'exact', head: true })
+        .in('action_type', ['api_call', 'remove_bg_api', 'download', 'export']),
+      
+      // 总抠图调用
+      supabase
+        .from('usage_stats')
+        .select('*', { count: 'exact', head: true })
+        .eq('action_type', 'remove_bg_api'),
+    ])
+
+    return {
+      removeBgCallsToday: removeBgCallsToday || 0,
+      downloadsToday: downloadsToday || 0,
+      totalApiCalls: totalApiCalls || 0,
+      totalRemoveBgCalls: totalRemoveBgCalls || 0,
+    }
+  },
+
+  // 获取带统计信息的最近用户
+  async getRecentUsersWithStats(limit: number = 50) {
+    const supabase = createAdminClient()
+    
+    // 获取用户及其使用统计
+    const { data: users, error } = await supabase
+      .from('users')
+      .select(`
+        id, name, email, title, created_at
+      `)
+      .order('created_at', { ascending: false })
+      .limit(limit)
+
+    if (error) {
+      console.error('Error fetching users:', error)
+      return []
+    }
+
+    // 为每个用户获取统计数据
+    const usersWithStats = await Promise.all(
+      (users || []).map(async (user: any) => {
+        const { data: userStats } = await supabase
+          .from('usage_stats')
+          .select('action_type, created_at')
+          .eq('user_id', user.id)
+
+        const stats = userStats || []
+        
+        // 计算各种统计
+        const downloadCount = stats.filter((s: any) => s.action_type === 'download').length
+        const removeBgCount = stats.filter((s: any) => s.action_type === 'remove_bg_api').length
+        const loginCount = stats.filter((s: any) => s.action_type === 'login').length
+        const totalApiCalls = stats.filter((s: any) => 
+          ['remove_bg_api', 'avatar_upload', 'export', 'api_call'].includes(s.action_type)
+        ).length
+
+        // 获取最后登录时间
+        const loginStats = stats.filter((s: any) => s.action_type === 'login')
+        const lastLogin = loginStats.length > 0 
+          ? loginStats[loginStats.length - 1].created_at 
+          : undefined
+
+        return {
+          id: user.id,
+          name: user.name || '未设置',
+          email: user.email,
+          title: user.title || '未设置',
+          created_at: user.created_at,
+          last_login: lastLogin,
+          download_count: downloadCount,
+          remove_bg_count: removeBgCount,
+          login_count: loginCount,
+          total_api_calls: totalApiCalls
+        }
+      })
+    )
+
+    return usersWithStats
   },
 
   // 获取用户注册趋势
@@ -179,11 +288,11 @@ export const adminStatsService = {
     if (error) throw error
 
     // 按日期分组统计
-    const dailyStats = data.reduce((acc, user) => {
+    const dailyStats = (data || []).reduce((acc: any, user: any) => {
       const date = new Date(user.created_at).toISOString().split('T')[0]
       acc[date] = (acc[date] || 0) + 1
       return acc
-    }, {} as Record<string, number>)
+    }, {})
 
     return Object.entries(dailyStats).map(([date, count]) => ({
       date,
@@ -202,15 +311,15 @@ export const adminStatsService = {
 
     if (error) throw error
 
-    const titleCounts = data.reduce((acc, user) => {
+    const titleCounts = (data || []).reduce((acc: any, user: any) => {
       const title = user.title!
       acc[title] = (acc[title] || 0) + 1
       return acc
-    }, {} as Record<string, number>)
+    }, {})
 
     return Object.entries(titleCounts)
       .map(([title, count]) => ({ title, count }))
-      .sort((a, b) => b.count - a.count)
+      .sort((a: any, b: any) => b.count - a.count)
   },
 
   // 获取每日活动统计
@@ -225,18 +334,18 @@ export const adminStatsService = {
     if (error) throw error
 
     // 按日期和行为类型分组
-    const dailyStats = data.reduce((acc, stat) => {
+    const dailyStats = (data || []).reduce((acc: any, stat: any) => {
       const date = new Date(stat.created_at).toISOString().split('T')[0]
       if (!acc[date]) {
         acc[date] = {}
       }
       acc[date][stat.action_type] = (acc[date][stat.action_type] || 0) + 1
       return acc
-    }, {} as Record<string, Record<string, number>>)
+    }, {})
 
     return Object.entries(dailyStats).map(([date, actions]) => ({
       date,
-      ...actions,
+      ...(actions as Record<string, number>),
     }))
   },
 }

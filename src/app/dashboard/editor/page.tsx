@@ -38,7 +38,7 @@ export default function EditorPage() {
       
       // 初始化文字模块数据
       updateTextModules({
-        name: user.name || 'AHMED AL-FAWAZ',
+        name: user.name || 'أحمد',
         title: user.title || 'SENIOR LANGUAGE COACH',
         phone: user.phone || '050-XXXX-XXAB',
         studentsServed: user.students_served || 5000,
@@ -46,6 +46,14 @@ export default function EditorPage() {
       })
     }
   }, [user]) // 移除其他依赖项避免循环
+
+  // 确保姓名默认值为“أحمد”，并避免邮箱作为默认显示
+  useEffect(() => {
+    const looksLikeEmail = (v: string | undefined) => !!v && v.includes('@')
+    if (!textModules.name || looksLikeEmail(textModules.name) || (user?.email && textModules.name === user.email)) {
+      updateTextModules({ name: 'أحمد' })
+    }
+  }, [textModules.name, user?.email, updateTextModules])
 
   // 同步 cardData 到 textModules - 当基本信息编辑时
   useEffect(() => {
@@ -155,17 +163,7 @@ export default function EditorPage() {
           <h1 className="text-2xl font-bold text-brand-dark">编辑名片</h1>
           <p className="text-brand-gray">完善您的个人信息，打造专业形象</p>
         </div>
-        <div className="flex gap-3">
-          {hasUnsavedChanges && (
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="btn-primary"
-            >
-              {saving ? '保存中...' : '保存更改'}
-            </Button>
-          )}
-        </div>
+        {/* 顶部保存按钮已移除 */}
       </div>
 
       <div className="grid lg:grid-cols-2 gap-6">
@@ -275,26 +273,7 @@ export default function EditorPage() {
         </div>
       </div>
 
-      {/* 保存提示 */}
-      {hasUnsavedChanges && (
-        <div className="fixed bottom-6 right-6 bg-white border border-gray-200 rounded-lg shadow-lg p-4 max-w-sm">
-          <div className="flex items-center space-x-3">
-            <div className="w-2 h-2 bg-yellow-500 rounded-full animate-pulse"></div>
-            <div className="flex-1">
-              <p className="text-sm font-medium text-brand-dark">有未保存的更改</p>
-              <p className="text-xs text-brand-gray">记得保存您的修改</p>
-            </div>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              disabled={saving}
-              className="btn-primary"
-            >
-              {saving ? '保存中...' : '保存'}
-            </Button>
-          </div>
-        </div>
-      )}
+      {/* 底部保存提示已移除 */}
     </div>
   )
 }

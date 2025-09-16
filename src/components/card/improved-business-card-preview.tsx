@@ -56,7 +56,7 @@ export default function ImprovedBusinessCardPreview({
   textStyles,
   abilities,
   className, 
-  backgroundImage = '/ditu.png',
+  backgroundImage = '/预览图.webp',
   onBackgroundUpload,
   showExportButtons = true
 }: ImprovedBusinessCardPreviewProps) {
@@ -186,7 +186,7 @@ export default function ImprovedBusinessCardPreview({
               fontWeight: finalTextStyles.name.fontWeight
             }}
           >
-            {textModules.name || user.name || 'AHMED AL-FAWAZ'}
+            {textModules.name || user.name || 'أحمد'}
           </div>
 
           {/* 职位头衔 - 精确位置 */}
@@ -201,7 +201,7 @@ export default function ImprovedBusinessCardPreview({
               fontWeight: finalTextStyles.title.fontWeight
             }}
           >
-            {textModules.title || user.title || 'SENIOR LANGUAGE COACH'}
+            {textModules.title || user.title || 'شريك النمو الرئيسي'}
           </div>
 
           {/* 数据统计区域 - 精确位置 */}
@@ -279,7 +279,7 @@ export default function ImprovedBusinessCardPreview({
                     fontWeight: finalTextStyles.teacherSelectionLabel.fontWeight
                   }}
                 >
-                  {(textModules.teacherSelectionLabel || 'Teacher\nSelection').split('\n').map((line, index, array) => (
+                  {(textModules.teacherSelectionLabel || 'اختيار\nالمعلم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -297,7 +297,7 @@ export default function ImprovedBusinessCardPreview({
                     fontWeight: finalTextStyles.progressFeedbackLabel.fontWeight
                   }}
                 >
-                  {(textModules.progressFeedbackLabel || 'Progress\nFeedback').split('\n').map((line, index, array) => (
+                  {(textModules.progressFeedbackLabel || 'تعليقات\nالتقدم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -316,7 +316,7 @@ export default function ImprovedBusinessCardPreview({
                     fontWeight: finalTextStyles.planningLabel.fontWeight
                   }}
                 >
-                  {(textModules.planningLabel || 'Study\nPlan').split('\n').map((line, index, array) => (
+                  {(textModules.planningLabel || 'خطة\nالدراسة').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}
@@ -334,7 +334,7 @@ export default function ImprovedBusinessCardPreview({
                     fontWeight: finalTextStyles.resourceSharingLabel.fontWeight
                   }}
                 >
-                  {(textModules.resourceSharingLabel || 'Learning\nResources').split('\n').map((line, index, array) => (
+                  {(textModules.resourceSharingLabel || 'موارد\nالتعلم').split('\n').map((line, index, array) => (
                     <span key={index}>
                       {line}
                       {index < array.length - 1 && <br />}

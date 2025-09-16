@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>背景图片重叠修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        .success {
+            border-left-color: #28a745;
+            background: #d4edda;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background: #fff3cd;
+        }
+        .step {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .check-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .check-item .icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .code {
+            background: #e9ecef;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 背景图片重叠修复验证</h1>
+    
+    <div class="test-section success">
+        <h2>✅ 修复完成</h2>
+        <p>已修复名片预览中背景图片重叠的问题，现在只显示一张预览图。</p>
+    </div>
+
+    <h2>🔧 修复内容</h2>
+
+    <div class="test-section">
+        <h3>1. 修复DraggableBusinessCardPreview组件</h3>
+        <ul>
+            <li><strong>问题：</strong> CSS背景图和img元素同时显示导致重叠</li>
+            <li><strong>修复：</strong> 确保预览模式只显示CSS背景，导出模式只显示img元素</li>
+            <li><strong>文件：</strong> <code>src/components/card/draggable-business-card-preview.tsx</code></li>
+        </ul>
+
+        <h3>2. 统一背景图片路径</h3>
+        <ul>
+            <li><strong>编辑器页面：</strong> 从 <code>/ditu.png</code> 更改为 <code>/预览图.webp</code></li>
+            <li><strong>文件：</strong> <code>src/app/dashboard/editor/page.tsx</code></li>
+        </ul>
+
+        <h3>3. 优化ImprovedBusinessCardPreview</h3>
+        <ul>
+            <li><strong>添加：</strong> 备用背景色防止图片加载失败</li>
+            <li><strong>确保：</strong> 只有单一背景图片层</li>
+        </ul>
+    </div>
+
+    <h2>🧪 测试步骤</h2>
+
+    <div class="step">
+        <h3>第1步：启动应用</h3>
+        <div class="code">npm run dev</div>
+        <p>确保应用运行在 http://localhost:3000</p>
+    </div>
+
+    <div class="step">
+        <h3>第2步：测试Dashboard预览</h3>
+        <p>访问：<strong>http://localhost:3000/dashboard</strong></p>
+        
+        <h4>检查项目：</h4>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>名片预览只显示一张背景图（预览图.webp）</span>
+        </div>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>没有图片重叠现象</span>
+        </div>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>头像、文字等元素显示正常</span>
+        </div>
+    </div>
+
+    <div class="step">
+        <h3>第3步：测试编辑器页面</h3>
+        <p>访问：<strong>http://localhost:3000/dashboard/editor</strong></p>
+        
+        <h4>检查项目：</h4>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>编辑器中的名片预览使用新的预览图.webp</span>
+        </div>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>拖拽功能正常工作</span>
+        </div>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>在预览模式下只显示CSS背景</span>
+        </div>
+        <div class="check-item">
+            <span class="icon">✅</span>
+            <span>导出时能正确切换到img元素（如果有导出功能）</span>
+        </div>
+    </div>
+
+    <h2>🔍 技术细节</h2>
+
+    <div class="test-section">
+        <h3>重叠问题的原因</h3>
+        <p><strong>DraggableBusinessCardPreview</strong> 组件使用了两种背景显示方式：</p>
+        <ul>
+            <li><strong>CSS背景：</strong> 用于日常预览，响应快但导出时可能有兼容性问题</li>
+            <li><strong>IMG元素：</strong> 用于导出时确保图片完整渲染</li>
+        </ul>
+        
+        <h3>修复方案</h3>
+        <p>确保在不同模式下只显示相应的背景：</p>
+        <ul>
+            <li><strong>预览模式：</strong> <code>useImgBackground = false</code> → 只显示CSS背景</li>
+            <li><strong>导出模式：</strong> <code>useImgBackground = true</code> → 只显示IMG元素</li>
+        </ul>
+    </div>
+
+    <h2>🎨 视觉效果验证</h2>
+
+    <div class="test-section">
+        <h3>应该看到的效果</h3>
+        <ul>
+            <li>✅ 单一、清晰的背景图片</li>
+            <li>✅ 头像圆形裁剪正常</li>
+            <li>✅ 文字层次清晰可读</li>
+            <li>✅ 整体布局协调美观</li>
+            <li>✅ 350x500像素固定尺寸</li>
+        </ul>
+
+        <h3>不应该出现的问题</h3>
+        <ul>
+            <li>❌ 背景图片模糊或重叠</li>
+            <li>❌ 图片加载闪烁</li>
+            <li>❌ 元素位置错乱</li>
+            <li>❌ 颜色异常或透明度问题</li>
+        </ul>
+    </div>
+
+    <h2>🚨 故障排除</h2>
+
+    <div class="test-section warning">
+        <h3>如果仍然看到重叠</h3>
+        <ol>
+            <li>刷新浏览器页面清除缓存</li>
+            <li>检查浏览器开发者工具中的Console是否有错误</li>
+            <li>验证 <code>/预览图.webp</code> 文件是否存在且可访问</li>
+            <li>检查是否有其他组件在同一区域渲染了背景</li>
+        </ol>
+
+        <h3>浏览器缓存清理</h3>
+        <p>如果图片显示异常，尝试：</p>
+        <ul>
+            <li><strong>Chrome/Edge：</strong> Ctrl+Shift+R 强制刷新</li>
+            <li><strong>Firefox：</strong> Ctrl+F5 强制刷新</li>
+            <li><strong>Safari：</strong> Cmd+Shift+R 强制刷新</li>
+        </ul>
+    </div>
+
+    <h2>✅ 验证清单</h2>
+
+    <div class="test-section success">
+        <h3>功能验证</h3>
+        <ul>
+            <li>□ Dashboard页面名片预览显示正常</li>
+            <li>□ 编辑器页面预览使用新背景图</li>
+            <li>□ 没有图片重叠现象</li>
+            <li>□ 头像和文字元素显示清晰</li>
+            <li>□ 页面加载速度正常</li>
+            <li>□ 所有交互功能正常工作</li>
+        </ul>
+
+        <h3>视觉验证</h3>
+        <ul>
+            <li>□ 背景图片清晰且唯一</li>
+            <li>□ 色彩层次丰富</li>
+            <li>□ 布局整齐美观</li>
+            <li>□ 响应式设计正常</li>
+        </ul>
+    </div>
+
+    <h2>🎉 修复完成</h2>
+
+    <div class="test-section success">
+        <p><strong>🎯 背景图片重叠问题已成功修复！</strong></p>
+        <p>现在所有名片预览页面都显示单一、清晰的预览图.webp背景，提供了更好的视觉体验。</p>
+        
+        <p><em>如果遇到任何问题，请按照故障排除指南进行检查。</em></p>
+    </div>
+
+    <hr>
+    <p style="text-align: center; color: #666; font-size: 14px;">
+        <em>背景图片修复验证指南 - Next.js 14 数字名片系统</em>
+    </p>
+</body>
+</html>

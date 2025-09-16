@@ -987,7 +987,7 @@ export default function DraggableBusinessCardPreview({
 
       // 🎯 直接从DOM读取姓名的实际位置和样式
       const namePos = getElementActualPosition('[data-module-id="name"]')
-      const displayName = actualText?.name || textModules.name || user.name || user.email || 'AHMED AL-FAWAZ'
+      const displayName = actualText?.name || textModules.name || user.name || 'أحمد'
       if (namePos) {
       drawText(
         displayName,
@@ -998,7 +998,7 @@ export default function DraggableBusinessCardPreview({
 
       // 🎯 直接从DOM读取职位头衔的实际位置和样式
       const titlePos = getElementActualPosition('[data-module-id="title"]')
-      const displayTitle = actualText?.title || textModules.title || user.title || 'SENIOR LANGUAGE COACH'
+      const displayTitle = actualText?.title || textModules.title || user.title || 'شريك النمو الرئيسي'
       if (titlePos) {
       drawText(
         displayTitle,
@@ -1027,10 +1027,10 @@ export default function DraggableBusinessCardPreview({
         // 获取标签元素的位置
         const studentsLabelPos = getElementActualPosition('[data-module-id="studentsServed"] > div:last-child')
         if (studentsLabelPos) {
-      drawMultilineText(
-        'STUDENTS\nSERVED',
+      drawText(
+        'الطلاب المخدومون',
             studentsLabelPos.x, studentsLabelPos.y,
-            studentsLabelPos.fontSize, studentsLabelPos.color, studentsLabelPos.lineHeight / studentsLabelPos.fontSize, studentsLabelPos.textAlign as any
+            studentsLabelPos.fontSize, studentsLabelPos.color, 'normal', studentsLabelPos.textAlign as any
       )
         }
       }
@@ -1053,10 +1053,10 @@ export default function DraggableBusinessCardPreview({
         // 获取标签元素的位置
         const positiveLabelPos = getElementActualPosition('[data-module-id="positiveRating"] > div:last-child')
         if (positiveLabelPos) {
-      drawMultilineText(
-        'POSITIVE\nRATING',
+      drawText(
+        'نسبة التقييم',
             positiveLabelPos.x, positiveLabelPos.y,
-            positiveLabelPos.fontSize, positiveLabelPos.color, positiveLabelPos.lineHeight / positiveLabelPos.fontSize, positiveLabelPos.textAlign as any
+            positiveLabelPos.fontSize, positiveLabelPos.color, 'normal', positiveLabelPos.textAlign as any
           )
         }
       }
@@ -1065,19 +1065,19 @@ export default function DraggableBusinessCardPreview({
       const abilityLabels = [
         {
           selector: '[data-module-id="teacherSelectionLabel"]',
-          text: textModules.teacherSelectionLabel || 'Teacher\nSelection'
+          text: textModules.teacherSelectionLabel || 'اختيار\nالمعلم'
         },
         {
           selector: '[data-module-id="progressFeedbackLabel"]',
-          text: textModules.progressFeedbackLabel || 'Progress\nFeedback'
+          text: textModules.progressFeedbackLabel || 'تعليقات\nالتقدم'
         },
         {
           selector: '[data-module-id="planningLabel"]',
-          text: textModules.planningLabel || 'Study\nPlan'
+          text: textModules.planningLabel || 'خطة\nالدراسة'
         },
         {
           selector: '[data-module-id="resourceSharingLabel"]',
-          text: textModules.resourceSharingLabel || 'Learning\nResources'
+          text: textModules.resourceSharingLabel || 'موارد\nالتعلم'
         }
       ]
 
@@ -1098,7 +1098,7 @@ export default function DraggableBusinessCardPreview({
       const phonePos = getElementActualPosition('[data-module-id="phone"]')
       if (phonePos) {
       drawText(
-        `电话: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
+        `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
           phonePos.x, phonePos.y,
           phonePos.fontSize, phonePos.color, phonePos.fontWeight, phonePos.textAlign as any
       )
@@ -2255,6 +2255,9 @@ export default function DraggableBusinessCardPreview({
     setDraggedElement(null)
   }
 
+  // 仅允许拖拽：名字与头衔（头像拖拽逻辑独立保留）
+  const canDrag = (id: string): boolean => id === 'name' || id === 'title'
+
   // 渲染可拖拽的文字元素
   const renderDraggableText = (
     moduleId: keyof TextPositions,
@@ -2263,22 +2266,28 @@ export default function DraggableBusinessCardPreview({
     position: TextPositions[keyof TextPositions],
     showCoordinates: boolean = false
   ) => {
+    const isDraggable = (id: string): boolean => canDrag(id)
     return (
       <div
         data-module-id={moduleId}
-        className={`absolute cursor-move select-none ${
-          draggedElement === moduleId ? 'z-50' : 'z-10'
-        }`}
+        className={`absolute select-none ${
+          isDraggable(moduleId) ? 'cursor-move' : 'cursor-default'
+        } ${draggedElement === moduleId ? 'z-50' : 'z-10'}`}
         style={{
           left: position.x,
           top: position.y,
           fontSize: `${style.fontSize}px`,
           color: style.color,
           fontWeight: style.fontWeight,
+          // 阿拉伯语显示优化：title 保持单行且从右到左
+          ...(moduleId === 'title'
+            ? { whiteSpace: 'nowrap', direction: 'rtl', wordBreak: 'keep-all', lineHeight: '1.2' }
+            : {}),
+          pointerEvents: 'auto',
           transform: draggedElement === moduleId ? 'scale(1.05)' : 'scale(1)',
           transition: draggedElement === moduleId ? 'none' : 'transform 0.2s ease'
         }}
-        onMouseDown={(e) => handleMouseDown(e, moduleId)}
+        onMouseDown={isDraggable(moduleId) ? (e) => handleMouseDown(e, moduleId) : undefined}
       >
         {text}
         {showCoordinates && (
@@ -2302,6 +2311,27 @@ export default function DraggableBusinessCardPreview({
         )}
       </div>
     )
+  }
+
+  // 文案归一化：将历史英文值映射为阿拉伯语，避免持久化导致仍显示英文
+  const normalizeLabel = (value: string | undefined, arabicDefault: string): string => {
+    const v = (value || '').trim()
+    switch (v) {
+      case 'Teacher\nSelection':
+      case 'Teacher Selection':
+        return 'اختيار\nالمعلم'
+      case 'Progress\nFeedback':
+      case 'Progress Feedback':
+        return 'تعليقات\nالتقدم'
+      case 'Study\nPlan':
+      case 'Study Plan':
+        return 'خطة\nالدراسة'
+      case 'Learning\nResources':
+      case 'Learning Resources':
+        return 'موارد\nالتعلم'
+      default:
+        return v || arabicDefault
+    }
   }
 
   return (
@@ -2330,41 +2360,9 @@ export default function DraggableBusinessCardPreview({
         </div>
       </div>
 
-      {/* ✂️ 裁剪导出按钮 - 显眼位置 */}
-      <div className="flex gap-2 p-3 bg-red-50 rounded-lg border border-red-200">
-        <div className="flex gap-2 flex-wrap">
-          <button
-            onClick={() => handleCropExport('png')}
-            className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-              exporting 
-                ? 'bg-gray-400 text-white cursor-not-allowed' 
-                : 'bg-red-500 text-white hover:bg-red-600'
-            }`}
-            disabled={exporting}
-          >
-            {exporting ? '导出中...' : '✂️ 裁剪导出PNG'}
-          </button>
-          <button
-            onClick={() => handleCropExport('jpg')}
-            className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
-              exporting 
-                ? 'bg-gray-400 text-white cursor-not-allowed' 
-                : 'bg-orange-500 text-white hover:bg-orange-600'
-            }`}
-            disabled={exporting}
-          >
-            {exporting ? '导出中...' : '✂️ 裁剪导出JPG'}
-          </button>
-          <button
-            onClick={fullDiagnosis}
-            className="px-3 py-2 rounded text-sm font-medium bg-yellow-500 text-white hover:bg-yellow-600 transition-colors"
-          >
-            🔍 诊断
-          </button>
-        </div>
-        <div className="text-xs text-red-700 flex items-center ml-2">
-          🎯 全新裁剪导出 - 解决图片被收窄/压扁问题
-        </div>
+      {/* ✂️ 裁剪导出按钮 - 已按要求隐藏，仅保留DOM导出模块 */}
+      <div className="hidden">
+        {/* 保留代码以便将来启用 */}
       </div>
 
       {/* 隐藏的文件输入 */}
@@ -2479,7 +2477,7 @@ export default function DraggableBusinessCardPreview({
 
           {renderDraggableText(
             'name',
-            textModules.name || user.name || 'AHMED AL-FAWAZ',
+            textModules.name || user.name || 'أحمد',
             textStyles.name,
             textPositions.name,
             showCoordinates
@@ -2487,7 +2485,7 @@ export default function DraggableBusinessCardPreview({
 
           {renderDraggableText(
             'title',
-            textModules.title || user.title || 'SENIOR LANGUAGE COACH',
+            textModules.title || user.title || 'شريك النمو الرئيسي',
             textStyles.title,
             textPositions.title,
             showCoordinates
@@ -2495,17 +2493,18 @@ export default function DraggableBusinessCardPreview({
 
           {/* 统计数据 - 无边框横排显示 */}
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'studentsServed' ? 'z-50' : 'z-10'
             }`}
             data-module-id="studentsServed"
             style={{
               left: textPositions.studentsServed.x,
               top: textPositions.studentsServed.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'studentsServed' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'studentsServed' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'studentsServed')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center justify-center text-center">
               <div 
@@ -2524,10 +2523,12 @@ export default function DraggableBusinessCardPreview({
                 className="text-[6px] leading-tight"
                 style={{
                   color: textStyles.studentsServed?.color || '#000000',
-                  fontWeight: textStyles.studentsServed?.fontWeight || 'normal'
+                  fontWeight: textStyles.studentsServed?.fontWeight || 'normal',
+                  whiteSpace: 'nowrap',
+                  direction: 'rtl'
                 }}
               >
-                STUDENTS<br />SERVED
+                الطلاب المخدومون
               </div>
               {showCoordinates && (
                 <div
@@ -2553,17 +2554,18 @@ export default function DraggableBusinessCardPreview({
           </div>
 
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'positiveRating' ? 'z-50' : 'z-10'
             }`}
             data-module-id="positiveRating"
             style={{
               left: textPositions.positiveRating.x,
               top: textPositions.positiveRating.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'positiveRating' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'positiveRating' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'positiveRating')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center justify-center text-center">
               <div 
@@ -2579,10 +2581,12 @@ export default function DraggableBusinessCardPreview({
                 className="text-[6px] leading-tight"
                 style={{
                   color: textStyles.positiveRating?.color || '#000000',
-                  fontWeight: textStyles.positiveRating?.fontWeight || 'normal'
+                  fontWeight: textStyles.positiveRating?.fontWeight || 'normal',
+                  whiteSpace: 'nowrap',
+                  direction: 'rtl'
                 }}
               >
-                POSITIVE<br />RATING
+                نسبة التقييم
               </div>
               {showCoordinates && (
                 <div
@@ -2609,7 +2613,7 @@ export default function DraggableBusinessCardPreview({
 
           {renderDraggableText(
             'phone',
-            `电话: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
+            `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
             textStyles.phone,
             textPositions.phone,
             showCoordinates
@@ -2618,17 +2622,18 @@ export default function DraggableBusinessCardPreview({
           {/* 能力标签 - 四个独立的可拖拽元素，无图标，英文两排显示 */}
           {/* 教师筛选 */}
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'teacherSelectionLabel' ? 'z-50' : 'z-10'
             }`}
             data-module-id="teacherSelectionLabel"
             style={{
               left: textPositions.teacherSelectionLabel.x,
               top: textPositions.teacherSelectionLabel.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'teacherSelectionLabel' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'teacherSelectionLabel' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'teacherSelectionLabel')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center text-center">
               <div 
@@ -2639,7 +2644,7 @@ export default function DraggableBusinessCardPreview({
                   fontWeight: textStyles.teacherSelectionLabel?.fontWeight || 'normal'
                 }}
               >
-                {(textModules.teacherSelectionLabel || 'Teacher\nSelection').split('\n').map((line, index, array) => (
+                {(normalizeLabel(textModules.teacherSelectionLabel, 'اختيار\nالمعلم')).split('\n').map((line, index, array) => (
                   <span key={index}>
                     {line}
                     {index < array.length - 1 && <br />}
@@ -2671,17 +2676,18 @@ export default function DraggableBusinessCardPreview({
 
           {/* 进度反馈 */}
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'progressFeedbackLabel' ? 'z-50' : 'z-10'
             }`}
             data-module-id="progressFeedbackLabel"
             style={{
               left: textPositions.progressFeedbackLabel.x,
               top: textPositions.progressFeedbackLabel.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'progressFeedbackLabel' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'progressFeedbackLabel' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'progressFeedbackLabel')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center text-center">
               <div 
@@ -2692,7 +2698,7 @@ export default function DraggableBusinessCardPreview({
                   fontWeight: textStyles.progressFeedbackLabel?.fontWeight || 'normal'
                 }}
               >
-                {(textModules.progressFeedbackLabel || 'Progress\nFeedback').split('\n').map((line, index, array) => (
+                {(normalizeLabel(textModules.progressFeedbackLabel, 'تعليقات\nالتقدم')).split('\n').map((line, index, array) => (
                   <span key={index}>
                     {line}
                     {index < array.length - 1 && <br />}
@@ -2724,17 +2730,18 @@ export default function DraggableBusinessCardPreview({
 
           {/* 学习计划 */}
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'planningLabel' ? 'z-50' : 'z-10'
             }`}
             data-module-id="planningLabel"
             style={{
               left: textPositions.planningLabel.x,
               top: textPositions.planningLabel.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'planningLabel' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'planningLabel' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'planningLabel')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center text-center">
               <div 
@@ -2745,7 +2752,7 @@ export default function DraggableBusinessCardPreview({
                   fontWeight: textStyles.planningLabel?.fontWeight || 'normal'
                 }}
               >
-                {(textModules.planningLabel || 'Study\nPlan').split('\n').map((line, index, array) => (
+                {(normalizeLabel(textModules.planningLabel, 'خطة\nالدراسة')).split('\n').map((line, index, array) => (
                   <span key={index}>
                     {line}
                     {index < array.length - 1 && <br />}
@@ -2777,17 +2784,18 @@ export default function DraggableBusinessCardPreview({
 
           {/* 学习资源 */}
           <div
-            className={`absolute cursor-move select-none ${
+            className={`absolute cursor-default select-none ${
               draggedElement === 'resourceSharingLabel' ? 'z-50' : 'z-10'
             }`}
             data-module-id="resourceSharingLabel"
             style={{
               left: textPositions.resourceSharingLabel.x,
               top: textPositions.resourceSharingLabel.y,
+              pointerEvents: 'none',
               transform: draggedElement === 'resourceSharingLabel' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'resourceSharingLabel' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={(e) => handleMouseDown(e, 'resourceSharingLabel')}
+            onMouseDown={undefined}
           >
             <div className="flex flex-col items-center text-center">
               <div 
@@ -2798,7 +2806,7 @@ export default function DraggableBusinessCardPreview({
                   fontWeight: textStyles.resourceSharingLabel?.fontWeight || 'normal'
                 }}
               >
-                {(textModules.resourceSharingLabel || 'Learning\nResources').split('\n').map((line, index, array) => (
+                {(normalizeLabel(textModules.resourceSharingLabel, 'موارد\nالتعلم')).split('\n').map((line, index, array) => (
                   <span key={index}>
                     {line}
                     {index < array.length - 1 && <br />}
@@ -2829,8 +2837,8 @@ export default function DraggableBusinessCardPreview({
           </div>
         </div>
 
-      {/* 导出按钮 - 添加到工具栏中 */}
-      <div className="flex gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
+      {/* 导出按钮 - 已隐藏，只保留DOM导出 */}
+      <div className="hidden flex gap-2 p-3 bg-green-50 rounded-lg border border-green-200">
         <div className="flex gap-2 flex-wrap">
           <button
             onClick={() => handleImgBasedExport('png')}
@@ -2895,12 +2903,14 @@ export default function DraggableBusinessCardPreview({
         className="mt-4"
       />
 
-      {/* DOM导出调试工具 */}
-      <DomExportDebug 
-        user={user}
-        cardRef={cardRef}
-        className="mt-4"
-      />
+      {/* DOM导出调试工具 - 已隐藏 */}
+      <div className="hidden">
+        <DomExportDebug 
+          user={user}
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
 
       {/* 使用说明 */}
       <div className="text-xs text-gray-500 space-y-1">

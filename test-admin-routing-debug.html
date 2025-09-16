@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员路由调试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .debug-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .test-link {
+            display: inline-block;
+            background: #dc2626;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 8px 12px 8px 0;
+            transition: background 0.2s;
+            font-weight: 500;
+        }
+        .test-link:hover {
+            background: #b91c1c;
+        }
+        .test-link.secondary {
+            background: #3b82f6;
+        }
+        .test-link.secondary:hover {
+            background: #2563eb;
+        }
+        .code {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+        .debug-info {
+            background: #f0f9ff;
+            border: 1px solid #e0f2fe;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .debug-info h4 {
+            color: #0c4a6e;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-card">
+        <h1>🔍 管理员路由调试</h1>
+        <p><strong>问题:</strong> 点击管理员看板没有反应</p>
+        <p><strong>当前服务器:</strong> <span class="code">http://localhost:3001</span></p>
+        
+        <div class="debug-info">
+            <h4>📋 测试链接</h4>
+            <p>请依次点击以下链接，观察页面跳转情况：</p>
+            
+            <div style="margin: 16px 0;">
+                <a href="http://localhost:3001" class="test-link secondary">🏠 主页</a>
+                <a href="http://localhost:3001/admin" class="test-link">📊 /admin (重定向页面)</a>
+                <a href="http://localhost:3001/admin/login" class="test-link">🔐 /admin/login</a>
+                <a href="http://localhost:3001/admin/dashboard" class="test-link">📈 /admin/dashboard</a>
+                <a href="http://localhost:3001/admin-portal" class="test-link secondary">🚪 /admin-portal</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="debug-card">
+        <h2>🧪 调试步骤</h2>
+        
+        <h3>1. 检查主页管理员按钮</h3>
+        <ol>
+            <li>访问 <a href="http://localhost:3001" class="test-link secondary">主页</a></li>
+            <li>点击导航栏的"管理员"按钮</li>
+            <li>观察是否跳转到登录页面</li>
+        </ol>
+
+        <h3>2. 检查管理员专区</h3>
+        <ol>
+            <li>在主页向下滚动找到"管理员专区"</li>
+            <li>点击"🔐 管理员登录"按钮</li>
+            <li>点击"📊 管理员门户"按钮</li>
+        </ol>
+
+        <h3>3. 手动测试路由</h3>
+        <ol>
+            <li>直接访问 <span class="code">/admin</span> → 应该跳转到登录页</li>
+            <li>直接访问 <span class="code">/admin/login</span> → 显示登录表单</li>
+            <li>直接访问 <span class="code">/admin/dashboard</span> → 需要权限验证</li>
+        </ol>
+    </div>
+
+    <div class="debug-card">
+        <h2>🔧 可能的问题</h2>
+        
+        <div class="debug-info">
+            <h4>1. JavaScript 错误</h4>
+            <p>打开浏览器开发者工具 (F12)，查看 Console 标签页是否有错误信息。</p>
+            <p>应该看到类似这样的调试信息：</p>
+            <pre style="background: #1f2937; color: #f9fafb; padding: 8px; border-radius: 4px; font-size: 12px;">
+Admin redirect: isLoggedIn = null
+Redirecting to login...
+            </pre>
+        </div>
+
+        <div class="debug-info">
+            <h4>2. 路由冲突</h4>
+            <p>可能存在多个路由文件冲突，检查以下文件：</p>
+            <ul>
+                <li><span class="code">src/app/admin/page.tsx</span> - 重定向逻辑</li>
+                <li><span class="code">src/app/admin/login/page.tsx</span> - 登录页面</li>
+                <li><span class="code">src/app/admin/dashboard/page.tsx</span> - 仪表板</li>
+            </ul>
+        </div>
+
+        <div class="debug-info">
+            <h4>3. 服务器编译问题</h4>
+            <p>检查终端是否有编译错误或警告信息。</p>
+            <p>如果有问题，尝试重启开发服务器：</p>
+            <pre style="background: #1f2937; color: #f9fafb; padding: 8px; border-radius: 4px; font-size: 12px;">
+Ctrl + C (停止服务器)
+npm run dev (重新启动)
+            </pre>
+        </div>
+    </div>
+
+    <div class="debug-card">
+        <h2>✅ 预期行为</h2>
+        
+        <h3>正确的流程应该是：</h3>
+        <ol>
+            <li><strong>点击主页"管理员"按钮</strong> → 跳转到 <span class="code">/admin</span></li>
+            <li><strong>重定向逻辑执行</strong> → 检查登录状态</li>
+            <li><strong>未登录状态</strong> → 自动跳转到 <span class="code">/admin/login</span></li>
+            <li><strong>输入正确密码</strong> → 跳转到 <span class="code">/admin/dashboard</span></li>
+        </ol>
+
+        <div class="debug-info">
+            <h4>🔑 测试登录信息</h4>
+            <p><strong>邮箱:</strong> <span class="code">admin@51talk.com</span></p>
+            <p><strong>密码:</strong> <span class="code">GhJ2537652940</span></p>
+        </div>
+    </div>
+
+    <div class="debug-card">
+        <h2>🛠️ 修复操作</h2>
+        
+        <h3>如果按钮仍然没有反应：</h3>
+        <ol>
+            <li>清除浏览器缓存和 localStorage</li>
+            <li>硬刷新页面 (Ctrl + F5)</li>
+            <li>检查浏览器控制台错误</li>
+            <li>确认服务器在 3001 端口运行</li>
+        </ol>
+
+        <button onclick="clearStorage()" style="background: #dc2626; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 8px 0;">
+            清除 localStorage
+        </button>
+        
+        <button onclick="checkRoutes()" style="background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin: 8px 0;">
+            检查路由状态
+        </button>
+    </div>
+
+    <script>
+        function clearStorage() {
+            localStorage.clear();
+            alert('localStorage 已清除，请重新测试登录流程');
+        }
+
+        function checkRoutes() {
+            const isLoggedIn = localStorage.getItem('admin_logged_in');
+            const adminEmail = localStorage.getItem('admin_email');
+            
+            alert(`当前登录状态：
+登录状态: ${isLoggedIn || '未登录'}
+管理员邮箱: ${adminEmail || '无'}
+建议操作: ${isLoggedIn ? '直接访问 /admin 应该跳转到仪表板' : '访问 /admin 应该跳转到登录页面'}`);
+        }
+
+        // 页面加载时检查状态
+        window.addEventListener('load', function() {
+            console.log('🔍 调试页面加载完成');
+            console.log('当前登录状态:', localStorage.getItem('admin_logged_in'));
+            console.log('管理员邮箱:', localStorage.getItem('admin_email'));
+        });
+
+        // 为测试链接添加点击事件
+        document.querySelectorAll('.test-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                console.log(`🔗 点击测试链接: ${this.textContent} → ${this.href}`);
+            });
+        });
+    </script>
+</body>
+</html>
+

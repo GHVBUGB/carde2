@@ -67,11 +67,11 @@ export default function ProfilePage() {
   }
 
   const titleOptions = [
-    { value: '', label: '请选择职位' },
-    { value: '首席成长伙伴', label: '首席成长伙伴' },
-    { value: '金牌成长顾问', label: '金牌成长顾问' },
-    { value: '五星服务官', label: '五星服务官' },
-    { value: '学习领航官', label: '学习领航官' },
+    { value: '', label: 'يرجى اختيار المنصب' },
+    { value: 'شريك النمو الرئيسي', label: 'شريك النمو الرئيسي' },
+    { value: 'مستشار النمو الذهبي', label: 'مستشار النمو الذهبي' },
+    { value: 'مسؤول الخدمة خمس نجوم', label: 'مسؤول الخدمة خمس نجوم' },
+    { value: 'مسؤول الملاحة التعليمية', label: 'مسؤول الملاحة التعليمية' },
   ]
 
   if (!user) {
