@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOM导出偏移修复测试</title>
+    <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@3.1.0/dist/dom-to-image-more.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-card {
+            width: 350px;
+            height: 500px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            position: relative;
+            margin: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border: 2px solid #ccc;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #fff;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+        }
+        
+        .name {
+            text-align: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .title {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .controls {
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        .debug-info {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .export-result {
+            margin: 20px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 DOM导出偏移修复测试</h1>
+    
+    <div class="export-result">
+        <h3>测试目标：解决DOM导出的偏移和边框问题</h3>
+        <p><strong>问题描述：</strong>DOM导出的图片向右偏移，并且添加了多余的边框</p>
+        <p><strong>解决方案：</strong>使用临时容器 + 样式重置 + 精确配置</p>
+    </div>
+    
+    <!-- 测试名片 -->
+    <div id="testCard" class="test-card">
+        <div class="avatar">👤</div>
+        <div class="name">张三</div>
+        <div class="title">高级顾问</div>
+        <div style="text-align: center; color: white; margin-top: 50px;">
+            <div>已服务学员：500+</div>
+            <div>好评率：98%</div>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <button onclick="exportOriginalMethod()">🔴 原始方法（有问题）</button>
+        <button onclick="exportFixedMethod()">🟢 修复方法（无偏移）</button>
+        <button onclick="checkStyles()">🔍 检查样式</button>
+    </div>
+    
+    <div id="debugInfo" class="debug-info"></div>
+    
+    <script>
+        const debugInfo = document.getElementById('debugInfo');
+        
+        function log(message) {
+            debugInfo.textContent += new Date().toLocaleTimeString() + ': ' + message + '\n';
+        }
+        
+        // 🔴 原始有问题的导出方法
+        async function exportOriginalMethod() {
+            log('开始原始方法导出...');
+            
+            try {
+                const element = document.getElementById('testCard');
+                
+                const dataUrl = await domtoimage.toPng(element, {
+                    width: 350,
+                    height: 500,
+                    quality: 1.0,
+                    bgcolor: '#ffffff'
+                });
+                
+                downloadImage(dataUrl, 'original-method.png');
+                log('✅ 原始方法导出完成（可能有偏移）');
+                
+            } catch (error) {
+                log('❌ 原始方法导出失败: ' + error.message);
+            }
+        }
+        
+        // 🟢 修复后的导出方法
+        async function exportFixedMethod() {
+            log('开始修复方法导出...');
+            
+            try {
+                const originalElement = document.getElementById('testCard');
+                const width = 350;
+                const height = 500;
+                
+                // 创建临时容器
+                const tempContainer = document.createElement('div');
+                tempContainer.style.cssText = `
+                    position: fixed !important;
+                    top: -10000px !important;
+                    left: -10000px !important;
+                    width: ${width}px !important;
+                    height: ${height}px !important;
+                    margin: 0 !important;
+                    padding: 0 !important;
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    background: transparent !important;
+                    overflow: hidden !important;
+                    box-sizing: border-box !important;
+                    z-index: -9999 !important;
+                `;
+                
+                // 克隆元素
+                const clonedCard = originalElement.cloneNode(true);
+                
+                // 重置样式
+                clonedCard.style.cssText = `
+                    position: relative !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    width: ${width}px !important;
+                    height: ${height}px !important;
+                    margin: 0 !important;
+                    padding: 20px !important;
+                    border: none !important;
+                    outline: none !important;
+                    box-shadow: none !important;
+                    transform: none !important;
+                    overflow: hidden !important;
+                    box-sizing: border-box !important;
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+                    border-radius: 16px !important;
+                `;
+                
+                // 深度清理子元素
+                const allElements = clonedCard.querySelectorAll('*');
+                allElements.forEach(el => {
+                    if (el.style) {
+                        // 保留必要样式，移除边距边框
+                        const essentialStyles = {
+                            color: el.style.color || window.getComputedStyle(el).color,
+                            fontSize: el.style.fontSize || window.getComputedStyle(el).fontSize,
+                            fontWeight: el.style.fontWeight || window.getComputedStyle(el).fontWeight,
+                            textAlign: el.style.textAlign || window.getComputedStyle(el).textAlign,
+                            background: el.style.background || window.getComputedStyle(el).background,
+                            borderRadius: el.style.borderRadius || window.getComputedStyle(el).borderRadius
+                        };
+                        
+                        // 重置并重新应用
+                        el.style.margin = '0';
+                        el.style.border = 'none';
+                        el.style.boxShadow = 'none';
+                        el.style.outline = 'none';
+                        
+                        Object.entries(essentialStyles).forEach(([prop, value]) => {
+                            if (value && value !== 'none') {
+                                el.style[prop] = value;
+                            }
+                        });
+                    }
+                });
+                
+                // 添加到DOM
+                tempContainer.appendChild(clonedCard);
+                document.body.appendChild(tempContainer);
+                
+                log('已创建临时容器，等待渲染...');
+                await new Promise(resolve => setTimeout(resolve, 200));
+                
+                // 导出
+                const dataUrl = await domtoimage.toPng(clonedCard, {
+                    width: width,
+                    height: height,
+                    quality: 1.0,
+                    bgcolor: '#ffffff',
+                    style: {
+                        margin: '0',
+                        padding: '0',
+                        border: 'none'
+                    }
+                });
+                
+                // 清理
+                document.body.removeChild(tempContainer);
+                
+                downloadImage(dataUrl, 'fixed-method.png');
+                log('✅ 修复方法导出完成（无偏移）');
+                
+            } catch (error) {
+                log('❌ 修复方法导出失败: ' + error.message);
+            }
+        }
+        
+        // 检查样式
+        function checkStyles() {
+            const element = document.getElementById('testCard');
+            const styles = window.getComputedStyle(element);
+            
+            const styleInfo = [
+                `尺寸: ${styles.width} x ${styles.height}`,
+                `位置: ${styles.position}`,
+                `边距: ${styles.margin}`,
+                `内边距: ${styles.padding}`,
+                `边框: ${styles.border}`,
+                `盒模型: ${styles.boxSizing}`,
+                `阴影: ${styles.boxShadow}`,
+                `变换: ${styles.transform}`
+            ];
+            
+            log('当前元素样式:\n' + styleInfo.join('\n'));
+        }
+        
+        // 下载图片
+        function downloadImage(dataUrl, filename) {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            link.click();
+        }
+        
+        // 初始化
+        log('DOM导出修复测试页面已加载');
+        log('请点击按钮测试不同的导出方法');
+    </script>
+</body>
+</html>

@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import { LayoutModule } from '@/lib/types'
 
 interface CardState {
@@ -21,6 +22,12 @@ interface CardState {
     feedbackAbility: boolean
     planningAbility: boolean
     resourceSharing: boolean
+  }
+  
+  // 头像配置
+  avatarConfig: {
+    size: number
+    position: { x: number; y: number }
   }
   
   // 文字模块数据
@@ -95,6 +102,10 @@ interface CardActions {
   updateTextPositions: (updates: Partial<CardState['textPositions']>) => void
   setTextPositions: (data: CardState['textPositions']) => void
   
+  // 头像配置操作
+  updateAvatarConfig: (updates: Partial<CardState['avatarConfig']>) => void
+  setAvatarConfig: (data: CardState['avatarConfig']) => void
+  
   // UI状态操作
   setPreviewMode: (isPreview: boolean) => void
   setIsEditing: (isEditing: boolean) => void
@@ -158,85 +169,117 @@ const initialTextPositions = {
   resourceSharingLabel: { x: 233, y: 401 }
 }
 
-export const useCardStore = create<CardState & CardActions>((set, get) => ({
-  // 初始状态
-  layouts: [],
-  isDragMode: false,
-  selectedModule: null,
-  cardData: initialCardData,
-  textModules: initialTextModules,
-  textStyles: initialTextStyles,
-  textPositions: initialTextPositions,
-  isPreviewMode: false,
-  isEditing: false,
-  hasUnsavedChanges: false,
+const initialAvatarConfig = {
+  size: 200, // 默认200px，更大的头像
+  position: { x: 73, y: 27 } // 默认位置：名片顶部居中，调整位置适应更大头像
+}
 
-  // 布局操作
-  setLayouts: (layouts) => set({ layouts }),
+export const useCardStore = create<CardState & CardActions>()(
+  persist(
+    (set, get) => ({
+      // 初始状态
+      layouts: [],
+      isDragMode: false,
+      selectedModule: null,
+      cardData: initialCardData,
+      avatarConfig: initialAvatarConfig,
+      textModules: initialTextModules,
+      textStyles: initialTextStyles,
+      textPositions: initialTextPositions,
+      isPreviewMode: false,
+      isEditing: false,
+      hasUnsavedChanges: false,
 
-  updateLayout: (id, updates) => {
-    const layouts = get().layouts.map(layout => 
-      layout.id === id ? { ...layout, ...updates } : layout
-    )
-    set({ layouts, hasUnsavedChanges: true })
-  },
+      // 布局操作
+      setLayouts: (layouts) => set({ layouts }),
 
-  setDragMode: (isDragMode) => set({ isDragMode }),
+      updateLayout: (id, updates) => {
+        const layouts = get().layouts.map(layout => 
+          layout.id === id ? { ...layout, ...updates } : layout
+        )
+        set({ layouts, hasUnsavedChanges: true })
+      },
 
-  setSelectedModule: (moduleId) => set({ selectedModule: moduleId }),
+      setDragMode: (isDragMode) => set({ isDragMode }),
 
-  // 名片数据操作
-  updateCardData: (updates) => {
-    const cardData = { ...get().cardData, ...updates }
-    set({ cardData, hasUnsavedChanges: true })
-  },
+      setSelectedModule: (moduleId) => set({ selectedModule: moduleId }),
 
-  setCardData: (data) => set({ cardData: data }),
+      // 名片数据操作
+      updateCardData: (updates) => {
+        const cardData = { ...get().cardData, ...updates }
+        set({ cardData, hasUnsavedChanges: true })
+      },
 
-  // 文字模块操作
-  updateTextModules: (updates) => {
-    const textModules = { ...get().textModules, ...updates }
-    set({ textModules, hasUnsavedChanges: true })
-  },
+      setCardData: (data) => set({ cardData: data }),
 
-  setTextModules: (data) => set({ textModules: data }),
+      // 文字模块操作
+      updateTextModules: (updates) => {
+        const textModules = { ...get().textModules, ...updates }
+        set({ textModules, hasUnsavedChanges: true })
+      },
 
-  // 文字样式操作
-  updateTextStyles: (updates) => {
-    const textStyles = { ...get().textStyles, ...updates }
-    set({ textStyles, hasUnsavedChanges: true })
-  },
+      setTextModules: (data) => set({ textModules: data }),
 
-  setTextStyles: (data) => set({ textStyles: data }),
+      // 文字样式操作
+      updateTextStyles: (updates) => {
+        const textStyles = { ...get().textStyles, ...updates }
+        set({ textStyles, hasUnsavedChanges: true })
+      },
 
-  // 文字位置操作
-  updateTextPositions: (updates) => {
-    const textPositions = { ...get().textPositions, ...updates }
-    set({ textPositions, hasUnsavedChanges: true })
-  },
+      setTextStyles: (data) => set({ textStyles: data }),
 
-  setTextPositions: (data) => set({ textPositions: data }),
+      // 文字位置操作
+      updateTextPositions: (updates) => {
+        const textPositions = { ...get().textPositions, ...updates }
+        set({ textPositions, hasUnsavedChanges: true })
+      },
 
-  // UI状态操作
-  setPreviewMode: (isPreviewMode) => set({ isPreviewMode }),
+      setTextPositions: (data) => set({ textPositions: data }),
 
-  setIsEditing: (isEditing) => set({ isEditing }),
+      // UI状态操作
+      setPreviewMode: (isPreviewMode) => set({ isPreviewMode }),
 
-  markAsChanged: () => set({ hasUnsavedChanges: true }),
+      setIsEditing: (isEditing) => set({ isEditing }),
 
-  markAsSaved: () => set({ hasUnsavedChanges: false }),
+      markAsChanged: () => set({ hasUnsavedChanges: true }),
 
-  // 重置
-  reset: () => set({
-    layouts: [],
-    isDragMode: false,
-    selectedModule: null,
-    cardData: initialCardData,
-    textModules: initialTextModules,
-    textStyles: initialTextStyles,
-    textPositions: initialTextPositions,
-    isPreviewMode: false,
-    isEditing: false,
-    hasUnsavedChanges: false,
-  }),
-}))
+      markAsSaved: () => set({ hasUnsavedChanges: false }),
+
+      // 头像配置操作
+      updateAvatarConfig: (updates) => {
+        set(state => ({
+          avatarConfig: { ...state.avatarConfig, ...updates },
+          hasUnsavedChanges: true
+        }))
+      },
+
+      setAvatarConfig: (data) => set({ avatarConfig: data, hasUnsavedChanges: true }),
+
+      // 重置
+      reset: () => set({
+        layouts: [],
+        isDragMode: false,
+        selectedModule: null,
+        cardData: initialCardData,
+        avatarConfig: initialAvatarConfig,
+        textModules: initialTextModules,
+        textStyles: initialTextStyles,
+        textPositions: initialTextPositions,
+        isPreviewMode: false,
+        isEditing: false,
+        hasUnsavedChanges: false,
+      }),
+    }),
+    {
+      name: 'card-storage',
+      partialize: (state) => ({
+        // 只持久化重要的配置数据，不持久化UI状态
+        avatarConfig: state.avatarConfig,
+        textModules: state.textModules,
+        textStyles: state.textStyles,
+        textPositions: state.textPositions,
+        cardData: state.cardData,
+      }),
+    }
+  )
+)

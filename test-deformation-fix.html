@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片变形修复测试</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .test-card {
+            width: 350px;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-bottom: 20px;
+        }
+        
+        .test-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .test-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .export-buttons {
+            margin: 20px 0;
+        }
+        
+        .export-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .export-btn:hover {
+            background: #0056b3;
+        }
+        
+        .comparison {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .before-after {
+            flex: 1;
+            text-align: center;
+        }
+        
+        .before-after img {
+            max-width: 100%;
+            height: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片变形修复测试</h1>
+    <p>测试修复后的导出功能，确保图片不再变形</p>
+    
+    <div class="export-buttons">
+        <button class="export-btn" onclick="exportWithFix()">导出修复版本</button>
+        <button class="export-btn" onclick="exportWithoutFix()">导出原始版本（对比）</button>
+        <button class="export-btn" onclick="exportComparison()">导出对比测试</button>
+    </div>
+    
+    <div class="test-container">
+        <!-- 测试卡片 -->
+        <div class="test-card" id="testCard">
+            <img src="https://picsum.photos/800/600?random=1" alt="Test Image" class="test-image">
+            <div class="test-label">修复版本测试</div>
+        </div>
+    </div>
+    
+    <div class="comparison" id="comparison" style="display: none;">
+        <div class="before-after">
+            <h3>修复前</h3>
+            <img id="beforeImage" src="" alt="修复前">
+        </div>
+        <div class="before-after">
+            <h3>修复后</h3>
+            <img id="afterImage" src="" alt="修复后">
+        </div>
+    </div>
+    
+    <script>
+        async function exportWithFix() {
+            const card = document.getElementById('testCard');
+            if (!card) {
+                console.error('Card not found');
+                return;
+            }
+            
+            try {
+                console.log('开始导出修复版本...');
+                
+                // 克隆卡片
+                const clonedCard = card.cloneNode(true);
+                clonedCard.style.position = 'absolute';
+                clonedCard.style.left = '0';
+                clonedCard.style.top = '0';
+                clonedCard.style.width = '350px';
+                clonedCard.style.height = '500px';
+                clonedCard.style.transform = 'none';
+                clonedCard.style.zoom = '1';
+                clonedCard.style.scale = 'none';
+                clonedCard.style.minWidth = '350px';
+                clonedCard.style.maxWidth = '350px';
+                clonedCard.style.minHeight = '500px';
+                clonedCard.style.maxHeight = '500px';
+                clonedCard.style.backgroundSize = 'cover';
+                clonedCard.style.backgroundPosition = 'center';
+                clonedCard.style.backgroundRepeat = 'no-repeat';
+                clonedCard.style.position = 'relative';
+                clonedCard.style.display = 'block';
+                clonedCard.style.boxSizing = 'border-box';
+                clonedCard.style.backgroundColor = '#ffffff';
+                clonedCard.style.visibility = 'visible';
+                clonedCard.style.opacity = '1';
+                clonedCard.style.overflow = 'hidden';
+                clonedCard.style.borderRadius = '16px';
+                
+                // 确保所有图片都有正确的object-fit
+                const images = clonedCard.querySelectorAll('img');
+                images.forEach(img => {
+                    img.style.objectFit = 'cover';
+                    img.style.objectPosition = 'center';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.maxWidth = '100%';
+                    img.style.maxHeight = '100%';
+                    img.style.minWidth = '100%';
+                    img.style.minHeight = '100%';
+                    img.style.transform = 'none !important';
+                    img.style.zoom = '1 !important';
+                    img.style.scale = 'none !important';
+                });
+                
+                document.body.appendChild(clonedCard);
+                
+                // 等待渲染
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 使用修复后的html2canvas配置
+                const canvas = await html2canvas(clonedCard, {
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 1, // 使用1倍缩放避免变形
+                    width: 350,
+                    height: 500,
+                    logging: true,
+                    foreignObjectRendering: false,
+                    removeContainer: false,
+                    imageTimeout: 30000,
+                    onclone: (clonedDoc) => {
+                        console.log('onclone 回调执行');
+                        const clonedCardInDoc = clonedDoc.querySelector('#testCard');
+                        if (clonedCardInDoc) {
+                            // 重置所有可能影响变形的样式
+                            clonedCardInDoc.style.transform = 'none !important';
+                            clonedCardInDoc.style.zoom = '1 !important';
+                            clonedCardInDoc.style.scale = 'none !important';
+                            clonedCardInDoc.style.width = '350px';
+                            clonedCardInDoc.style.height = '500px';
+                            clonedCardInDoc.style.minWidth = '350px';
+                            clonedCardInDoc.style.maxWidth = '350px';
+                            clonedCardInDoc.style.minHeight = '500px';
+                            clonedCardInDoc.style.maxHeight = '500px';
+                            clonedCardInDoc.style.backgroundSize = 'cover';
+                            clonedCardInDoc.style.backgroundPosition = 'center';
+                            clonedCardInDoc.style.backgroundRepeat = 'no-repeat';
+                            clonedCardInDoc.style.position = 'relative';
+                            clonedCardInDoc.style.display = 'block';
+                            clonedCardInDoc.style.boxSizing = 'border-box';
+                            clonedCardInDoc.style.backgroundColor = '#ffffff';
+                            clonedCardInDoc.style.visibility = 'visible';
+                            clonedCardInDoc.style.opacity = '1';
+                            clonedCardInDoc.style.overflow = 'hidden';
+                            clonedCardInDoc.style.borderRadius = '16px';
+                            
+                            // 为所有图片元素应用object-fit防止变形
+                            const allImages = clonedCardInDoc.querySelectorAll('img');
+                            allImages.forEach((img) => {
+                                img.style.objectFit = 'cover';
+                                img.style.objectPosition = 'center';
+                                img.style.width = '100%';
+                                img.style.height = '100%';
+                                img.style.maxWidth = '100%';
+                                img.style.maxHeight = '100%';
+                                img.style.minWidth = '100%';
+                                img.style.minHeight = '100%';
+                                img.style.transform = 'none !important';
+                                img.style.zoom = '1 !important';
+                                img.style.scale = 'none !important';
+                                console.log('✅ 已为图片应用object-fit: cover');
+                            });
+                        }
+                    }
+                });
+                
+                // 清理DOM
+                document.body.removeChild(clonedCard);
+                
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'deformation-fix-test.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                console.log('✅ 修复版本导出成功');
+                
+            } catch (error) {
+                console.error('❌ 修复版本导出失败:', error);
+                alert(`导出失败: ${error.message}`);
+            }
+        }
+        
+        async function exportWithoutFix() {
+            const card = document.getElementById('testCard');
+            if (!card) {
+                console.error('Card not found');
+                return;
+            }
+            
+            try {
+                console.log('开始导出原始版本...');
+                
+                // 使用原始配置（可能导致变形）
+                const canvas = await html2canvas(card, {
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 2, // 使用2倍缩放可能导致变形
+                    width: 350,
+                    height: 500,
+                    logging: true,
+                    foreignObjectRendering: true,
+                    removeContainer: true,
+                    imageTimeout: 15000,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+                
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'deformation-original-test.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                console.log('✅ 原始版本导出成功');
+                
+            } catch (error) {
+                console.error('❌ 原始版本导出失败:', error);
+                alert(`导出失败: ${error.message}`);
+            }
+        }
+        
+        async function exportComparison() {
+            await exportWithoutFix();
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await exportWithFix();
+            
+            // 显示对比提示
+            document.getElementById('comparison').style.display = 'flex';
+            alert('已导出两个版本，请对比查看修复效果！');
+        }
+    </script>
+</body>
+</html>
+
+
+

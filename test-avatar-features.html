@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>头像大小调整和拖动功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .success-section {
+            border-left: 4px solid #28a745;
+        }
+        
+        .success-section h2 {
+            color: #28a745;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .demo-section {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .demo-section h3 {
+            color: #2e7d32;
+            margin-top: 0;
+        }
+        
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .size-control label {
+            font-weight: bold;
+            color: #333;
+            min-width: 80px;
+        }
+        
+        .size-control input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .size-control input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4caf50;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .size-display {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #333;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .coordinate-display {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .coordinate-display h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .coordinate-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+        
+        .coordinate-item {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        
+        .coordinate-item h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+            font-size: 14px;
+        }
+        
+        .coordinate-value {
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .test-scenarios {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .test-scenarios h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .scenario {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #ffc107;
+        }
+        
+        .scenario-title {
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .scenario-result {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .avatar-preview {
+            width: 350px;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .avatar-demo {
+            position: absolute;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .coordinate-label {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            font-size: 10px;
+            color: #666;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 2px 4px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ 头像大小调整和拖动功能</h1>
+        
+        <div class="section success-section">
+            <h2>🎯 新增功能</h2>
+            <p>已成功添加头像相关的高级功能：</p>
+            <ul class="feature-list">
+                <li><strong>头像大小调整</strong> - 60px到150px范围内自由调整</li>
+                <li><strong>头像拖动功能</strong> - 可在名片范围内自由拖动</li>
+                <li><strong>坐标显示</strong> - 实时显示头像位置坐标</li>
+                <li><strong>状态管理</strong> - 头像配置持久化保存</li>
+                <li><strong>智能约束</strong> - 自动限制在名片边界内</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 头像大小调整</h2>
+            <p>用户可以通过滑块调整头像在名片中的显示大小：</p>
+            
+            <div class="demo-section">
+                <h3>大小调整控件</h3>
+                <div class="size-control">
+                    <label>头像大小:</label>
+                    <input type="range" min="60" max="150" value="96" id="sizeSlider">
+                    <div class="size-display" id="sizeDisplay">96px</div>
+                </div>
+                <p>调整范围：60px - 150px</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>📍 坐标显示功能</h2>
+            <p>当启用"显示坐标"功能时，头像会显示其当前位置坐标：</p>
+            
+            <div class="coordinate-display">
+                <h3>坐标信息</h3>
+                <div class="coordinate-info">
+                    <div class="coordinate-item">
+                        <h4>X坐标</h4>
+                        <div class="coordinate-value" id="xCoord">127</div>
+                    </div>
+                    <div class="coordinate-item">
+                        <h4>Y坐标</h4>
+                        <div class="coordinate-value" id="yCoord">64</div>
+                    </div>
+                </div>
+                <p>坐标格式：(x, y) - 以像素为单位，相对于名片左上角</p>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 头像预览演示</h2>
+            <p>以下是头像在名片中的预览效果：</p>
+            
+            <div class="avatar-preview" id="avatarPreview">
+                <div class="avatar-demo" id="avatarDemo" style="width: 96px; height: 96px; left: 127px; top: 64px;">
+                    👤
+                    <div class="coordinate-label" id="coordLabel">(127, 64)</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 技术实现</h2>
+            <p>主要的技术实现细节：</p>
+            
+            <h3>1. 状态管理</h3>
+            <div class="code-block">
+// 在 src/store/card.ts 中添加头像配置
+interface CardState {
+  avatarConfig: {
+    size: number
+    position: { x: number; y: number }
+  }
+  // ... 其他状态
+}
+
+// 初始配置
+const initialAvatarConfig = {
+  size: 96, // 默认96px
+  position: { x: 127, y: 64 } // 默认位置：名片顶部居中
+}
+            </div>
+            
+            <h3>2. 头像大小调整</h3>
+            <div class="code-block">
+// 在头像上传组件中添加大小调整控件
+&lt;input
+  type="range"
+  min="60"
+  max="150"
+  value={avatarConfig.size}
+  onChange={(e) => updateAvatarConfig({ size: Number(e.target.value) })}
+  className="flex-1"
+/&gt;
+            </div>
+            
+            <h3>3. 头像拖动处理</h3>
+            <div class="code-block">
+// 头像拖拽开始
+const handleAvatarMouseDown = (e: React.MouseEvent) => {
+  setDraggedElement('avatar')
+  const rect = e.currentTarget.getBoundingClientRect()
+  setDragOffset({
+    x: e.clientX - rect.left,
+    y: e.clientY - rect.top
+  })
+}
+
+// 拖拽移动处理
+if (draggedElement === 'avatar') {
+  const constrainedX = Math.max(0, Math.min(newX, 350 - avatarConfig.size))
+  const constrainedY = Math.max(0, Math.min(newY, 500 - avatarConfig.size))
+  
+  if (onAvatarPositionChange) {
+    onAvatarPositionChange(constrainedX, constrainedY)
+  }
+}
+            </div>
+            
+            <h3>4. 坐标显示</h3>
+            <div class="code-block">
+// 头像坐标显示
+{showCoordinates && (
+  &lt;div
+    style={{
+      position: 'absolute',
+      top: '100%',
+      left: '0',
+      fontSize: '10px',
+      color: '#666',
+      background: 'rgba(255, 255, 255, 0.8)',
+      padding: '2px 4px',
+      borderRadius: '3px',
+      whiteSpace: 'nowrap',
+      zIndex: 1000,
+      pointerEvents: 'none'
+    }}
+  &gt;
+    ({Math.round(avatarConfig.position.x)}, {Math.round(avatarConfig.position.y)})
+  &lt;/div&gt;
+)}
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 测试场景</h2>
+            <p>请按以下场景测试头像功能：</p>
+            
+            <div class="test-scenarios">
+                <h3>大小调整测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试1：调整头像大小</div>
+                    <div class="scenario-result">✅ 拖动滑块，头像应该实时改变大小（60px-150px）</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试2：大小限制</div>
+                    <div class="scenario-result">✅ 滑块应该限制在60-150px范围内</div>
+                </div>
+                
+                <h3>拖动功能测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试3：头像拖动</div>
+                    <div class="scenario-result">✅ 点击并拖动头像，应该能自由移动</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试4：边界约束</div>
+                    <div class="scenario-result">✅ 头像应该被限制在名片边界内</div>
+                </div>
+                
+                <h3>坐标显示测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试5：坐标显示</div>
+                    <div class="scenario-result">✅ 启用"显示坐标"后，头像应显示位置坐标</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试6：坐标更新</div>
+                    <div class="scenario-result">✅ 拖动头像时，坐标应该实时更新</div>
+                </div>
+                
+                <h3>状态持久化测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试7：配置保存</div>
+                    <div class="scenario-result">✅ 刷新页面后，头像大小和位置应该保持</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试8：重置功能</div>
+                    <div class="scenario-result">✅ 重置位置功能应该恢复头像到初始位置</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 功能完成</h2>
+            <p>头像大小调整和拖动功能已成功实现：</p>
+            <ul class="feature-list">
+                <li><strong>大小调整</strong> - 60-150px范围内自由调整</li>
+                <li><strong>拖动功能</strong> - 可在名片范围内自由拖动</li>
+                <li><strong>坐标显示</strong> - 实时显示位置坐标</li>
+                <li><strong>状态管理</strong> - 配置持久化保存</li>
+                <li><strong>智能约束</strong> - 自动边界限制</li>
+                <li><strong>用户友好</strong> - 直观的控件和反馈</li>
+            </ul>
+            
+            <p><strong>使用方法：</strong></p>
+            <ol>
+                <li>上传头像后，在头像上传区域调整大小</li>
+                <li>在名片预览中直接拖动头像调整位置</li>
+                <li>启用"显示坐标"查看精确位置</li>
+                <li>所有设置会自动保存</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // 演示脚本
+        const sizeSlider = document.getElementById('sizeSlider');
+        const sizeDisplay = document.getElementById('sizeDisplay');
+        const avatarDemo = document.getElementById('avatarDemo');
+        const coordLabel = document.getElementById('coordLabel');
+        const xCoord = document.getElementById('xCoord');
+        const yCoord = document.getElementById('yCoord');
+
+        // 大小调整演示
+        sizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            sizeDisplay.textContent = size + 'px';
+            avatarDemo.style.width = size + 'px';
+            avatarDemo.style.height = size + 'px';
+        });
+
+        // 拖动演示
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        avatarDemo.addEventListener('mousedown', function(e) {
+            isDragging = true;
+            const rect = this.getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+            this.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isDragging) return;
+            
+            const preview = document.getElementById('avatarPreview');
+            const rect = preview.getBoundingClientRect();
+            const newX = e.clientX - rect.left - dragOffset.x;
+            const newY = e.clientY - rect.top - dragOffset.y;
+            
+            const size = parseInt(avatarDemo.style.width);
+            const constrainedX = Math.max(0, Math.min(newX, 350 - size));
+            const constrainedY = Math.max(0, Math.min(newY, 500 - size));
+            
+            avatarDemo.style.left = constrainedX + 'px';
+            avatarDemo.style.top = constrainedY + 'px';
+            
+            // 更新坐标显示
+            xCoord.textContent = Math.round(constrainedX);
+            yCoord.textContent = Math.round(constrainedY);
+            coordLabel.textContent = `(${Math.round(constrainedX)}, ${Math.round(constrainedY)})`;
+        });
+
+        document.addEventListener('mouseup', function() {
+            isDragging = false;
+            avatarDemo.style.cursor = 'grab';
+        });
+    </script>
+</body>
+</html>

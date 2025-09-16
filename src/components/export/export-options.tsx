@@ -19,6 +19,7 @@ export default function ExportOptions({ settings, onSettingsChange }: ExportOpti
   const formatOptions = [
     { value: 'png', label: 'PNG', description: '支持透明背景，质量最佳' },
     { value: 'jpg', label: 'JPG', description: '文件较小，适合分享' },
+    { value: 'svg', label: 'SVG', description: '矢量图，可无损缩放' },
   ]
 
   const presetSizes = [

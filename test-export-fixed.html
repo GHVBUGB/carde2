@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>修复后的导出功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-card {
+            width: 350px;
+            height: 500px;
+            margin: 20px auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            position: relative;
+            color: white;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: white;
+            margin: 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #333;
+            position: absolute;
+            top: 50px;
+            left: 135px;
+        }
+        .name {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 140px 0 10px 0;
+        }
+        .title {
+            font-size: 16px;
+            text-align: center;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        .info {
+            font-size: 14px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .badges {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .badge {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 80px;
+        }
+        .badge-number {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .badge-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .icons {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        .icon {
+            text-align: center;
+            font-size: 12px;
+        }
+        .phone {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .export-buttons {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn.jpg {
+            background: #2196F3;
+        }
+        .btn.jpg:hover {
+            background: #1976D2;
+        }
+        .status {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>修复后的导出功能测试</h1>
+        <p>这个页面用于测试修复后的导出功能，确保样式和位置正确。</p>
+        
+        <div class="export-buttons">
+            <button class="btn" onclick="exportPNG()" id="exportBtn">导出 PNG</button>
+            <button class="btn jpg" onclick="exportJPG()">导出 JPG</button>
+        </div>
+        
+        <div id="testCard" class="test-card">
+            <div class="avatar">👤</div>
+            <div class="name">测试用户</div>
+            <div class="title">SENIOR LANGUAGE COACH</div>
+            <div class="info">📧 test@51talk.com</div>
+            
+            <div class="badges">
+                <div class="badge">
+                    <div class="badge-number">0</div>
+                    <div class="badge-label">STUDENTS SERVED</div>
+                </div>
+                <div class="badge">
+                    <div class="badge-number">0%</div>
+                    <div class="badge-label">POSITIVE RATING</div>
+                </div>
+            </div>
+            
+            <div class="icons">
+                <div class="icon">🔍<br>Teacher Selection</div>
+                <div class="icon">✅<br>Progress Feedback</div>
+                <div class="icon">📅<br>Study Plan</div>
+                <div class="icon">💡<br>Learning Resources</div>
+            </div>
+            
+            <div class="phone">电话: 050-XXXX-XXAB</div>
+        </div>
+        
+        <div id="status" class="status">准备就绪</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <script>
+        function updateStatus(message) {
+            document.getElementById('status').textContent = message;
+            console.log('状态更新:', message);
+        }
+        
+        async function exportPNG() {
+            updateStatus('正在导出 PNG...');
+            const btn = document.getElementById('exportBtn');
+            btn.disabled = true;
+            btn.textContent = '导出中...';
+            
+            try {
+                console.log('开始导出 PNG');
+                const canvas = await html2canvas(document.getElementById('testCard'), {
+                    width: 350,
+                    height: 500,
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    removeContainer: false,
+                    foreignObjectRendering: false,
+                    onclone: (clonedDoc, element) => {
+                        // 确保克隆的元素保持正确的样式
+                        const clonedCard = element;
+                        if (clonedCard) {
+                            clonedCard.style.width = '350px';
+                            clonedCard.style.height = '500px';
+                            clonedCard.style.position = 'relative';
+                            clonedCard.style.overflow = 'hidden';
+                            clonedCard.style.borderRadius = '16px';
+                            clonedCard.style.transform = 'none';
+                            clonedCard.style.margin = '0';
+                            clonedCard.style.padding = '20px';
+                        }
+                    }
+                });
+                
+                console.log('Canvas 创建完成:', canvas);
+                console.log('Canvas 尺寸:', canvas.width, 'x', canvas.height);
+                
+                canvas.toBlob(function(blob) {
+                    console.log('Blob 创建完成:', blob);
+                    if (blob) {
+                        console.log('Blob 大小:', blob.size, 'bytes');
+                        saveAs(blob, 'test-card-fixed.png');
+                        updateStatus('PNG 导出成功！');
+                    } else {
+                        updateStatus('PNG 导出失败：无法生成文件');
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('导出失败:', error);
+                updateStatus('PNG 导出失败: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '导出 PNG';
+            }
+        }
+        
+        async function exportJPG() {
+            updateStatus('正在导出 JPG...');
+            
+            try {
+                console.log('开始导出 JPG');
+                const canvas = await html2canvas(document.getElementById('testCard'), {
+                    width: 350,
+                    height: 500,
+                    scale: 1.5,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    removeContainer: false,
+                    foreignObjectRendering: false,
+                    onclone: (clonedDoc, element) => {
+                        const clonedCard = element;
+                        if (clonedCard) {
+                            clonedCard.style.width = '350px';
+                            clonedCard.style.height = '500px';
+                            clonedCard.style.position = 'relative';
+                            clonedCard.style.overflow = 'hidden';
+                            clonedCard.style.borderRadius = '16px';
+                            clonedCard.style.transform = 'none';
+                            clonedCard.style.margin = '0';
+                            clonedCard.style.padding = '20px';
+                        }
+                    }
+                });
+                
+                console.log('Canvas 创建完成:', canvas);
+                console.log('Canvas 尺寸:', canvas.width, 'x', canvas.height);
+                
+                canvas.toBlob(function(blob) {
+                    console.log('Blob 创建完成:', blob);
+                    if (blob) {
+                        console.log('Blob 大小:', blob.size, 'bytes');
+                        saveAs(blob, 'test-card-fixed.jpg');
+                        updateStatus('JPG 导出成功！');
+                    } else {
+                        updateStatus('JPG 导出失败：无法生成文件');
+                    }
+                }, 'image/jpeg', 0.9);
+                
+            } catch (error) {
+                console.error('导出失败:', error);
+                updateStatus('JPG 导出失败: ' + error.message);
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        window.addEventListener('load', function() {
+            console.log('页面加载完成');
+            updateStatus('页面加载完成，可以开始测试');
+        });
+    </script>
+</body>
+</html>
+
+

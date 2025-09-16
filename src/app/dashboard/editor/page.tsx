@@ -14,7 +14,7 @@ import TextModulesEditor from '@/components/editor/text-modules-editor'
 
 export default function EditorPage() {
   const { user, updateUser } = useAuthStore()
-  const { cardData, updateCardData, textModules, updateTextModules, textStyles, updateTextStyles, textPositions, updateTextPositions, setTextPositions, markAsSaved, hasUnsavedChanges } = useCardStore()
+  const { cardData, avatarConfig, updateCardData, updateAvatarConfig, textModules, updateTextModules, textStyles, updateTextStyles, textPositions, updateTextPositions, setTextPositions, markAsSaved, hasUnsavedChanges } = useCardStore()
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [backgroundImage, setBackgroundImage] = useState('/ditu.png')
@@ -213,6 +213,7 @@ export default function EditorPage() {
                   planning_ability: cardData.planningAbility,
                   resource_sharing: cardData.resourceSharing,
                 }}
+                avatarConfig={avatarConfig}
                 textModules={textModules}
                 textStyles={textStyles}
                 textPositions={textPositions}
@@ -227,6 +228,11 @@ export default function EditorPage() {
                 onPositionChange={(moduleId, x, y) => {
                   updateTextPositions({
                     [moduleId]: { x, y }
+                  })
+                }}
+                onAvatarPositionChange={(x, y) => {
+                  updateAvatarConfig({
+                    position: { x, y }
                   })
                 }}
               />

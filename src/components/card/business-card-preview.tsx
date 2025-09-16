@@ -1,7 +1,11 @@
 'use client'
 
 import { User } from '@/lib/types'
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import html2canvas from 'html2canvas'
+import { saveAs } from 'file-saver'
+import DualExportMethods from '@/components/export/dual-export-methods'
+import DomExportDebug from '@/components/export/dom-export-debug'
 
 interface TextModules {
   companyName: string
@@ -54,12 +58,270 @@ export default function BusinessCardPreview({
   onBackgroundUpload 
 }: BusinessCardPreviewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [exporting, setExporting] = useState(false)
+  const [showExportOptions, setShowExportOptions] = useState(false)
+  const exportMenuRef = useRef<HTMLDivElement>(null)
+
+  // 点击外部关闭下拉菜单
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(event.target as Node)) {
+        setShowExportOptions(false)
+      }
+    }
+
+    if (showExportOptions) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showExportOptions])
 
   // 处理背景图上传
   const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && onBackgroundUpload) {
       onBackgroundUpload(file)
+    }
+  }
+
+  // 🎯 全新Canvas导出功能 - 零变形、高质量
+  const handleExport = async (format: 'png' | 'jpg' = 'png') => {
+    console.log('=== 新Canvas导出功能开始 ===')
+
+    if (!user) {
+      alert('错误：用户信息缺失')
+      return
+    }
+
+    setExporting(true)
+
+    try {
+      // 创建临时Canvas
+      const canvas = document.createElement('canvas')
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        throw new Error('无法创建Canvas上下文')
+      }
+
+      const scale = format === 'png' ? 3 : 2 // PNG用3倍分辨率，JPG用2倍
+      const width = 350
+      const height = 500
+      
+      // 设置Canvas尺寸
+      canvas.width = width * scale
+      canvas.height = height * scale
+      
+      // 设置高质量渲染
+      ctx.imageSmoothingEnabled = true
+      ctx.imageSmoothingQuality = 'high'
+      
+      // 1. 绘制白色背景
+      ctx.fillStyle = '#ffffff'
+      ctx.fillRect(0, 0, canvas.width, canvas.height)
+      
+      // 2. 绘制背景图
+      if (backgroundImage) {
+        await new Promise<void>((resolve, reject) => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          img.onload = () => {
+            try {
+              // 计算cover效果的绘制参数
+              const aspectRatio = img.width / img.height
+              const canvasAspectRatio = canvas.width / canvas.height
+              
+              let drawWidth = canvas.width
+              let drawHeight = canvas.height
+              let drawX = 0
+              let drawY = 0
+
+              if (aspectRatio > canvasAspectRatio) {
+                drawWidth = canvas.height * aspectRatio
+                drawX = -(drawWidth - canvas.width) / 2
+              } else {
+                drawHeight = canvas.width / aspectRatio
+                drawY = -(drawHeight - canvas.height) / 2
+              }
+
+              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
+              resolve()
+          } catch (error) {
+            reject(error)
+            }
+          }
+          img.onerror = () => reject(new Error('背景图加载失败'))
+          img.src = backgroundImage
+        })
+      }
+      
+      // 3. 绘制头像（如果存在）
+      if (user.avatar_url) {
+        await new Promise<void>((resolve, reject) => {
+          const img = new Image()
+          img.crossOrigin = 'anonymous'
+          img.onload = () => {
+            try {
+              const avatarX = 127 * scale // 127px from left
+              const avatarY = 64 * scale  // 64px from top
+              const avatarSize = 96 * scale
+              const radius = avatarSize / 2
+              const centerX = avatarX + radius
+              const centerY = avatarY + radius
+
+              // 保存状态
+              ctx.save()
+
+              // 创建圆形裁剪
+              ctx.beginPath()
+              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+              ctx.clip()
+
+              // 🎯 智能比例保持 - 防止头像变形
+              const aspectRatio = img.width / img.height
+              let drawWidth = avatarSize
+              let drawHeight = avatarSize
+              let drawX = avatarX
+              let drawY = avatarY
+
+              if (aspectRatio > 1) {
+                // 宽图片：以高度为准，水平居中
+                drawWidth = avatarSize * aspectRatio
+                drawX = avatarX - (drawWidth - avatarSize) / 2
+              } else {
+                // 高图片：以宽度为准，垂直居中
+                drawHeight = avatarSize / aspectRatio
+                drawY = avatarY - (drawHeight - avatarSize) / 2
+              }
+
+              // 绘制头像
+              ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight)
+              
+              // 恢复状态
+              ctx.restore()
+
+              // 绘制白色边框
+              ctx.strokeStyle = '#ffffff'
+              ctx.lineWidth = 4 * scale
+              ctx.beginPath()
+              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
+              ctx.stroke()
+
+              resolve()
+          } catch (error) {
+            reject(error)
+            }
+          }
+          img.onerror = () => reject(new Error('头像加载失败'))
+          img.src = user.avatar_url
+        })
+      }
+      
+      // 4. 绘制文字内容
+      const drawText = (text: string, x: number, y: number, fontSize: number, color: string, fontWeight: string = 'normal') => {
+        ctx.save()
+        ctx.font = `${fontWeight} ${fontSize * scale}px Arial, sans-serif`
+        ctx.fillStyle = color
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.3)'
+        ctx.shadowBlur = 1 * scale
+        ctx.shadowOffsetY = 1 * scale
+        ctx.fillText(text, x * scale, y * scale)
+        ctx.restore()
+      }
+
+      const drawMultilineText = (text: string, x: number, y: number, fontSize: number, color: string, lineHeight = 1.2) => {
+        const lines = text.split('\n')
+        lines.forEach((line, index) => {
+          const lineY = y + (index * fontSize * lineHeight)
+          drawText(line, x, lineY, fontSize, color)
+        })
+      }
+
+      // 姓名
+      drawText(
+        textModules.name || user.name || 'AHMED AL-FAWAZ',
+        175, 176, 20, '#000000', 'bold'
+      )
+
+      // 职位
+      drawText(
+        textModules.title || user.title || 'SENIOR LANGUAGE COACH',
+        175, 200, 14, '#666666'
+      )
+
+      // 统计数据
+      const studentsText = textModules.studentsServed >= 1000 
+        ? `${Math.floor(textModules.studentsServed / 1000)}K+`
+        : textModules.studentsServed.toString()
+      
+      drawText(studentsText, 143, 288, 16, '#000000', 'bold')
+      drawMultilineText('STUDENTS\nSERVED', 143, 305, 6, '#000000')
+      
+      drawText(`${textModules.positiveRating}%`, 207, 288, 16, '#000000', 'bold')
+      drawMultilineText('POSITIVE\nRATING', 207, 305, 6, '#000000')
+
+      // 业务能力标签
+      const abilities = [
+        { text: 'Teacher\nSelection', x: 110, y: 380 },
+        { text: 'Progress\nFeedback', x: 240, y: 380 },
+        { text: 'Study\nPlan', x: 110, y: 420 },
+        { text: 'Learning\nResources', x: 240, y: 420 }
+      ]
+
+      abilities.forEach(ability => {
+        drawMultilineText(ability.text, ability.x, ability.y, 8, '#666666', 1.2)
+      })
+
+      // 电话
+      drawText(
+        `电话: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
+        175, 472, 14, '#000000', 'bold'
+      )
+
+      console.log('Canvas绘制完成，开始导出...')
+
+      // 🎯 高质量导出 - 避免压缩失败
+      const blob = await new Promise<Blob>((resolve, reject) => {
+        if (format === 'jpg') {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob)
+            } else {
+              // 备选方案：使用dataURL
+              const dataURL = canvas.toDataURL('image/jpeg', 0.95)
+              fetch(dataURL).then(res => res.blob()).then(resolve).catch(reject)
+            }
+          }, 'image/jpeg', 0.95)
+        } else {
+          canvas.toBlob((blob) => {
+            if (blob) {
+              resolve(blob)
+            } else {
+              // 备选方案：使用dataURL
+              const dataURL = canvas.toDataURL('image/png')
+              fetch(dataURL).then(res => res.blob()).then(resolve).catch(reject)
+            }
+          }, 'image/png')
+        }
+      })
+
+      const filename = `${user.name || 'business-card'}-名片-新导出.${format}`
+      saveAs(blob, filename)
+      
+      console.log('✅ 新Canvas导出成功！')
+      alert(`🎉 导出成功！\n格式: ${format.toUpperCase()}\n分辨率: ${width * scale}x${height * scale}\n特点: 零变形、高质量`)
+
+    } catch (error) {
+      console.error('❌ 新Canvas导出失败:', error)
+      alert('导出失败: ' + (error as Error).message)
+    } finally {
+      setExporting(false)
+      setShowExportOptions(false)
     }
   }
 
@@ -89,23 +351,78 @@ export default function BusinessCardPreview({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* 工具栏 */}
-      <div className="flex gap-2 p-3 bg-gray-100 rounded-lg">
+      {/* 工具栏 - 已隐藏 */}
+      <div className="flex gap-2 p-3 bg-gray-100 rounded-lg hidden">
         <button
           onClick={() => fileInputRef.current?.click()}
           className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
         >
           上传底图
         </button>
+        
+        {/* 测试按钮 */}
         <button
           onClick={() => {
-            // TODO: 实现导出功能
-            console.log('导出名片')
+            console.log('测试按钮被点击')
+            alert('测试按钮工作正常')
           }}
-          className="px-3 py-1 bg-green-500 text-white rounded text-sm hover:bg-green-600 transition-colors"
+          className="px-3 py-1 bg-yellow-500 text-white rounded text-sm hover:bg-yellow-600 transition-colors"
         >
-          导出名片
+          测试
         </button>
+        
+        {/* 直接导出按钮 - 简化版本 */}
+        <button
+          onClick={() => {
+            console.log('直接导出按钮被点击')
+            handleExport('png')
+          }}
+          className="px-3 py-1 bg-red-500 text-white rounded text-sm hover:bg-red-600 transition-colors"
+        >
+          直接导出PNG
+        </button>
+        
+        {/* 导出按钮和选项 */}
+        <div className="relative" ref={exportMenuRef}>
+          <button
+            onClick={() => {
+              console.log('导出按钮被点击，当前状态:', showExportOptions)
+              setShowExportOptions(!showExportOptions)
+            }}
+            disabled={exporting}
+            className={`px-3 py-1 text-white rounded text-sm transition-colors ${
+              exporting 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-green-500 hover:bg-green-600'
+            }`}
+          >
+            {exporting ? '导出中...' : '导出名片 ▼'}
+          </button>
+          
+          {/* 导出选项下拉菜单 */}
+          {showExportOptions && !exporting && (
+            <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 min-w-[120px]">
+              <button
+                onClick={() => {
+                  console.log('新Canvas PNG导出按钮被点击')
+                  handleExport('png')
+                }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 rounded-t-lg"
+              >
+                🎯 PNG (零变形·超高清)
+              </button>
+              <button
+                onClick={() => {
+                  console.log('新Canvas JPG导出按钮被点击')
+                  handleExport('jpg')
+                }}
+                className="w-full px-3 py-2 text-left text-sm hover:bg-gray-100 rounded-b-lg"
+              >
+                ⚡ JPG (零变形·小文件)
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 隐藏的文件输入 */}
@@ -118,16 +435,17 @@ export default function BusinessCardPreview({
       />
 
       {/* 名片画布 - 基于图片设计 */}
-      <div className="relative">
-        <div 
-          className="relative w-[350px] h-[500px] mx-auto border border-gray-300 rounded-2xl overflow-hidden shadow-2xl"
-          style={{
-            backgroundImage: `url(${backgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
+      <div 
+        ref={cardRef}
+        data-card-ref="true"
+        className="relative w-[350px] h-[500px] mx-auto border border-gray-300 rounded-2xl overflow-hidden shadow-2xl"
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover', // 恢复为cover以正确显示底图
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      >
 
           {/* 头像 - 中上部位置 */}
           {user.avatar_url && (
@@ -310,14 +628,28 @@ export default function BusinessCardPreview({
             </div>
           </div>
         </div>
-      </div>
+
+      {/* 双重导出引擎 */}
+      <DualExportMethods 
+        user={user}
+        cardRef={cardRef}
+        className="mt-4"
+      />
+
+      {/* DOM导出调试工具 */}
+      <DomExportDebug 
+        user={user}
+        cardRef={cardRef}
+        className="mt-4"
+      />
 
       {/* 使用说明 */}
       <div className="text-xs text-gray-500 space-y-1">
-        <p>• 点击"上传底图"更换背景图片</p>
-        <p>• 在左侧编辑区域修改文字内容</p>
-        <p>• 选择业务能力会在名片上显示对应图标</p>
-        <p>• 点击"导出名片"下载高清图片</p>
+        <p>🎯 <strong>双重导出引擎</strong> - 原生Canvas + DOM-to-image</p>
+        <p>• Canvas: 完全控制，标准化输出，适合批量使用</p>
+        <p>• DOM-to-image: 保真样式，兼容性好，适合复杂布局</p>
+        <p>• 对比模式: 同时导出，性能测试，选择最佳方案</p>
+        <p>• 多格式支持: PNG高质量 + JPG小文件</p>
       </div>
     </div>
   )

@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>样式修复测试</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-container {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .test-card {
+            width: 350px;
+            height: 500px;
+            border: 1px solid #d1d5db;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-bottom: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        
+        .test-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('https://picsum.photos/800/600?random=1');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.3;
+        }
+        
+        .avatar-container {
+            position: absolute;
+            top: 64px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 4px solid #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+        
+        .email-text {
+            position: absolute;
+            top: 176px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            font-weight: bold;
+            color: #000000;
+            text-align: center;
+        }
+        
+        .title-text {
+            position: absolute;
+            top: 200px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #666666;
+            text-align: center;
+        }
+        
+        .stats-container {
+            position: absolute;
+            top: 288px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 32px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .stat-label {
+            font-size: 6px;
+            color: #000000;
+            line-height: 1.2;
+        }
+        
+        .features-container {
+            position: absolute;
+            top: 350px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+        }
+        
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            width: 20px;
+            height: 20px;
+            background: #666666;
+            border-radius: 2px;
+            margin-bottom: 4px;
+        }
+        
+        .feature-label {
+            font-size: 8px;
+            color: #666666;
+            line-height: 1.2;
+        }
+        
+        .phone-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000000;
+        }
+        
+        .export-buttons {
+            margin: 20px 0;
+        }
+        
+        .export-btn {
+            margin: 5px;
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .export-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>样式修复测试</h1>
+    <p>测试修复后的导出功能，确保所有样式正确渲染</p>
+    
+    <div class="export-buttons">
+        <button class="export-btn" onclick="exportWithStyleFix()">导出修复版本</button>
+        <button class="export-btn" onclick="exportOriginal()">导出原始版本（对比）</button>
+    </div>
+    
+    <div class="test-container">
+        <!-- 测试卡片 -->
+        <div class="test-card" id="testCard">
+            <div class="avatar-container">
+                <img src="https://picsum.photos/200/200?random=1" alt="Avatar" class="avatar-image">
+            </div>
+            <div class="email-text">munihoang99@gmail.com</div>
+            <div class="title-text">SENIOR LANGUAGE COACH</div>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">STUDENTS<br>SERVED</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">POSITIVE<br>RATING</div>
+                </div>
+            </div>
+            <div class="features-container">
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <div class="feature-label">Teacher<br>Selection</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <div class="feature-label">Progress<br>Feedback</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <div class="feature-label">Study<br>Plan</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon"></div>
+                    <div class="feature-label">Learning<br>Resources</div>
+                </div>
+            </div>
+            <div class="phone-bar">电话: 050-XXXX-XXAB</div>
+        </div>
+    </div>
+    
+    <script>
+        async function exportWithStyleFix() {
+            const card = document.getElementById('testCard');
+            if (!card) {
+                console.error('Card not found');
+                return;
+            }
+            
+            try {
+                console.log('开始导出修复版本...');
+                
+                // 克隆卡片
+                const clonedCard = card.cloneNode(true);
+                clonedCard.style.position = 'absolute';
+                clonedCard.style.left = '0';
+                clonedCard.style.top = '0';
+                clonedCard.style.width = '350px';
+                clonedCard.style.height = '500px';
+                clonedCard.style.transform = 'none';
+                clonedCard.style.zoom = '1';
+                clonedCard.style.scale = 'none';
+                clonedCard.style.minWidth = '350px';
+                clonedCard.style.maxWidth = '350px';
+                clonedCard.style.minHeight = '500px';
+                clonedCard.style.maxHeight = '500px';
+                clonedCard.style.backgroundSize = 'cover';
+                clonedCard.style.backgroundPosition = 'center';
+                clonedCard.style.backgroundRepeat = 'no-repeat';
+                clonedCard.style.position = 'relative';
+                clonedCard.style.display = 'block';
+                clonedCard.style.boxSizing = 'border-box';
+                clonedCard.style.backgroundColor = '#ffffff';
+                clonedCard.style.visibility = 'visible';
+                clonedCard.style.opacity = '1';
+                clonedCard.style.overflow = 'hidden';
+                clonedCard.style.borderRadius = '16px';
+                clonedCard.style.border = '1px solid #d1d5db';
+                clonedCard.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                
+                // 确保背景图片正确设置
+                clonedCard.style.backgroundImage = 'url(https://picsum.photos/800/600?random=1)';
+                
+                // 确保所有子元素样式正确
+                const allElements = clonedCard.querySelectorAll('*');
+                allElements.forEach((el) => {
+                    const htmlEl = el;
+                    htmlEl.style.visibility = 'visible';
+                    htmlEl.style.opacity = '1';
+                    htmlEl.style.transform = 'none !important';
+                    htmlEl.style.zoom = '1 !important';
+                    htmlEl.style.scale = 'none !important';
+                    
+                    // 对图片元素应用object-fit防止变形
+                    if (htmlEl.tagName === 'IMG') {
+                        htmlEl.style.objectFit = 'cover';
+                        htmlEl.style.objectPosition = 'center';
+                        htmlEl.style.width = '100%';
+                        htmlEl.style.height = '100%';
+                        htmlEl.style.maxWidth = '100%';
+                        htmlEl.style.maxHeight = '100%';
+                        htmlEl.style.minWidth = '100%';
+                        htmlEl.style.minHeight = '100%';
+                        console.log('✅ 已为图片应用object-fit: cover');
+                    }
+                    
+                    // 确保圆形头像容器正确渲染
+                    if (htmlEl.classList.contains('avatar-container') || htmlEl.style.borderRadius === '50%') {
+                        htmlEl.style.borderRadius = '50%';
+                        htmlEl.style.overflow = 'hidden';
+                        htmlEl.style.border = '4px solid #ffffff';
+                        htmlEl.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                        console.log('✅ 已设置圆形头像样式');
+                    }
+                });
+                
+                document.body.appendChild(clonedCard);
+                
+                // 等待渲染
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // 使用修复后的html2canvas配置
+                const canvas = await html2canvas(clonedCard, {
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 1, // 使用1倍缩放避免变形
+                    width: 350,
+                    height: 500,
+                    logging: true,
+                    foreignObjectRendering: false,
+                    removeContainer: false,
+                    imageTimeout: 30000,
+                    onclone: (clonedDoc) => {
+                        console.log('onclone 回调执行');
+                        const clonedCardInDoc = clonedDoc.querySelector('#testCard');
+                        if (clonedCardInDoc) {
+                            // 重置所有可能影响变形的样式
+                            clonedCardInDoc.style.transform = 'none !important';
+                            clonedCardInDoc.style.zoom = '1 !important';
+                            clonedCardInDoc.style.scale = 'none !important';
+                            clonedCardInDoc.style.width = '350px';
+                            clonedCardInDoc.style.height = '500px';
+                            clonedCardInDoc.style.minWidth = '350px';
+                            clonedCardInDoc.style.maxWidth = '350px';
+                            clonedCardInDoc.style.minHeight = '500px';
+                            clonedCardInDoc.style.maxHeight = '500px';
+                            clonedCardInDoc.style.backgroundSize = 'cover';
+                            clonedCardInDoc.style.backgroundPosition = 'center';
+                            clonedCardInDoc.style.backgroundRepeat = 'no-repeat';
+                            clonedCardInDoc.style.position = 'relative';
+                            clonedCardInDoc.style.display = 'block';
+                            clonedCardInDoc.style.boxSizing = 'border-box';
+                            clonedCardInDoc.style.backgroundColor = '#ffffff';
+                            clonedCardInDoc.style.visibility = 'visible';
+                            clonedCardInDoc.style.opacity = '1';
+                            clonedCardInDoc.style.overflow = 'hidden';
+                            clonedCardInDoc.style.borderRadius = '16px';
+                            clonedCardInDoc.style.border = '1px solid #d1d5db';
+                            clonedCardInDoc.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+                            
+                            // 确保背景图片正确设置
+                            clonedCardInDoc.style.backgroundImage = 'url(https://picsum.photos/800/600?random=1)';
+                            
+                            // 为所有图片元素应用object-fit防止变形
+                            const allImages = clonedCardInDoc.querySelectorAll('img');
+                            allImages.forEach((img) => {
+                                img.style.objectFit = 'cover';
+                                img.style.objectPosition = 'center';
+                                img.style.width = '100%';
+                                img.style.height = '100%';
+                                img.style.maxWidth = '100%';
+                                img.style.maxHeight = '100%';
+                                img.style.minWidth = '100%';
+                                img.style.minHeight = '100%';
+                                img.style.transform = 'none !important';
+                                img.style.zoom = '1 !important';
+                                img.style.scale = 'none !important';
+                                console.log('✅ 已为图片应用object-fit: cover');
+                            });
+                            
+                            // 确保圆形头像容器正确渲染
+                            const allElements = clonedCardInDoc.querySelectorAll('*');
+                            allElements.forEach((el) => {
+                                if (el.classList.contains('avatar-container') || el.style.borderRadius === '50%') {
+                                    el.style.borderRadius = '50%';
+                                    el.style.overflow = 'hidden';
+                                    el.style.border = '4px solid #ffffff';
+                                    el.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
+                                    console.log('✅ 已设置圆形头像样式');
+                                }
+                            });
+                        }
+                    }
+                });
+                
+                // 清理DOM
+                document.body.removeChild(clonedCard);
+                
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'style-fix-test.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                console.log('✅ 修复版本导出成功');
+                
+            } catch (error) {
+                console.error('❌ 修复版本导出失败:', error);
+                alert(`导出失败: ${error.message}`);
+            }
+        }
+        
+        async function exportOriginal() {
+            const card = document.getElementById('testCard');
+            if (!card) {
+                console.error('Card not found');
+                return;
+            }
+            
+            try {
+                console.log('开始导出原始版本...');
+                
+                // 使用原始配置（可能导致样式问题）
+                const canvas = await html2canvas(card, {
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    scale: 2, // 使用2倍缩放可能导致变形
+                    width: 350,
+                    height: 500,
+                    logging: true,
+                    foreignObjectRendering: true,
+                    removeContainer: true,
+                    imageTimeout: 15000,
+                    x: 0,
+                    y: 0,
+                    scrollX: 0,
+                    scrollY: 0
+                });
+                
+                // 下载图片
+                const link = document.createElement('a');
+                link.download = 'style-original-test.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                console.log('✅ 原始版本导出成功');
+                
+            } catch (error) {
+                console.error('❌ 原始版本导出失败:', error);
+                alert(`导出失败: ${error.message}`);
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+

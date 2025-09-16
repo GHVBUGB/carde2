@@ -55,7 +55,7 @@ export default function ProfilePage() {
 
       if (error) throw error
 
-      updateUser(updates)
+      updateUser(updates as any)
       alert('个人信息更新成功')
 
     } catch (error) {

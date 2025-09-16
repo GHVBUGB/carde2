@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>更大头像功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+        }
+        
+        .section h2 {
+            color: #007bff;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+        
+        .success-section {
+            border-left: 4px solid #28a745;
+        }
+        
+        .success-section h2 {
+            color: #28a745;
+        }
+        
+        .improvement-section {
+            border-left: 4px solid #ff6b35;
+        }
+        
+        .improvement-section h2 {
+            color: #ff6b35;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:before {
+            content: "✅ ";
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .size-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .size-before, .size-after {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .size-before {
+            background: #f8d7da;
+            border: 2px solid #f5c6cb;
+        }
+        
+        .size-after {
+            background: #d4edda;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .size-before h3 {
+            color: #721c24;
+            margin-top: 0;
+        }
+        
+        .size-after h3 {
+            color: #155724;
+            margin-top: 0;
+        }
+        
+        .avatar-demo {
+            width: 350px;
+            height: 500px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 20px auto;
+            overflow: hidden;
+        }
+        
+        .avatar-small {
+            position: absolute;
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 12px;
+            font-weight: bold;
+            left: 127px;
+            top: 64px;
+        }
+        
+        .avatar-large {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 4px solid white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-size: 16px;
+            font-weight: bold;
+            left: 115px;
+            top: 50px;
+        }
+        
+        .size-control {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .size-control label {
+            font-weight: bold;
+            color: #333;
+            min-width: 80px;
+        }
+        
+        .size-control input[type="range"] {
+            flex: 1;
+            height: 6px;
+            background: #ddd;
+            border-radius: 3px;
+            outline: none;
+        }
+        
+        .size-control input[type="range"]::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #4caf50;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .size-display {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: #333;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            color: #000;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+        
+        .test-scenarios {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .test-scenarios h3 {
+            color: #856404;
+            margin-top: 0;
+        }
+        
+        .scenario {
+            margin: 10px 0;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #ffc107;
+        }
+        
+        .scenario-title {
+            font-weight: bold;
+            color: #856404;
+        }
+        
+        .scenario-result {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🖼️ 更大头像功能优化</h1>
+        
+        <div class="section improvement-section">
+            <h2>🎯 优化内容</h2>
+            <p>根据用户反馈，对头像功能进行了以下优化：</p>
+            <ul class="feature-list">
+                <li><strong>默认大小增加</strong> - 从96px增加到120px</li>
+                <li><strong>调整范围扩大</strong> - 从60-150px扩大到80-200px</li>
+                <li><strong>位置优化</strong> - 调整默认位置适应更大头像</li>
+                <li><strong>约束更新</strong> - 更新拖拽边界约束</li>
+                <li><strong>代码修复</strong> - 修复重复变量声明错误</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>📏 大小对比</h2>
+            <p>优化前后的头像大小对比：</p>
+            
+            <div class="size-comparison">
+                <div class="size-before">
+                    <h3>优化前</h3>
+                    <div class="avatar-demo">
+                        <div class="avatar-small">96px</div>
+                    </div>
+                    <p>默认大小：96px</p>
+                    <p>调整范围：60-150px</p>
+                </div>
+                
+                <div class="size-after">
+                    <h3>优化后</h3>
+                    <div class="avatar-demo">
+                        <div class="avatar-large">120px</div>
+                    </div>
+                    <p>默认大小：120px</p>
+                    <p>调整范围：80-200px</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🔧 技术实现</h2>
+            <p>主要的技术修改：</p>
+            
+            <h3>1. 默认大小调整</h3>
+            <div class="code-block">
+// 在 src/store/card.ts 中调整默认配置
+const initialAvatarConfig = {
+  size: 120, // 从96px增加到120px
+  position: { x: 115, y: 50 } // 调整位置适应更大头像
+}
+            </div>
+            
+            <h3>2. 调整范围扩大</h3>
+            <div class="code-block">
+// 在头像上传组件中扩大调整范围
+&lt;input
+  type="range"
+  min="80"        // 从60增加到80
+  max="200"       // 从150增加到200
+  value={avatarConfig.size}
+  onChange={(e) => updateAvatarConfig({ size: Number(e.target.value) })}
+  className="flex-1"
+/&gt;
+            </div>
+            
+            <h3>3. 代码错误修复</h3>
+            <div class="code-block">
+// 修复重复变量声明错误
+// 移除重复的 avatarConfig 获取
+// avatarConfig 现在通过 props 传递
+export default function DraggableBusinessCardPreview({ 
+  user, 
+  avatarConfig,  // 通过props传递
+  // ... 其他props
+}: DraggableBusinessCardPreviewProps) {
+  // 移除重复的 const { avatarConfig } = useCardStore()
+}
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>🎨 头像大小调整演示</h2>
+            <p>现在您可以在更大的范围内调整头像大小：</p>
+            
+            <div class="size-control">
+                <label>头像大小:</label>
+                <input type="range" min="80" max="200" value="120" id="sizeSlider">
+                <div class="size-display" id="sizeDisplay">120px</div>
+            </div>
+            <p>调整范围：80px - 200px（比之前更大）</p>
+        </div>
+        
+        <div class="section">
+            <h2>🧪 测试场景</h2>
+            <p>请按以下场景测试优化后的头像功能：</p>
+            
+            <div class="test-scenarios">
+                <h3>默认大小测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试1：默认头像大小</div>
+                    <div class="scenario-result">✅ 新上传的头像应该默认为120px（比之前的96px更大）</div>
+                </div>
+                
+                <h3>调整范围测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试2：最小大小</div>
+                    <div class="scenario-result">✅ 头像最小可以调整到80px（比之前的60px更大）</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试3：最大大小</div>
+                    <div class="scenario-result">✅ 头像最大可以调整到200px（比之前的150px更大）</div>
+                </div>
+                
+                <h3>位置调整测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试4：默认位置</div>
+                    <div class="scenario-result">✅ 默认位置应该适应120px的头像大小</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试5：拖动约束</div>
+                    <div class="scenario-result">✅ 大尺寸头像拖动时应该正确约束在边界内</div>
+                </div>
+                
+                <h3>代码修复测试</h3>
+                <div class="scenario">
+                    <div class="scenario-title">测试6：编译错误</div>
+                    <div class="scenario-result">✅ 应该没有重复变量声明的编译错误</div>
+                </div>
+                <div class="scenario">
+                    <div class="scenario-title">测试7：功能正常</div>
+                    <div class="scenario-result">✅ 头像大小调整和拖动功能应该正常工作</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="section success-section">
+            <h2>✅ 优化完成</h2>
+            <p>头像功能已成功优化，现在提供更大的默认大小和更宽的调整范围：</p>
+            <ul class="feature-list">
+                <li><strong>默认大小</strong> - 从96px增加到120px（增加25%）</li>
+                <li><strong>调整范围</strong> - 从60-150px扩大到80-200px</li>
+                <li><strong>最大尺寸</strong> - 现在可以设置到200px的超大头像</li>
+                <li><strong>位置优化</strong> - 默认位置适应更大头像</li>
+                <li><strong>代码修复</strong> - 修复了编译错误</li>
+                <li><strong>向后兼容</strong> - 现有用户配置不受影响</li>
+            </ul>
+            
+            <p><strong>使用建议：</strong></p>
+            <ul>
+                <li>对于正式名片，建议使用120-150px的头像大小</li>
+                <li>对于特殊设计，可以使用更大的头像（最大200px）</li>
+                <li>头像位置可以根据内容需要自由调整</li>
+                <li>所有设置都会自动保存</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 演示脚本
+        const sizeSlider = document.getElementById('sizeSlider');
+        const sizeDisplay = document.getElementById('sizeDisplay');
+
+        // 大小调整演示
+        sizeSlider.addEventListener('input', function() {
+            const size = this.value;
+            sizeDisplay.textContent = size + 'px';
+        });
+    </script>
+</body>
+</html>

@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth'
 import { supabase } from '@/lib/supabase/client'
-import BusinessCardPreview from '@/components/card/business-card-preview'
+import ImprovedBusinessCardPreview from '@/components/card/improved-business-card-preview'
 import StatsCards from '@/components/dashboard/stats-cards'
 
 export default function DashboardPage() {
@@ -131,13 +131,13 @@ export default function DashboardPage() {
         {/* 名片预览 */}
         <Card>
           <CardHeader>
-            <CardTitle>名片预览</CardTitle>
+            <CardTitle>名片预览与导出</CardTitle>
             <CardDescription>
-              当前名片效果展示
+              预览名片效果并使用新的高质量导出功能（已修复头像变形问题）
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <BusinessCardPreview
+            <ImprovedBusinessCardPreview
               user={user}
               textModules={{
                 companyName: '51Talk',
@@ -157,11 +157,12 @@ export default function DashboardPage() {
                 planningAbility: user.planning_ability || false,
                 resourceSharing: user.resource_sharing || false,
               }}
+              showExportButtons={true}
             />
           </CardContent>
         </Card>
-        {/* 快速操作 */}
-        <Card>
+        {/* 快速操作 - 已隐藏 */}
+        <Card className="hidden">
           <CardHeader>
             <CardTitle>快速操作</CardTitle>
             <CardDescription>

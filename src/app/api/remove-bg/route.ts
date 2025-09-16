@@ -14,14 +14,8 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 检查API密钥
-    if (!process.env.REMOVE_BG_API_KEY) {
-      console.error('Remove.bg API key not configured')
-      return NextResponse.json(
-        { error: 'AI抠图服务暂时不可用' },
-        { status: 503 }
-      )
-    }
+    // 使用提供的API密钥
+    const API_KEY = process.env.REMOVE_BG_API_KEY || 'CUkG97quGQMhjG1KM9DcW3c5'
 
     // 获取上传的图片
     const formData = await request.formData()
@@ -59,7 +53,7 @@ export async function POST(request: NextRequest) {
       const response = await fetch('https://api.remove.bg/v1.0/removebg', {
         method: 'POST',
         headers: {
-          'X-Api-Key': process.env.REMOVE_BG_API_KEY,
+          'X-Api-Key': API_KEY,
         },
         body: removeBgFormData,
       })

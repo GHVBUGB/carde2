@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>简单导出测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-card {
+            width: 350px;
+            height: 500px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            border-radius: 16px;
+            position: relative;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .avatar {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: #fff;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .name {
+            position: absolute;
+            top: 160px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+        
+        .title {
+            position: absolute;
+            top: 190px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+        
+        .stats {
+            position: absolute;
+            top: 250px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 40px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .stat-label {
+            font-size: 8px;
+            color: #666;
+            line-height: 1.2;
+        }
+        
+        .features {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 280px;
+        }
+        
+        .feature {
+            font-size: 8px;
+            color: #666;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        .phone {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .btn-primary {
+            background: #007bff;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>简单导出测试</h1>
+        <p>测试html2canvas是否能正确渲染内容</p>
+        
+        <div class="controls">
+            <button class="btn btn-primary" onclick="exportPNG()">导出 PNG</button>
+            <button class="btn btn-success" onclick="exportJPG()">导出 JPG</button>
+        </div>
+        
+        <div id="status" class="status info">准备就绪</div>
+        
+        <div id="testCard" class="test-card">
+            <div class="avatar"></div>
+            <div class="name">AHMED AL-FAWAZ</div>
+            <div class="title">SENIOR LANGUAGE COACH</div>
+            
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-number">0</div>
+                    <div class="stat-label">STUDENTS<br>SERVED</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-number">0%</div>
+                    <div class="stat-label">POSITIVE<br>RATING</div>
+                </div>
+            </div>
+            
+            <div class="features">
+                <div class="feature">Teacher<br>Selection</div>
+                <div class="feature">Progress<br>Feedback</div>
+                <div class="feature">Study<br>Plan</div>
+                <div class="feature">Learning<br>Resources</div>
+            </div>
+            
+            <div class="phone">电话: 050-XXXX-XXAB</div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <script>
+        function updateStatus(message, type = 'info') {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            console.log('状态更新:', message);
+        }
+        
+        async function exportPNG() {
+            updateStatus('正在导出 PNG...', 'info');
+            
+            try {
+                const cardElement = document.getElementById('testCard');
+                console.log('开始导出 PNG，元素:', cardElement);
+                
+                const canvas = await html2canvas(cardElement, {
+                    width: 350,
+                    height: 500,
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: true
+                });
+                
+                console.log('Canvas 创建完成:', canvas);
+                console.log('Canvas 尺寸:', canvas.width, 'x', canvas.height);
+                
+                canvas.toBlob(function(blob) {
+                    if (blob) {
+                        console.log('Blob 创建完成:', blob);
+                        console.log('Blob 大小:', blob.size, 'bytes');
+                        saveAs(blob, 'test-card.png');
+                        updateStatus('PNG 导出成功！', 'success');
+                    } else {
+                        updateStatus('PNG 导出失败：无法生成文件', 'error');
+                    }
+                }, 'image/png');
+                
+            } catch (error) {
+                console.error('导出失败:', error);
+                updateStatus('PNG 导出失败: ' + error.message, 'error');
+            }
+        }
+        
+        async function exportJPG() {
+            updateStatus('正在导出 JPG...', 'info');
+            
+            try {
+                const cardElement = document.getElementById('testCard');
+                console.log('开始导出 JPG，元素:', cardElement);
+                
+                const canvas = await html2canvas(cardElement, {
+                    width: 350,
+                    height: 500,
+                    scale: 1.5,
+                    backgroundColor: '#ffffff',
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: true
+                });
+                
+                console.log('Canvas 创建完成:', canvas);
+                console.log('Canvas 尺寸:', canvas.width, 'x', canvas.height);
+                
+                canvas.toBlob(function(blob) {
+                    if (blob) {
+                        console.log('Blob 创建完成:', blob);
+                        console.log('Blob 大小:', blob.size, 'bytes');
+                        saveAs(blob, 'test-card.jpg');
+                        updateStatus('JPG 导出成功！', 'success');
+                    } else {
+                        updateStatus('JPG 导出失败：无法生成文件', 'error');
+                    }
+                }, 'image/jpeg', 0.8);
+                
+            } catch (error) {
+                console.error('导出失败:', error);
+                updateStatus('JPG 导出失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStatus('页面加载完成，可以开始测试导出功能', 'info');
+        });
+    </script>
+</body>
+</html>

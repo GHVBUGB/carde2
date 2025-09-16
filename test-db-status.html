@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库状态检查</title>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #FF6B35;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .status-title {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .status-content {
+            font-family: 'Courier New', monospace;
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background: #FF6B35;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #e55a2b;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .success {
+            color: #27ae60;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .warning {
+            color: #f39c12;
+        }
+        
+        .loading {
+            color: #3498db;
+        }
+        
+        .email-test {
+            margin-top: 20px;
+        }
+        
+        input {
+            width: 300px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 数据库状态检查工具</h1>
+        
+        <div class="action-buttons">
+            <button onclick="checkAuthStore()">检查本地认证状态</button>
+            <button onclick="checkSupabaseConnection()">测试Supabase连接</button>
+            <button onclick="listAllUsers()">查看所有用户</button>
+            <button onclick="clearLocalStorage()">清除本地存储</button>
+            <button onclick="checkUserByEmail()">检查特定用户</button>
+        </div>
+        
+        <div class="email-test">
+            <input type="email" id="testEmail" placeholder="输入邮箱地址" value="guhongji@51talk.com">
+            <button onclick="searchUserByEmail()">搜索用户</button>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">🔐 本地认证状态</div>
+            <div class="status-content" id="authStatus">点击"检查本地认证状态"查看...</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">🗄️ Supabase连接状态</div>
+            <div class="status-content" id="supabaseStatus">点击"测试Supabase连接"查看...</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">👥 用户列表</div>
+            <div class="status-content" id="usersList">点击"查看所有用户"查看...</div>
+        </div>
+        
+        <div class="status-card">
+            <div class="status-title">🔍 特定用户检查</div>
+            <div class="status-content" id="specificUser">输入邮箱并点击"搜索用户"...</div>
+        </div>
+    </div>
+
+    <script>
+        // 检查本地认证状态
+        function checkAuthStore() {
+            const authStatus = document.getElementById('authStatus');
+            authStatus.innerHTML = '<span class="loading">检查中...</span>';
+            
+            try {
+                // 检查localStorage中的认证信息
+                const authStorage = localStorage.getItem('auth-storage');
+                const cardStorage = localStorage.getItem('card-storage');
+                
+                let result = '=== 本地存储状态 ===\n\n';
+                
+                if (authStorage) {
+                    const authData = JSON.parse(authStorage);
+                    result += '✅ 认证存储存在\n';
+                    result += `- 是否已认证: ${authData.state?.isAuthenticated || false}\n`;
+                    result += `- 用户信息: ${authData.state?.user ? JSON.stringify(authData.state.user, null, 2) : '无'}\n\n`;
+                } else {
+                    result += '❌ 认证存储不存在\n\n';
+                }
+                
+                if (cardStorage) {
+                    result += '✅ 卡片存储存在\n';
+                    result += `- 存储大小: ${cardStorage.length} 字符\n\n`;
+                } else {
+                    result += '❌ 卡片存储不存在\n\n';
+                }
+                
+                // 检查sessionStorage
+                const sessionKeys = Object.keys(sessionStorage);
+                result += `📦 SessionStorage: ${sessionKeys.length} 项\n`;
+                sessionKeys.forEach(key => {
+                    result += `  - ${key}\n`;
+                });
+                
+                authStatus.innerHTML = `<span class="success">${result}</span>`;
+            } catch (error) {
+                authStatus.innerHTML = `<span class="error">检查失败: ${error.message}</span>`;
+            }
+        }
+        
+        // 测试Supabase连接
+        async function checkSupabaseConnection() {
+            const supabaseStatus = document.getElementById('supabaseStatus');
+            supabaseStatus.innerHTML = '<span class="loading">连接测试中...</span>';
+            
+            try {
+                // 尝试调用登录API来测试连接
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: 'test@51talk.com'
+                    })
+                });
+                
+                const result = await response.text();
+                let status = '';
+                
+                if (response.ok) {
+                    status = '✅ API响应正常\n';
+                } else {
+                    status = `⚠️ API响应状态: ${response.status}\n`;
+                }
+                
+                status += `📡 响应内容:\n${result}\n\n`;
+                status += `🌐 请求URL: ${response.url}\n`;
+                status += `📋 响应头:\n`;
+                for (let [key, value] of response.headers.entries()) {
+                    status += `  ${key}: ${value}\n`;
+                }
+                
+                supabaseStatus.innerHTML = `<span class="${response.ok ? 'success' : 'warning'}">${status}</span>`;
+            } catch (error) {
+                supabaseStatus.innerHTML = `<span class="error">连接失败: ${error.message}</span>`;
+            }
+        }
+        
+        // 查看所有用户
+        async function listAllUsers() {
+            const usersList = document.getElementById('usersList');
+            usersList.innerHTML = '<span class="loading">获取用户列表中...</span>';
+            
+            try {
+                // 这里需要调用一个专门的API来获取用户列表
+                // 由于安全原因，我们不能直接从前端访问用户列表
+                const response = await fetch('/api/debug/user-status', {
+                    method: 'GET'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    let result = '=== 用户列表 ===\n\n';
+                    
+                    if (data.users && data.users.length > 0) {
+                        data.users.forEach((user, index) => {
+                            result += `${index + 1}. ${user.email}\n`;
+                            result += `   - ID: ${user.id}\n`;
+                            result += `   - 姓名: ${user.name || '未设置'}\n`;
+                            result += `   - 职位: ${user.title || '未设置'}\n`;
+                            result += `   - 创建时间: ${user.created_at}\n\n`;
+                        });
+                    } else {
+                        result += '❌ 没有找到任何用户\n';
+                    }
+                    
+                    usersList.innerHTML = `<span class="success">${result}</span>`;
+                } else {
+                    const error = await response.text();
+                    usersList.innerHTML = `<span class="error">获取失败: ${error}</span>`;
+                }
+            } catch (error) {
+                usersList.innerHTML = `<span class="error">请求失败: ${error.message}</span>`;
+            }
+        }
+        
+        // 搜索特定用户
+        async function searchUserByEmail() {
+            const email = document.getElementById('testEmail').value;
+            const specificUser = document.getElementById('specificUser');
+            
+            if (!email) {
+                specificUser.innerHTML = '<span class="error">请输入邮箱地址</span>';
+                return;
+            }
+            
+            specificUser.innerHTML = '<span class="loading">搜索中...</span>';
+            
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                let status = `=== 搜索结果: ${email} ===\n\n`;
+                
+                if (response.status === 404) {
+                    status += '❌ 用户不存在\n';
+                    status += '📝 可能的原因:\n';
+                    status += '  1. 用户未注册\n';
+                    status += '  2. 邮箱地址错误\n';
+                    status += '  3. 数据库连接问题\n';
+                } else if (response.ok) {
+                    status += '✅ 用户存在\n';
+                    status += `📋 响应: ${JSON.stringify(result, null, 2)}\n`;
+                } else {
+                    status += `⚠️ 状态码: ${response.status}\n`;
+                    status += `📋 响应: ${JSON.stringify(result, null, 2)}\n`;
+                }
+                
+                specificUser.innerHTML = `<span class="${response.status === 404 ? 'error' : response.ok ? 'success' : 'warning'}">${status}</span>`;
+            } catch (error) {
+                specificUser.innerHTML = `<span class="error">搜索失败: ${error.message}</span>`;
+            }
+        }
+        
+        // 检查特定用户
+        function checkUserByEmail() {
+            document.getElementById('testEmail').value = 'guhongji@51talk.com';
+            searchUserByEmail();
+        }
+        
+        // 清除本地存储
+        function clearLocalStorage() {
+            localStorage.removeItem('auth-storage');
+            localStorage.removeItem('card-storage');
+            sessionStorage.clear();
+            alert('✅ 本地存储已清除');
+            checkAuthStore();
+        }
+        
+        // 页面加载时自动检查认证状态
+        window.addEventListener('load', () => {
+            checkAuthStore();
+        });
+    </script>
+</body>
+</html>
+
