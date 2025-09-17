@@ -170,12 +170,13 @@ export default function DualExportMethods({
         ctx.fillText('RATING', 230 * scale, 355 * scale)
       }
       
-      // 电话
+      // 电话（RTL安全文本）
       if (user.phone) {
         ctx.font = `${16 * scale}px Arial, sans-serif`
         
         // 绘制电话背景
-        const phoneText = `电话: ${user.phone}`
+        const phoneSafe = String(user.phone).replace(/-/g, '\\u2011').replace(/\s+/g, '\\u00A0')
+        const phoneText = `\\u200Fهاتف:\\u00A0\\u2068${phoneSafe}\\u2069`
         const textMetrics = ctx.measureText(phoneText)
         const phoneX = width / 2 * scale
         const phoneY = 450 * scale

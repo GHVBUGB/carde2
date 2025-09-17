@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createRouteClient } from '@/lib/supabase/server'
+import { createRouteClient, createAdminClient } from '@/lib/supabase/server'
+import { ApiLogger } from '@/lib/api-logger'
 import { is51TalkEmail, isValidEmail } from '@/lib/utils'
 
 export async function POST(request: NextRequest) {
@@ -58,15 +59,23 @@ export async function POST(request: NextRequest) {
         )
       }
 
-      // 记录登录统计
+      // 记录登录统计 + 更新最后登录时间 + 写入api_logs
       if (authData.user) {
-        await supabase
-          .from('usage_stats')
-          .insert({
-            user_id: authData.user.id,
-            action_type: 'login',
-            details: { method: 'password', email },
-          })
+        const adminSupabase = createAdminClient()
+        await Promise.all([
+          supabase
+            .from('usage_stats')
+            .insert({
+              user_id: authData.user.id,
+              action_type: 'login',
+              details: { method: 'password', email },
+            } as any),
+          adminSupabase
+            .from('users')
+            .update({ last_login: new Date().toISOString() } as any)
+            .eq('id', authData.user.id),
+          ApiLogger.logLogin(authData.user.id, { method: 'password', email }, request)
+        ])
       }
 
       return NextResponse.json({
@@ -142,15 +151,23 @@ export async function PUT(request: NextRequest) {
       .eq('email', email)
       .single()
 
-    // 记录登录统计
+    // 记录登录统计 + 更新最后登录时间 + 写入api_logs
     if (data.user) {
-      await supabase
-        .from('usage_stats')
-        .insert({
-          user_id: data.user.id,
-          action_type: 'login',
-          details: { method: 'otp', email },
-        })
+      const adminSupabase = createAdminClient()
+      await Promise.all([
+        supabase
+          .from('usage_stats')
+          .insert({
+            user_id: data.user.id,
+            action_type: 'login',
+            details: { method: 'otp', email },
+          } as any),
+        adminSupabase
+          .from('users')
+          .update({ last_login: new Date().toISOString() } as any)
+          .eq('id', data.user.id),
+        ApiLogger.logLogin(data.user.id, { method: 'otp', email }, request)
+      ])
     }
 
     return NextResponse.json({

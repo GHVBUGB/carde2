@@ -58,7 +58,7 @@ export default function UserMonitoringTable({ users }: UserMonitoringTableProps)
           <div className="text-sm text-gray-600">今日活跃</div>
         </div>
         <div className="text-center">
-          <div className="text-2xl font-bold text-orange-600">
+          <div className="text-2xl font-bold text-yellow-600">
             {users.filter(u => u.remove_bg_count > 5).length}
           </div>
           <div className="text-sm text-gray-600">抠图超限</div>
@@ -158,7 +158,7 @@ export default function UserMonitoringTable({ users }: UserMonitoringTableProps)
                     <div className="text-center">
                       <span className={`font-medium ${
                         removeBgAlert === 'high' ? 'text-red-600 bg-red-50 px-2 py-1 rounded' :
-                        removeBgAlert === 'medium' ? 'text-orange-600' : ''
+                        removeBgAlert === 'medium' ? 'text-yellow-600' : ''
                       }`}>
                         {user.remove_bg_count}
                       </span>
@@ -171,7 +171,7 @@ export default function UserMonitoringTable({ users }: UserMonitoringTableProps)
                     <div className="text-center">
                       <span className={`font-medium ${
                         downloadAlert === 'high' ? 'text-red-600 bg-red-50 px-2 py-1 rounded' :
-                        downloadAlert === 'medium' ? 'text-orange-600' : ''
+                        downloadAlert === 'medium' ? 'text-yellow-600' : ''
                       }`}>
                         {user.download_count}
                       </span>
@@ -184,7 +184,7 @@ export default function UserMonitoringTable({ users }: UserMonitoringTableProps)
                     <div className="text-center">
                       <span className={`font-medium ${
                         apiAlert === 'high' ? 'text-red-600 bg-red-50 px-2 py-1 rounded' :
-                        apiAlert === 'medium' ? 'text-orange-600' : ''
+                        apiAlert === 'medium' ? 'text-yellow-600' : ''
                       }`}>
                         {user.total_api_calls}
                       </span>

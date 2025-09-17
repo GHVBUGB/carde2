@@ -1,4 +1,4 @@
-import { createServerClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 
 export interface ApiLogEntry {
   user_id?: string
@@ -10,7 +10,8 @@ export interface ApiLogEntry {
 
 export class ApiLogger {
   private static async getSupabase() {
-    return createServerClient()
+    // 使用 service role，确保在 RLS 存在时也能写入日志
+    return createAdminClient()
   }
 
   /**

@@ -376,21 +376,42 @@ export default function CleanDraggableCard({
           </div>
         </div>
 
-        {/* 电话号码 - 黄色背景条 */}
-        <div 
-          className="absolute cursor-move select-none"
-          style={{ left: '50%', bottom: '40px', transform: 'translateX(-50%)' }}
-          onMouseDown={(e) => handleMouseDown(e, 'phone')}
-        >
+    {/* 电话号码 - 黄色背景条（固定位置，不可拖动） */}
+    <div
+      className="absolute select-none"
+      style={{ left: '50%', bottom: '40px', transform: 'translateX(-50%)' }}
+    >
           <div 
             className="bg-yellow-400 px-8 py-2 text-center font-bold"
             style={{
               fontSize: `${textStyles.phone.fontSize}px`,
-              color: '#000000'
+              color: '#000000',
+              whiteSpace: 'nowrap',
+              wordWrap: 'normal',
+              wordBreak: 'normal',
+              overflow: 'hidden',
+              maxWidth: '300px'
             }}
-          >
-            电话: {textModules.phone}
-          </div>
+            data-module-id="phone"
+            ref={(el) => {
+              if (!el) return
+              // 动态调整字体大小以适应容器
+              const phoneText = `هاتف: ${textModules.phone || ''}`
+              el.textContent = phoneText
+              
+              let fontSize = textStyles.phone?.fontSize || 14
+              const minFontSize = 10
+              const maxWidth = 280
+              
+              el.style.fontSize = `${fontSize}px`
+              
+              // 如果文本超出宽度，逐步减小字体
+              while (el.scrollWidth > maxWidth && fontSize > minFontSize) {
+                fontSize -= 0.5
+                el.style.fontSize = `${fontSize}px`
+              }
+            }}
+          />
           {showCoordinates && (
             <div className="absolute top-full left-0 text-xs text-gray-600 bg-white bg-opacity-80 px-1 rounded">
               ({Math.round(textPositions.phone.x)}, {Math.round(textPositions.phone.y)})

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteClient } from '@/lib/supabase/server'
+import { ApiLogger } from '@/lib/api-logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -83,18 +84,24 @@ export async function POST(request: NextRequest) {
 
       const processedImageBuffer = await response.arrayBuffer()
 
-      // 记录API调用统计
-      await supabase
-        .from('usage_stats')
-        .insert({
-          user_id: user.id,
-          action_type: 'api_call',
-          details: { 
-            service: 'remove_bg',
-            file_size: imageFile.size,
-            file_type: imageFile.type,
-          },
-        })
+      // 记录API调用统计和日志
+      await Promise.all([
+        supabase
+          .from('usage_stats')
+          .insert({
+            user_id: user.id,
+            action_type: 'remove_bg_api',
+            details: { 
+              service: 'remove_bg',
+              file_size: imageFile.size,
+              file_type: imageFile.type,
+            },
+          } as any),
+        ApiLogger.logRemoveBackground(user.id, {
+          imageSize: imageFile.size,
+          success: true
+        }, request)
+      ])
 
       // 返回处理后的图片
       return new NextResponse(processedImageBuffer, {

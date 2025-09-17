@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createServerClient()
+    // 使用管理员客户端，保证没有会话也能读取统计
+    const supabase = createAdminClient()
 
     // 获取当前日期的开始和结束时间
     const today = new Date()
@@ -38,14 +39,36 @@ export async function GET(req: NextRequest) {
         todayApiCalls = todayLogs.length
         todayDownloads = todayLogs.filter(log => log.action === 'download').length
         todayRemoveBg = todayLogs.filter(log => log.action === 'remove_background').length
+
+        // api_logs 存在但无数据时，降级到 usage_stats
+        if (todayLogs.length === 0) {
+          throw new Error('api_logs empty, fallback to usage_stats')
+        }
       }
     } catch (error) {
-      console.log('API logs table not found, using simulated data')
-      // 使用基于时间的模拟数据，让数据看起来更真实
-      const hour = new Date().getHours()
-      todayDownloads = Math.floor(hour / 3) + Math.floor(Math.random() * 3)
-      todayApiCalls = Math.floor(hour / 2) + Math.floor(Math.random() * 5)
-      todayRemoveBg = Math.floor(hour / 4) + Math.floor(Math.random() * 2)
+      try {
+        // 降级：从 usage_stats 读取
+        const { data: usageToday, error: usageErr } = await supabase
+          .from('usage_stats')
+          .select('action_type, created_at')
+          .gte('created_at', todayStart)
+          .lt('created_at', todayEnd)
+
+        if (!usageErr && usageToday) {
+          todayApiCalls = usageToday.length
+          todayDownloads = usageToday.filter(s => s.action_type === 'download').length
+          todayRemoveBg = usageToday.filter(s => s.action_type === 'remove_background' || s.action_type === 'remove_bg_api').length
+        } else {
+          throw new Error('usage_stats not accessible')
+        }
+      } catch (fallbackErr) {
+        console.log('API logs and usage_stats unavailable, using simulated data')
+        // 最后回退：使用基于时间的模拟数据
+        const hour = new Date().getHours()
+        todayDownloads = Math.floor(hour / 3) + Math.floor(Math.random() * 3)
+        todayApiCalls = Math.floor(hour / 2) + Math.floor(Math.random() * 5)
+        todayRemoveBg = Math.floor(hour / 4) + Math.floor(Math.random() * 2)
+      }
     }
 
     // 3. 检查告警条件

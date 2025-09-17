@@ -44,7 +44,7 @@ const config: Config = {
         },
         // 51Talk 品牌色
         brand: {
-          primary: '#FF6B35',    // 51Talk 橙色
+          primary: '#FFD700',    // 51Talk 亮黄色
           secondary: '#4A90E2',  // 蓝色
           accent: '#F5A623',     // 金色
           gray: '#9B9B9B',       // 灰色

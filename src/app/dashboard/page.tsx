@@ -123,7 +123,7 @@ export default function DashboardPage() {
               <Button 
                 variant="outline"
                 onClick={() => router.push('/admin')}
-                className="border-orange-200 text-orange-600 hover:bg-orange-50"
+                className="border-yellow-200 text-yellow-600 hover:bg-yellow-50"
               >
                 🔐 管理面板
               </Button>

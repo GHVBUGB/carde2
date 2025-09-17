@@ -162,7 +162,7 @@ const initialTextPositions = {
   title: { x: 267, y:126 },
   studentsServed: { x: 121, y: 322 },
   positiveRating: { x: 192, y: 322 },
-  phone: { x: 94, y: 432 },
+  phone: { x: 182, y: 431 },
   teacherSelectionLabel: { x: 95, y: 402 },
   progressFeedbackLabel: { x: 142, y: 402 },
   planningLabel: { x: 190, y: 402 },

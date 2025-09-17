@@ -1097,11 +1097,15 @@ export default function DraggableBusinessCardPreview({
       // 🎯 直接从DOM读取电话信息的实际位置和样式
       const phonePos = getElementActualPosition('[data-module-id="phone"]')
       if (phonePos) {
-      drawText(
-        `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
+        const phoneValue = textModules.phone || user.phone || '050-XXXX-XXAB'
+        // 使用双向控制字符，保证在RTL环境中冒号与数字不乱序
+        // \u200F: RLM（右向标记）；\u00A0: 不换行空格；\u2068/\u2069: FSI/PDI（双向隔离）
+        const phoneText = `\u200Fهاتف:\u00A0\u2068${phoneValue}\u2069`
+        drawText(
+          phoneText,
           phonePos.x, phonePos.y,
           phonePos.fontSize, phonePos.color, phonePos.fontWeight, phonePos.textAlign as any
-      )
+        )
       }
 
       console.log('🔍 新导出调试信息:')
@@ -2349,7 +2353,7 @@ export default function DraggableBusinessCardPreview({
           onClick={() => setShowCoordinates(!showCoordinates)}
           className={`px-3 py-1 rounded text-sm transition-colors ${
             showCoordinates 
-              ? 'bg-orange-500 text-white hover:bg-orange-600' 
+              ? 'bg-yellow-400 text-black hover:bg-yellow-500' 
               : 'bg-gray-500 text-white hover:bg-gray-600'
           }`}
         >
@@ -2611,13 +2615,55 @@ export default function DraggableBusinessCardPreview({
             </div>
           </div>
 
-          {renderDraggableText(
-            'phone',
-            `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`,
-            textStyles.phone,
-            textPositions.phone,
-            showCoordinates
-          )}
+          {/* 电话模块 - 固定位置，不可拖动 */}
+          <div
+            className="absolute select-none"
+            style={{
+              left: textPositions.phone.x,
+              top: textPositions.phone.y,
+              transform: 'translateX(-50%)',
+              maxWidth: '300px'
+            }}
+          >
+            <span
+              style={{
+                fontSize: `${textStyles.phone?.fontSize || 14}px`,
+                color: textStyles.phone?.color || '#000000',
+                fontWeight: textStyles.phone?.fontWeight || 'bold',
+                whiteSpace: 'nowrap',
+                wordWrap: 'normal',
+                wordBreak: 'normal',
+                overflow: 'hidden',
+                display: 'inline-block'
+              }}
+              ref={(el) => {
+                if (!el) return
+                // 动态调整字体大小以适应容器
+                const phoneText = `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`
+                el.textContent = phoneText
+                
+                let fontSize = textStyles.phone?.fontSize || 14
+                const minFontSize = 10
+                const maxWidth = 280
+                
+                el.style.fontSize = `${fontSize}px`
+                
+                // 如果文本超出宽度，逐步减小字体
+                while (el.scrollWidth > maxWidth && fontSize > minFontSize) {
+                  fontSize -= 0.5
+                  el.style.fontSize = `${fontSize}px`
+                }
+              }}
+            />
+            {showCoordinates && (
+              <div
+                className="absolute top-full left-0 text-xs text-gray-600 bg-white bg-opacity-80 px-1 rounded pointer-events-none"
+                style={{ zIndex: 1000 }}
+              >
+                ({Math.round(textPositions.phone.x)}, {Math.round(textPositions.phone.y)})
+              </div>
+            )}
+          </div>
 
           {/* 能力标签 - 四个独立的可拖拽元素，无图标，英文两排显示 */}
           {/* 教师筛选 */}
@@ -2856,7 +2902,7 @@ export default function DraggableBusinessCardPreview({
             className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
               exporting 
                 ? 'bg-gray-400 text-white cursor-not-allowed' 
-                : 'bg-orange-500 text-white hover:bg-orange-600'
+                : 'bg-yellow-400 text-black hover:bg-yellow-500'
             }`}
             disabled={exporting}
           >

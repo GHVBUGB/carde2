@@ -295,7 +295,7 @@ export default function RealTimeMonitor() {
               </div>
               <div className="text-center p-3 bg-gray-50 rounded-lg">
                 <div className={`text-2xl font-bold ${
-                  monitorData.stats.usage.removeBgCallsToday > 5 ? 'text-red-600' : 'text-orange-600'
+                  monitorData.stats.usage.removeBgCallsToday > 5 ? 'text-red-600' : 'text-yellow-600'
                 }`}>
                   {monitorData.stats.usage.removeBgCallsToday}
                 </div>

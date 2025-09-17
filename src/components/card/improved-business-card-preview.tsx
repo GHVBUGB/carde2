@@ -354,10 +354,33 @@ export default function ImprovedBusinessCardPreview({
               transform: 'translateX(-50%)',
               fontSize: `${finalTextStyles.phone.fontSize}px`,
               color: finalTextStyles.phone.color,
-              fontWeight: finalTextStyles.phone.fontWeight
+              fontWeight: finalTextStyles.phone.fontWeight,
+              whiteSpace: 'nowrap',
+              wordWrap: 'normal',
+              wordBreak: 'normal',
+              overflow: 'hidden',
+              maxWidth: '300px'
+            }}
+            data-module-id="phone"
+            ref={(el) => {
+              if (!el) return
+              // 动态调整字体大小以适应容器
+              const phoneText = `هاتف: ${textModules.phone || user.phone || '050-XXXX-XXAB'}`
+              el.textContent = phoneText
+              
+              let fontSize = finalTextStyles.phone?.fontSize || 14
+              const minFontSize = 10
+              const maxWidth = 280
+              
+              el.style.fontSize = `${fontSize}px`
+              
+              // 如果文本超出宽度，逐步减小字体
+              while (el.scrollWidth > maxWidth && fontSize > minFontSize) {
+                fontSize -= 0.5
+                el.style.fontSize = `${fontSize}px`
+              }
             }}
           >
-            电话: {textModules.phone || user.phone || '050-XXXX-XXAB'}
           </div>
         </div>
 

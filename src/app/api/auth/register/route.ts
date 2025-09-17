@@ -1,6 +1,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteClient, createAdminClient } from '@/lib/supabase/server'
+import { ApiLogger } from '@/lib/api-logger'
 import { emailVerificationService } from '@/lib/supabase/server'
 import { sendVerificationEmail } from '@/lib/auth/mailer'
 import { is51TalkEmail, isValidEmail } from '@/lib/utils'
@@ -157,14 +158,17 @@ export async function PUT(request: NextRequest) {
         // 不阻断流程，用户可以后续完善信息
       }
 
-      // 记录注册统计
-      await adminSupabase
-        .from('usage_stats')
-        .insert({
-          user_id: authData.user.id,
-          action_type: 'register',
-          details: { email, name },
-        } as any)
+      // 记录注册统计 + 写入 api_logs
+      await Promise.all([
+        adminSupabase
+          .from('usage_stats')
+          .insert({
+            user_id: authData.user.id,
+            action_type: 'register',
+            details: { email, name },
+          } as any),
+        ApiLogger.logRegister(authData.user.id, { method: 'email', email, name }, undefined)
+      ])
     }
 
     return NextResponse.json({

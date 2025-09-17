@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   try {
-    const supabase = createServerClient()
+    // 使用管理员客户端，确保在无登录会话和RLS开启时也能读取真实数据
+    const supabase = createAdminClient()
 
     // 获取当前日期的开始和结束时间
     const today = new Date()
@@ -74,6 +75,11 @@ export async function GET(req: NextRequest) {
           log.created_at >= todayStart && 
           log.created_at < todayEnd
         ).length
+        
+        // 如果 api_logs 存在但为空，降级到 usage_stats 统计
+        if (apiLogs.length === 0) {
+          throw new Error('api_logs empty, fallback to usage_stats')
+        }
       }
     } catch (error) {
       console.log('API logs table not found, trying usage_stats table...')
@@ -90,20 +96,19 @@ export async function GET(req: NextRequest) {
           todayApiCalls = usageStats.filter(stat => stat.created_at >= todayStart && stat.created_at < todayEnd).length
           
           // 统计下载和抠图（适配 usage_stats 字段名）
-          totalDownloads = usageStats.filter(stat => 
-            stat.action_type === 'download' || stat.action_type === 'api_call'
-          ).length
+          totalDownloads = usageStats.filter(stat => stat.action_type === 'download').length
           todayDownloads = usageStats.filter(stat => 
-            (stat.action_type === 'download' || stat.action_type === 'api_call') && 
+            stat.action_type === 'download' && 
             stat.created_at >= todayStart && 
             stat.created_at < todayEnd
           ).length
           
+          // 抠图：兼容 action_type 命名差异
           removeBgCalls = usageStats.filter(stat => 
-            stat.action_type === 'remove_background' || stat.action_type === 'api_call'
+            stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
           ).length
           todayRemoveBg = usageStats.filter(stat => 
-            (stat.action_type === 'remove_background' || stat.action_type === 'api_call') && 
+            (stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api') && 
             stat.created_at >= todayStart && 
             stat.created_at < todayEnd
           ).length
