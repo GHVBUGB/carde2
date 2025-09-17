@@ -7,8 +7,14 @@ import { saveAs } from 'file-saver'
 import html2canvas from 'html2canvas'
 import { toPng as domToPng, toJpeg as domToJpeg } from 'html-to-image'
 import { generateOptimizedSVG, svgToHighQualityImage } from '@/utils/svg-export-optimized'
-import DualExportMethods from '@/components/export/dual-export-methods'
 import DomExportDebug from '@/components/export/dom-export-debug'
+import FixedSizeExport from '@/components/export/fixed-size-export'
+import EnhancedDomExport from '@/components/export/enhanced-dom-export'
+import DomEnhancedExport from '@/components/export/dom-enhanced-export'
+import DiagnosisExport from '@/components/export/diagnosis-export'
+import ForceFixExport from '@/components/export/force-fix-export'
+import LayoutPerfectExport from '@/components/export/layout-perfect-export'
+import BypassDomExport from '@/components/export/bypass-dom-export'
 
 interface TextModules {
   companyName: string
@@ -58,6 +64,12 @@ interface DraggableBusinessCardPreviewProps {
   textModules: TextModules
   textStyles: TextStyles
   textPositions: TextPositions
+  logoConfig?: {
+    enabled: boolean
+    src: string
+    size: { width: number; height: number }
+    position: { x: number; y: number }
+  }
   abilities: {
     teacherScreening: boolean
     feedbackAbility: boolean
@@ -69,6 +81,8 @@ interface DraggableBusinessCardPreviewProps {
   onBackgroundUpload?: (file: File) => void
   onPositionChange?: (moduleId: string, x: number, y: number) => void
   onAvatarPositionChange?: (x: number, y: number) => void
+  onLogoPositionChange?: (x: number, y: number) => void
+  cardRef?: React.RefObject<HTMLDivElement>
 }
 
 export default function DraggableBusinessCardPreview({ 
@@ -77,15 +91,19 @@ export default function DraggableBusinessCardPreview({
   textModules,
   textStyles,
   textPositions,
+  logoConfig,
   abilities,
   className, 
   backgroundImage = '/ditu.png',
   onBackgroundUpload,
   onPositionChange,
-  onAvatarPositionChange
+  onAvatarPositionChange,
+  onLogoPositionChange,
+  cardRef: externalCardRef
 }: DraggableBusinessCardPreviewProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const cardRef = useRef<HTMLDivElement>(null)
+  const internalCardRef = useRef<HTMLDivElement>(null)
+  const cardRef = externalCardRef || internalCardRef
   const [draggedElement, setDraggedElement] = useState<string | null>(null)
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 })
   const [showCoordinates, setShowCoordinates] = useState(false)
@@ -179,6 +197,36 @@ export default function DraggableBusinessCardPreview({
       calculateBackgroundImageDimensions(backgroundImage)
     }
   }, [backgroundImage])
+
+  // 🎯 监听导出事件，切换背景模式
+  useEffect(() => {
+    const handleSwitchBackground = () => {
+      console.log('🔄 切换到img背景模式用于导出')
+      setUseImgBackground(true)
+      // 等待一段时间确保背景切换完成
+      setTimeout(() => {
+        if (backgroundImage) {
+          calculateBackgroundImageDimensions(backgroundImage)
+        }
+      }, 100)
+    }
+
+    const handleResetBackground = () => {
+      console.log('🔄 恢复CSS背景模式')
+      setUseImgBackground(false)
+    }
+
+    if (cardRef && cardRef.current) {
+      const element = cardRef.current
+      element.addEventListener('switchToImgBackground', handleSwitchBackground)
+      element.addEventListener('resetBackground', handleResetBackground)
+      
+      return () => {
+        element.removeEventListener('switchToImgBackground', handleSwitchBackground)
+        element.removeEventListener('resetBackground', handleResetBackground)
+      }
+    }
+  }, [cardRef, backgroundImage])
 
   // 🔍 完整诊断功能
   const fullDiagnosis = async () => {
@@ -576,7 +624,7 @@ export default function DraggableBusinessCardPreview({
         useCORS: true,
         allowTaint: false,
         logging: true,
-        scale: format === 'png' ? 2 : 1.5,
+        scale: format === 'png' ? 4 : 3,
         width: 350,
         height: 500
       })
@@ -649,7 +697,7 @@ export default function DraggableBusinessCardPreview({
         // width: 350,
         // height: 500,
         
-        scale: format === 'png' ? 2 : 1.5,
+        scale: format === 'png' ? 4 : 3,
         foreignObjectRendering: false,
         removeContainer: false,
         imageTimeout: 15000,
@@ -893,9 +941,33 @@ export default function DraggableBusinessCardPreview({
         const cardRect = cardElement!.getBoundingClientRect()
         const computedStyle = window.getComputedStyle(element)
         
+        // 获取变换矩阵以计算实际位置
+        const transform = computedStyle.transform
+        let actualX = rect.left - cardRect.left
+        let actualY = rect.top - cardRect.top
+        
+        // 如果有变换，需要调整位置
+        if (transform && transform !== 'none') {
+          const matrix = new DOMMatrix(transform)
+          actualX += matrix.m41
+          actualY += matrix.m42
+        }
+        
+        // 对于服务标签，需要特殊处理位置偏移
+        if (selector.includes('Label')) {
+          // 服务标签通常有额外的偏移，需要调整
+          const parentElement = element.parentElement
+          if (parentElement) {
+            const parentRect = parentElement.getBoundingClientRect()
+            const parentCardRect = cardElement!.getBoundingClientRect()
+            actualX = parentRect.left - parentCardRect.left
+            actualY = parentRect.top - parentCardRect.top
+          }
+        }
+        
         return {
-          x: rect.left - cardRect.left,
-          y: rect.top - cardRect.top,
+          x: actualX,
+          y: actualY,
           width: rect.width,
           height: rect.height,
           textAlign: computedStyle.textAlign,
@@ -987,7 +1059,7 @@ export default function DraggableBusinessCardPreview({
 
       // 🎯 直接从DOM读取姓名的实际位置和样式
       const namePos = getElementActualPosition('[data-module-id="name"]')
-      const displayName = actualText?.name || textModules.name || user.name || 'أحمد'
+      const displayName = actualText?.name || textModules.name || 'أحمد'
       if (namePos) {
       drawText(
         displayName,
@@ -1084,9 +1156,28 @@ export default function DraggableBusinessCardPreview({
       abilityLabels.forEach(label => {
         const labelPos = getElementActualPosition(label.selector)
         if (labelPos) {
-      drawMultilineText(
+          // 对于服务标签，需要调整位置以确保正确对齐
+          let adjustedX = labelPos.x
+          let adjustedY = labelPos.y
+          
+          // 根据文本对齐方式调整位置
+          if (labelPos.textAlign === 'center') {
+            adjustedX = labelPos.x + labelPos.width / 2
+          }
+          
+          // 调整Y位置以匹配DOM中的实际渲染位置
+          adjustedY = labelPos.y + labelPos.fontSize * 0.2 // 微调垂直位置
+          
+          console.log(`🎯 服务标签 ${label.selector}:`, {
+            original: { x: labelPos.x, y: labelPos.y },
+            adjusted: { x: adjustedX, y: adjustedY },
+            textAlign: labelPos.textAlign,
+            fontSize: labelPos.fontSize
+          })
+          
+          drawMultilineText(
             label.text,
-            labelPos.x, labelPos.y,
+            adjustedX, adjustedY,
             labelPos.fontSize, labelPos.color,
             labelPos.lineHeight / labelPos.fontSize,
             labelPos.textAlign as any
@@ -1700,7 +1791,7 @@ export default function DraggableBusinessCardPreview({
         backgroundColor: '#ffffff', // 设置白色背景确保有内容
         useCORS: true,
         allowTaint: true,
-        scale: 1, // 使用1倍缩放避免变形，让html2canvas自己处理
+        scale: 4, // 使用4倍缩放确保高清输出
         width: 350, // 固定宽度
         height: 500, // 固定高度
         logging: true, // 开启日志以便调试
@@ -1958,7 +2049,7 @@ export default function DraggableBusinessCardPreview({
     try {
       // 获取设备像素比，确保高分辨率设备正确渲染
       const dpr = window.devicePixelRatio || 1
-      const targetScale = Math.max(2, 2 * dpr) // 至少2倍，考虑设备像素比
+      const targetScale = Math.max(4, 4 * dpr) // 提高到4倍，确保高清输出
       
       console.log('设备像素比:', dpr, '目标缩放:', targetScale)
       
@@ -2005,14 +2096,14 @@ export default function DraggableBusinessCardPreview({
       // 等待渲染完成
       await new Promise(resolve => setTimeout(resolve, 500))
       
-      // 使用优化的html2canvas配置 - 彻底修复变形问题
+      // 使用优化的html2canvas配置 - 彻底修复变形问题并提高质量
       const canvas = await html2canvas(clonedCard, {
         backgroundColor: '#ffffff',
         useCORS: true,
         allowTaint: true,
-        scale: 1, // 使用1倍缩放避免变形
-        width: 350,
-        height: 500,
+        scale: targetScale, // 使用高缩放比例确保高清输出
+        width: 350 * targetScale,
+        height: 500 * targetScale,
         logging: true, // 开启日志以便调试
         foreignObjectRendering: false, // 禁用以避免渲染问题
         removeContainer: false, // 不禁用以保持容器
@@ -2227,6 +2318,20 @@ export default function DraggableBusinessCardPreview({
     })
   }
 
+  // Logo拖拽开始
+  const handleLogoMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    setDraggedElement('logo')
+    const rect = e.currentTarget.getBoundingClientRect()
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    })
+  }
+
+
   // 拖拽移动
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!draggedElement) return
@@ -2242,6 +2347,14 @@ export default function DraggableBusinessCardPreview({
       
       if (onAvatarPositionChange) {
         onAvatarPositionChange(constrainedX, constrainedY)
+      }
+    } else if (draggedElement === 'logo' && logoConfig) {
+      // Logo拖动
+      const constrainedX = Math.max(0, Math.min(newX, 350 - logoConfig.size.width))
+      const constrainedY = Math.max(0, Math.min(newY, 500 - logoConfig.size.height))
+      
+      if (onLogoPositionChange) {
+        onLogoPositionChange(constrainedX, constrainedY)
       }
     } else {
       // 文字模块拖动
@@ -2261,6 +2374,7 @@ export default function DraggableBusinessCardPreview({
 
   // 仅允许拖拽：名字与头衔（头像拖拽逻辑独立保留）
   const canDrag = (id: string): boolean => id === 'name' || id === 'title'
+  const isDraggable = (id: string): boolean => canDrag(id)
 
   // 渲染可拖拽的文字元素
   const renderDraggableText = (
@@ -2270,7 +2384,6 @@ export default function DraggableBusinessCardPreview({
     position: TextPositions[keyof TextPositions],
     showCoordinates: boolean = false
   ) => {
-    const isDraggable = (id: string): boolean => canDrag(id)
     return (
       <div
         data-module-id={moduleId}
@@ -2382,6 +2495,7 @@ export default function DraggableBusinessCardPreview({
       <div 
         ref={cardRef}
         data-card-ref="true"
+        data-export-target="true"
         className="rounded-2xl overflow-hidden shadow-2xl"
         style={{
           // 🎯 终极修复：去掉边框，确保容器就是350x500
@@ -2481,7 +2595,7 @@ export default function DraggableBusinessCardPreview({
 
           {renderDraggableText(
             'name',
-            textModules.name || user.name || 'أحمد',
+            textModules.name || 'أحمد',
             textStyles.name,
             textPositions.name,
             showCoordinates
@@ -2497,25 +2611,27 @@ export default function DraggableBusinessCardPreview({
 
           {/* 统计数据 - 无边框横排显示 */}
           <div
-            className={`absolute cursor-default select-none ${
+            className={`absolute ${isDraggable('studentsServed') ? 'cursor-move' : 'cursor-default'} select-none ${
               draggedElement === 'studentsServed' ? 'z-50' : 'z-10'
             }`}
             data-module-id="studentsServed"
             style={{
               left: textPositions.studentsServed.x,
               top: textPositions.studentsServed.y,
-              pointerEvents: 'none',
+              pointerEvents: isDraggable('studentsServed') ? 'auto' : 'none',
               transform: draggedElement === 'studentsServed' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'studentsServed' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={undefined}
+            onMouseDown={isDraggable('studentsServed') ? (e) => handleMouseDown(e, 'studentsServed') : undefined}
           >
             <div className="flex flex-col items-center justify-center text-center">
+              {/* 主要数字显示 */}
               <div 
                 style={{
                   fontSize: `${textStyles.studentsServed?.fontSize || 16}px`,
                   color: textStyles.studentsServed?.color || '#000000',
-                  fontWeight: textStyles.studentsServed?.fontWeight || 'bold'
+                  fontWeight: textStyles.studentsServed?.fontWeight || 'bold',
+                  textAlign: 'center'
                 }}
               >
                 {textModules.studentsServed >= 1000 
@@ -2523,13 +2639,16 @@ export default function DraggableBusinessCardPreview({
                   : textModules.studentsServed
                 }
               </div>
+              
+              {/* 阿拉伯语标签 */}
               <div 
                 className="text-[6px] leading-tight"
                 style={{
                   color: textStyles.studentsServed?.color || '#000000',
                   fontWeight: textStyles.studentsServed?.fontWeight || 'normal',
                   whiteSpace: 'nowrap',
-                  direction: 'rtl'
+                  direction: 'rtl',
+                  textAlign: 'center'
                 }}
               >
                 الطلاب المخدومون
@@ -2558,39 +2677,44 @@ export default function DraggableBusinessCardPreview({
           </div>
 
           <div
-            className={`absolute cursor-default select-none ${
+            className={`absolute ${isDraggable('positiveRating') ? 'cursor-move' : 'cursor-default'} select-none ${
               draggedElement === 'positiveRating' ? 'z-50' : 'z-10'
             }`}
             data-module-id="positiveRating"
             style={{
               left: textPositions.positiveRating.x,
               top: textPositions.positiveRating.y,
-              pointerEvents: 'none',
+              pointerEvents: isDraggable('positiveRating') ? 'auto' : 'none',
               transform: draggedElement === 'positiveRating' ? 'scale(1.05)' : 'scale(1)',
               transition: draggedElement === 'positiveRating' ? 'none' : 'transform 0.2s ease'
             }}
-            onMouseDown={undefined}
+            onMouseDown={isDraggable('positiveRating') ? (e) => handleMouseDown(e, 'positiveRating') : undefined}
           >
             <div className="flex flex-col items-center justify-center text-center">
+              {/* 主要数字显示 */}
               <div 
                 style={{
                   fontSize: `${textStyles.positiveRating?.fontSize || 16}px`,
                   color: textStyles.positiveRating?.color || '#000000',
-                  fontWeight: textStyles.positiveRating?.fontWeight || 'bold'
+                  fontWeight: textStyles.positiveRating?.fontWeight || 'bold',
+                  textAlign: 'center'
                 }}
               >
                 {textModules.positiveRating}%
               </div>
+              
+              {/* 阿拉伯语标签 */}
               <div 
                 className="text-[6px] leading-tight"
                 style={{
                   color: textStyles.positiveRating?.color || '#000000',
                   fontWeight: textStyles.positiveRating?.fontWeight || 'normal',
                   whiteSpace: 'nowrap',
-                  direction: 'rtl'
+                  direction: 'rtl',
+                  textAlign: 'center'
                 }}
               >
-                نسبة التقييم
+                نسبة النجاح
               </div>
               {showCoordinates && (
                 <div
@@ -2881,6 +3005,57 @@ export default function DraggableBusinessCardPreview({
               )}
             </div>
           </div>
+
+          {/* Logo模块 - 可拖拽 */}
+          {logoConfig && logoConfig.enabled && (
+            <div
+              className={`absolute cursor-move select-none ${
+                draggedElement === 'logo' ? 'z-50' : 'z-10'
+              }`}
+              data-module-id="logo"
+              style={{
+                left: logoConfig.position.x,
+                top: logoConfig.position.y,
+                width: logoConfig.size.width,
+                height: logoConfig.size.height,
+                transform: draggedElement === 'logo' ? 'scale(1.05)' : 'scale(1)',
+                transition: draggedElement === 'logo' ? 'none' : 'transform 0.2s ease'
+              }}
+              onMouseDown={handleLogoMouseDown}
+            >
+              <img 
+                src={logoConfig.src} 
+                alt="Logo"
+                className="w-full h-full object-contain"
+                draggable={false}
+                onError={(e) => {
+                  console.warn('Logo加载失败:', logoConfig.src)
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+              
+              {/* Logo坐标显示 */}
+              {showCoordinates && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: '100%',
+                    left: '0',
+                    fontSize: '10px',
+                    color: '#666',
+                    background: 'rgba(255, 255, 255, 0.8)',
+                    padding: '2px 4px',
+                    borderRadius: '3px',
+                    whiteSpace: 'nowrap',
+                    zIndex: 1000,
+                    pointerEvents: 'none'
+                  }}
+                >
+                  Logo: ({Math.round(logoConfig.position.x)}, {Math.round(logoConfig.position.y)})
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
       {/* 导出按钮 - 已隐藏，只保留DOM导出 */}
@@ -2942,12 +3117,63 @@ export default function DraggableBusinessCardPreview({
           </div>
         </div>
 
-      {/* 双重导出引擎 */}
-      <DualExportMethods 
-        user={user}
-        cardRef={cardRef}
-        className="mt-4"
-      />
+
+      {/* 🚀 绕过画质损失导出 - 备用 */}
+      <div className="hidden">
+        <BypassDomExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+      {/* 🎯 精确布局导出 - 备用 */}
+      <div className="hidden">
+        <LayoutPerfectExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+      {/* 🔧 强制修复器 - 备用 */}
+      <div className="hidden">
+        <ForceFixExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+      {/* 🔍 问题诊断器 - 备用 */}
+      <div className="hidden">
+        <DiagnosisExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+      {/* 🔧 DOM增强导出 - 备用 */}
+      <div className="hidden">
+        <DomEnhancedExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+
+      {/* 🚀 增强DOM导出 - 备用 */}
+      <div className="hidden">
+        <EnhancedDomExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
+
+      {/* 🔧 固定尺寸导出 - 备用 */}
+      <div className="hidden">
+        <FixedSizeExport 
+          cardRef={cardRef}
+          className="mt-4"
+        />
+      </div>
 
       {/* DOM导出调试工具 - 已隐藏 */}
       <div className="hidden">

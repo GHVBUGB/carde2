@@ -1,16 +1,15 @@
 'use client'
 
-import { useState } from 'react'
-import html2canvas from 'html2canvas'
-import { saveAs } from 'file-saver'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Download, Image } from 'lucide-react'
-import { useCardStore } from '@/store/card'
+import { Badge } from '@/components/ui/badge'
+import { saveAs } from 'file-saver'
+import domtoimage from 'dom-to-image-more'
 import { useAuthStore } from '@/store/auth'
 
 interface SimpleDomExportProps {
-  cardRef: React.RefObject<HTMLElement>
+  cardRef: React.RefObject<HTMLDivElement>
   className?: string
 }
 
@@ -22,157 +21,107 @@ export default function SimpleDomExport({
   const [status, setStatus] = useState('')
   
   const { user } = useAuthStore()
-  const { cardData, textModules } = useCardStore()
 
-  // 获取用户名用于文件命名
-  const getUserName = () => {
-    return cardData.name || textModules.name || user?.name || 'business-card'
-  }
-
-  // 🎯 简洁的DOM导出函数
-  const exportCard = async (format: 'png' | 'jpeg' = 'png') => {
+  // 简单的DOM导出
+  const simpleDomExport = async (format: 'png' | 'jpeg' = 'png') => {
     if (!cardRef.current) {
       setStatus('❌ 名片组件未找到')
       return
     }
 
     setExporting(true)
-    setStatus('正在准备导出...')
+    setStatus('正在导出...')
 
     try {
-      // 等待资源加载
-      setStatus('等待资源加载...')
+      const startTime = Date.now()
+      const domNode = cardRef.current
       
-      // 等待图片加载完成
-      const images = cardRef.current.querySelectorAll('img')
-      if (images.length > 0) {
-        await Promise.all(Array.from(images).map(img => {
-          if (img.complete) return Promise.resolve()
-          return new Promise((resolve) => {
-            img.onload = resolve
-            img.onerror = resolve
-            setTimeout(resolve, 3000) // 3秒超时
-          })
-        }))
-      }
-
-      // 等待字体加载
-      if (document.fonts) {
-        await document.fonts.ready
-      }
-
-      // 短暂等待确保DOM稳定
-      await new Promise(resolve => setTimeout(resolve, 300))
-
-      setStatus('正在生成图片...')
-
-      // 🎯 使用html2canvas导出
-      const canvas = await html2canvas(cardRef.current, {
+      // 最简单的配置
+      const options = {
         width: 350,
         height: 500,
-        scale: 2, // 高清晰度
-        useCORS: true,
-        allowTaint: false,
-        backgroundColor: null, // 透明背景
-        logging: false,
-        imageTimeout: 15000,
-        removeContainer: true,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: window.innerWidth,
-        windowHeight: window.innerHeight
-      })
+        quality: format === 'png' ? 1.0 : 0.95,
+        bgcolor: '#ffffff',
+        cacheBust: true,
+        pixelRatio: 1, // 使用1倍像素比，避免复杂问题
+      }
 
-      setStatus('正在处理图片...')
-
-      // 转换为Blob
-      const blob = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => {
-          resolve(blob!)
-        }, `image/${format}`, format === 'jpeg' ? 0.9 : 1.0)
-      })
-
-      // 下载文件
-      const filename = `${getUserName()}.${format}`
+      let dataUrl: string
+      if (format === 'png') {
+        dataUrl = await domtoimage.toPng(domNode, options)
+      } else {
+        dataUrl = await domtoimage.toJpeg(domNode, options)
+      }
+      
+      // 转换为blob并下载
+      const response = await fetch(dataUrl)
+      const blob = await response.blob()
+      
+      const filename = `${user?.name || 'business-card'}-simple.${format}`
       saveAs(blob, filename)
 
+      const duration = Date.now() - startTime
       const fileSizeKB = (blob.size / 1024).toFixed(1)
-      setStatus(`✅ 导出成功！文件大小: ${fileSizeKB}KB`)
+      setStatus(`✅ 导出成功！大小: ${fileSizeKB}KB, 耗时: ${duration}ms`)
 
     } catch (error: any) {
-      console.error('导出失败:', error)
+      console.error('❌ 导出失败:', error)
       setStatus(`❌ 导出失败: ${error.message}`)
     } finally {
       setExporting(false)
-      // 3秒后清除状态
-      setTimeout(() => setStatus(''), 3000)
+      setTimeout(() => setStatus(''), 5000)
     }
   }
 
   return (
-    <Card className={`p-4 ${className}`}>
-      <div className="space-y-4">
-        <div className="text-center">
-          <h3 className="text-md font-semibold mb-2">导出名片</h3>
-          <p className="text-xs text-gray-600">
-            将您的名片导出为高清图片
-          </p>
+    <Card className={`p-4 ${className} border-2 border-blue-500`}>
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-blue-700">📷 简单DOM导出</h3>
+          <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+            基础导出
+          </Badge>
         </div>
-
-        {/* 导出按钮 */}
-        <div className="flex gap-3">
+        
+        <div className="text-sm text-blue-700 bg-blue-50 p-2 rounded">
+          <strong>说明：</strong>最简单的DOM导出，无复杂优化，直接导出当前显示内容
+        </div>
+        
+        <div className="grid grid-cols-2 gap-2">
           <Button
-            onClick={() => exportCard('png')}
+            onClick={() => simpleDomExport('png')}
             disabled={exporting}
-            className="flex-1 flex items-center justify-center gap-2"
-            variant="default"
+            className="bg-blue-600 hover:bg-blue-700"
+            size="sm"
           >
-            <Image className="w-4 h-4" />
-            PNG格式
+            {exporting ? '导出中...' : '📷 PNG导出'}
           </Button>
-          
           <Button
-            onClick={() => exportCard('jpeg')}
+            onClick={() => simpleDomExport('jpeg')}
             disabled={exporting}
-            className="flex-1 flex items-center justify-center gap-2"
             variant="outline"
+            size="sm"
           >
-            <Download className="w-4 h-4" />
-            JPEG格式
+            {exporting ? '导出中...' : '📷 JPEG导出'}
           </Button>
         </div>
 
-        {/* 状态显示 */}
-        {(exporting || status) && (
-          <div className="text-center p-3 bg-gray-50 rounded-lg">
-            {exporting && (
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-sm">导出中...</span>
-              </div>
-            )}
-            {status && (
-              <p className={`text-sm ${
-                status.startsWith('✅') 
-                  ? 'text-green-600' 
-                  : status.startsWith('❌')
-                  ? 'text-red-600'
-                  : 'text-blue-600'
-              }`}>
-                {status}
-              </p>
-            )}
+        {status && (
+          <div className={`text-sm text-center p-2 rounded ${
+            status.includes('✅') ? 'bg-green-50 text-green-700' :
+            status.includes('❌') ? 'bg-red-50 text-red-700' :
+            'bg-blue-50 text-blue-700'
+          }`}>
+            {status}
           </div>
         )}
-
-        {/* 说明 */}
-        <div className="bg-blue-50 rounded-lg p-3 text-xs text-blue-800">
-          <div className="space-y-1">
-            <div><strong>💡 使用说明:</strong></div>
-            <div>• PNG格式: 透明背景，最高质量</div>
-            <div>• JPEG格式: 白色背景，文件较小</div>
-            <div>• 分辨率: 700x1000像素 (2倍高清)</div>
-          </div>
+        
+        <div className="text-xs text-gray-600 space-y-1">
+          <div className="font-semibold text-blue-700">📷 简单导出：</div>
+          <div>• 直接使用dom-to-image导出</div>
+          <div>• 固定350x500尺寸</div>
+          <div>• 1倍像素比，避免复杂问题</div>
+          <div>• 无额外优化，保持原始效果</div>
         </div>
       </div>
     </Card>

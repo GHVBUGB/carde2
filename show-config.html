@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>当前配置显示</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .config-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .config-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .config-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        .config-item {
+            margin: 5px 0;
+            font-family: monospace;
+            background: #f8f8f8;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .copy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .copy-btn:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>当前名片配置</h1>
+    
+    <div class="config-container">
+        <button class="copy-btn" onclick="copyAllConfig()">复制所有配置</button>
+        <button class="copy-btn" onclick="location.reload()">刷新配置</button>
+    </div>
+
+    <div id="config-display"></div>
+
+    <script>
+        function getConfigFromStorage() {
+            try {
+                const cardStorage = localStorage.getItem('card-storage');
+                if (cardStorage) {
+                    const config = JSON.parse(cardStorage);
+                    return config.state || config;
+                }
+            } catch (e) {
+                console.error('读取配置失败:', e);
+            }
+            return null;
+        }
+
+        function displayConfig() {
+            const config = getConfigFromStorage();
+            const display = document.getElementById('config-display');
+            
+            if (!config) {
+                display.innerHTML = '<div class="config-container"><p>未找到保存的配置数据</p></div>';
+                return;
+            }
+
+            let html = '';
+
+            // 文字位置配置
+            if (config.textPositions) {
+                html += '<div class="config-section">';
+                html += '<div class="config-title">📝 文字模块位置 (textPositions)</div>';
+                Object.entries(config.textPositions).forEach(([key, value]) => {
+                    html += `<div class="config-item">${key}: { x: ${value.x}, y: ${value.y} }</div>`;
+                });
+                html += '</div>';
+            }
+
+            // 头像配置
+            if (config.avatarConfig) {
+                html += '<div class="config-section">';
+                html += '<div class="config-title">👤 头像配置 (avatarConfig)</div>';
+                html += `<div class="config-item">size: ${config.avatarConfig.size}</div>`;
+                html += `<div class="config-item">position: { x: ${config.avatarConfig.position.x}, y: ${config.avatarConfig.position.y} }</div>`;
+                html += '</div>';
+            }
+
+            // Logo配置
+            if (config.logoConfig) {
+                html += '<div class="config-section">';
+                html += '<div class="config-title">🏷️ Logo配置 (logoConfig)</div>';
+                html += `<div class="config-item">enabled: ${config.logoConfig.enabled}</div>`;
+                html += `<div class="config-item">src: "${config.logoConfig.src}"</div>`;
+                html += `<div class="config-item">size: { width: ${config.logoConfig.size.width}, height: ${config.logoConfig.size.height} }</div>`;
+                html += `<div class="config-item">position: { x: ${config.logoConfig.position.x}, y: ${config.logoConfig.position.y} }</div>`;
+                html += '</div>';
+            }
+
+            // 文字模块内容
+            if (config.textModules) {
+                html += '<div class="config-section">';
+                html += '<div class="config-title">📄 文字模块内容 (textModules)</div>';
+                Object.entries(config.textModules).forEach(([key, value]) => {
+                    html += `<div class="config-item">${key}: "${value}"</div>`;
+                });
+                html += '</div>';
+            }
+
+            // 文字样式
+            if (config.textStyles) {
+                html += '<div class="config-section">';
+                html += '<div class="config-title">🎨 文字样式 (textStyles)</div>';
+                Object.entries(config.textStyles).forEach(([key, value]) => {
+                    html += `<div class="config-item">${key}: { fontSize: ${value.fontSize}, color: "${value.color}", fontWeight: "${value.fontWeight}" }</div>`;
+                });
+                html += '</div>';
+            }
+
+            display.innerHTML = html;
+        }
+
+        function copyAllConfig() {
+            const config = getConfigFromStorage();
+            if (config) {
+                const configText = JSON.stringify(config, null, 2);
+                navigator.clipboard.writeText(configText).then(() => {
+                    alert('配置已复制到剪贴板！');
+                }).catch(() => {
+                    // 备用方法
+                    const textArea = document.createElement('textarea');
+                    textArea.value = configText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                    alert('配置已复制到剪贴板！');
+                });
+            } else {
+                alert('没有找到配置数据！');
+            }
+        }
+
+        // 页面加载时显示配置
+        displayConfig();
+    </script>
+</body>
+</html>

@@ -208,58 +208,6 @@ export default function TextModulesEditor({
             </div>
           </div>
 
-          {/* 好评率 */}
-          <div className="space-y-2">
-            <label className="text-xs text-gray-600">معدل التقييم الإيجابي (%)</label>
-            <Input
-              type="number"
-              min="0"
-              max="99"
-              value={textModules.positiveRating || ''}
-              onChange={(e) => {
-                const value = e.target.value.replace(/^0+/, '') || '0'
-                const numValue = Number(value)
-                if (numValue <= 99) {
-                  handleTextChange('positiveRating', numValue)
-                }
-              }}
-              placeholder="يرجى إدخال معدل التقييم الإيجابي (حد أقصى 99%)"
-              className="w-full"
-            />
-            <div className="grid grid-cols-3 gap-2 hidden">
-              <div>
-                <label className="text-xs text-gray-600">حجم الخط</label>
-                <input
-                  type="range"
-                  min="8"
-                  max="20"
-                  value={textStyles.positiveRating?.fontSize || 12}
-                  onChange={(e) => handleStyleChange('positiveRating', 'fontSize', Number(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-gray-600">اللون</label>
-                <input
-                  type="color"
-                  value={textStyles.positiveRating?.color || '#000000'}
-                  onChange={(e) => handleStyleChange('positiveRating', 'color', e.target.value)}
-                  className="w-full h-8 rounded border"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-gray-600">السمك</label>
-                <select
-                  value={textStyles.positiveRating?.fontWeight || 'bold'}
-                  onChange={(e) => handleStyleChange('positiveRating', 'fontWeight', e.target.value)}
-                  className="w-full text-xs border rounded px-2 py-1"
-                >
-                  <option value="normal">عادي</option>
-                  <option value="bold">غامق</option>
-                </select>
-              </div>
-            </div>
-      </div>
       
           {/* 联系电话 */}
           <div className="space-y-2 md:col-span-2">

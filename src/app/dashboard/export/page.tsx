@@ -184,7 +184,7 @@ export default function ExportPage() {
             }
           })
         }
-        filename = `${user.name || 'business-card'}-名片.${settings.format}`
+        filename = `${user.name || 'business-card'}-بطاقة.${settings.format}`
       }
 
       // 使用file-saver下载文件
@@ -269,7 +269,7 @@ export default function ExportPage() {
       
       for (const format of formats) {
         for (const size of sizes) {
-          setCurrentTask(`正在导出 ${format.toUpperCase()} 格式 - ${size.name} (${size.width}x${size.height})`)
+          setCurrentTask(`جاري تصدير تنسيق ${format.toUpperCase()} - ${size.name} (${size.width}x${size.height})`)
           
           const currentSettings = {
             ...settings,
@@ -300,9 +300,9 @@ export default function ExportPage() {
         }
       }
       
-      setCurrentTask('批量导出完成！')
+      setCurrentTask('تم إكمال التصدير المجمع!')
       setTimeout(() => {
-        alert('批量导出完成！')
+        alert('تم إكمال التصدير المجمع!')
         setExporting(false)
         setProgress(0)
         setCurrentTask('')
@@ -310,7 +310,7 @@ export default function ExportPage() {
       
     } catch (error) {
       console.error('Batch export failed:', error)
-      alert('批量导出失败，请稍后重试')
+      alert('فشل التصدير المجمع، يرجى المحاولة لاحقاً')
       setExporting(false)
       setProgress(0)
       setCurrentTask('')
@@ -321,8 +321,8 @@ export default function ExportPage() {
     if (!user) return
 
     const shareData = {
-      title: `${user.name}的数字名片`,
-      text: `查看我的51Talk数字名片`,
+      title: `بطاقة ${user.name} الرقمية`,
+      text: `شاهد بطاقة 51Talk الرقمية الخاصة بي`,
       url: `${window.location.origin}/card/${user.id}`,
     }
 
@@ -332,7 +332,7 @@ export default function ExportPage() {
       } else {
         // 备用方案：复制链接到剪贴板
         await navigator.clipboard.writeText(shareData.url)
-        alert('名片链接已复制到剪贴板')
+        alert('تم نسخ رابط البطاقة إلى الحافظة')
       }
 
       // 记录分享统计
@@ -349,9 +349,9 @@ export default function ExportPage() {
       // 如果分享失败，尝试复制链接
       try {
         await navigator.clipboard.writeText(shareData.url)
-        alert('名片链接已复制到剪贴板')
+        alert('تم نسخ رابط البطاقة إلى الحافظة')
       } catch {
-        alert('分享失败，请手动复制链接')
+        alert('فشل المشاركة، يرجى نسخ الرابط يدوياً')
       }
     }
   }
@@ -375,16 +375,16 @@ export default function ExportPage() {
             </svg>
           </div>
           <div>
-            <h3 className="text-sm font-medium text-blue-800">导出功能已迁移</h3>
-            <p className="mt-1 text-sm text-blue-700">
-              此页面的导出功能已移至<strong>实时预览模块</strong>。请在实时预览页面使用导出功能，该功能已优化并修复了所有问题。
+            <h3 className="text-sm font-medium text-blue-800" dir="rtl">تم نقل وظيفة التصدير</h3>
+            <p className="mt-1 text-sm text-blue-700" dir="rtl">
+              تم نقل وظيفة التصدير في هذه الصفحة إلى <strong>وحدة المعاينة المباشرة</strong>. يرجى استخدام وظيفة التصدير في صفحة المعاينة المباشرة، حيث تم تحسينها وإصلاح جميع المشاكل.
             </p>
             <div className="mt-2">
               <a 
                 href="/dashboard" 
                 className="text-sm font-medium text-blue-600 hover:text-blue-500 underline"
               >
-                前往实时预览页面 →
+                الذهاب إلى صفحة المعاينة المباشرة →
               </a>
             </div>
           </div>
@@ -393,9 +393,9 @@ export default function ExportPage() {
 
       {/* 页面标题 */}
       <div>
-        <h1 className="text-2xl font-bold text-brand-dark mb-2">导出名片</h1>
-        <p className="text-brand-gray">
-          将您的数字名片导出为图片或分享链接
+        <h1 className="text-2xl font-bold text-brand-dark mb-2" dir="rtl">تصدير البطاقة</h1>
+        <p className="text-brand-gray" dir="rtl">
+          تصدير بطاقتك الرقمية كصورة أو رابط مشاركة
         </p>
       </div>
 
@@ -407,9 +407,9 @@ export default function ExportPage() {
           {/* 导出操作 */}
           <Card>
             <CardHeader>
-              <CardTitle>导出操作</CardTitle>
-              <CardDescription>
-                选择导出方式
+              <CardTitle dir="rtl">عمليات التصدير</CardTitle>
+              <CardDescription dir="rtl">
+                اختر طريقة التصدير
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -421,14 +421,14 @@ export default function ExportPage() {
                 {exporting ? (
                   <div className="flex items-center space-x-2">
                     <div className="loading-spinner w-4 h-4"></div>
-                    <span>导出中...</span>
+                    <span dir="rtl">جاري التصدير...</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
-                    <span>下载图片</span>
+                    <span dir="rtl">تحميل الصورة</span>
                   </div>
                 )}
               </Button>
@@ -443,7 +443,7 @@ export default function ExportPage() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
-                  <span>批量导出</span>
+                  <span dir="rtl">تصدير مجمع</span>
                 </div>
               </Button>
 
@@ -456,7 +456,7 @@ export default function ExportPage() {
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z" />
                   </svg>
-                  <span>分享名片链接</span>
+                  <span dir="rtl">مشاركة رابط البطاقة</span>
                 </div>
               </Button>
             </CardContent>
@@ -468,9 +468,9 @@ export default function ExportPage() {
           {/* 导出历史 */}
           <Card>
             <CardHeader>
-              <CardTitle>导出历史</CardTitle>
-              <CardDescription>
-                查看最近的导出记录
+              <CardTitle dir="rtl">تاريخ التصدير</CardTitle>
+              <CardDescription dir="rtl">
+                عرض سجلات التصدير الأخيرة
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -488,7 +488,7 @@ export default function ExportPage() {
                         </div>
                         <div>
                           <div className="text-sm font-medium">
-                            {record.details?.dimensions || '未知尺寸'}
+                            {record.details?.dimensions || 'أبعاد غير معروفة'}
                           </div>
                           <div className="text-xs text-gray-500">
                             {new Date(record.created_at).toLocaleString()}

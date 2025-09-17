@@ -482,8 +482,8 @@ export default function BusinessCardPreview({
             </p>
           </div>
 
-          {/* 数据统计 - 无边框横排显示 */}
-          <div className="absolute top-72 left-1/2 transform -translate-x-1/2 flex gap-8">
+          {/* 数据统计 - 无边框居中显示 */}
+          <div className="absolute top-72 left-1/2 transform -translate-x-1/2 flex justify-center">
             {/* 学员数量 */}
             <div className="flex flex-col items-center justify-center text-center">
               <div 
@@ -509,27 +509,6 @@ export default function BusinessCardPreview({
               </div>
             </div>
             
-            {/* 好评率 */}
-            <div className="flex flex-col items-center justify-center text-center">
-              <div 
-                style={{
-                  fontSize: `${textStyles?.positiveRating?.fontSize || 16}px`,
-                  color: textStyles?.positiveRating?.color || '#000000',
-                  fontWeight: textStyles?.positiveRating?.fontWeight || 'bold'
-                }}
-              >
-                {textModules.positiveRating}%
-              </div>
-              <div 
-                className="text-[6px] leading-tight"
-                style={{
-                  color: textStyles?.positiveRating?.color || '#000000',
-                  fontWeight: textStyles?.positiveRating?.fontWeight || 'normal'
-                }}
-              >
-                POSITIVE<br />RATING
-              </div>
-            </div>
           </div>
 
           {/* 业务能力标签区域 - 无图标，英文两排显示 */}

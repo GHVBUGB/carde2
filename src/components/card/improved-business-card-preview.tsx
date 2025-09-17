@@ -204,7 +204,7 @@ export default function ImprovedBusinessCardPreview({
             {textModules.title || user.title || 'شريك النمو الرئيسي'}
           </div>
 
-          {/* 数据统计区域 - 精确位置 */}
+          {/* 数据统计区域 - 简洁设计 */}
           <div className="absolute" style={{ left: '50%', top: '288px', transform: 'translateX(-50%)' }}>
             <div className="flex gap-16">
               {/* 学员数量 */}
@@ -213,7 +213,8 @@ export default function ImprovedBusinessCardPreview({
                   style={{
                     fontSize: `${finalTextStyles.studentsServed.fontSize}px`,
                     color: finalTextStyles.studentsServed.color,
-                    fontWeight: finalTextStyles.studentsServed.fontWeight
+                    fontWeight: finalTextStyles.studentsServed.fontWeight,
+                    lineHeight: '1'
                   }}
                 >
                   {textModules.studentsServed >= 1000 
@@ -226,33 +227,57 @@ export default function ImprovedBusinessCardPreview({
                   style={{
                     fontSize: '6px',
                     color: finalTextStyles.studentsServed.color,
-                    fontWeight: 'normal'
+                    fontWeight: 'normal',
+                    textAlign: 'center',
+                    marginTop: '2px'
                   }}
                 >
-                  STUDENTS<br />SERVED
+                  الطلاب المخدومون
                 </div>
               </div>
               
-              {/* 好评率 */}
-              <div className="flex flex-col items-center text-center">
+              {/* 好评率 - 重新设计 */}
+              <div className="flex flex-col items-center text-center relative">
+                {/* 主要数字显示 */}
                 <div 
+                  className="relative z-10"
                   style={{
                     fontSize: `${finalTextStyles.positiveRating.fontSize}px`,
                     color: finalTextStyles.positiveRating.color,
-                    fontWeight: finalTextStyles.positiveRating.fontWeight
+                    fontWeight: finalTextStyles.positiveRating.fontWeight,
+                    lineHeight: '1',
+                    textShadow: '0 1px 2px rgba(0,0,0,0.1)'
                   }}
                 >
                   {textModules.positiveRating}%
                 </div>
+                
+                {/* 装饰性背景圆圈 */}
                 <div 
-                  className="leading-tight"
+                  className="absolute inset-0 rounded-full opacity-20"
+                  style={{
+                    background: `linear-gradient(135deg, ${finalTextStyles.positiveRating.color}40, ${finalTextStyles.positiveRating.color}20)`,
+                    width: '45px',
+                    height: '45px',
+                    top: '-8px',
+                    left: '50%',
+                    transform: 'translateX(-50%)'
+                  }}
+                />
+                
+                {/* 阿拉伯语标签 */}
+                <div 
+                  className="leading-tight relative z-10"
                   style={{
                     fontSize: '6px',
                     color: finalTextStyles.positiveRating.color,
-                    fontWeight: 'normal'
+                    fontWeight: '500',
+                    textAlign: 'center',
+                    marginTop: '4px',
+                    letterSpacing: '0.3px'
                   }}
                 >
-                  POSITIVE<br />RATING
+                  نسبة النجاح
                 </div>
               </div>
             </div>

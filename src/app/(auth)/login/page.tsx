@@ -162,11 +162,11 @@ export default function LoginPage() {
     <div className="animate-fade-in">
       <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-brand-dark">
-            欢迎回来
+          <CardTitle className="text-2xl font-bold text-brand-dark" dir="rtl">
+            أهلاً وسهلاً
           </CardTitle>
-          <CardDescription className="text-brand-gray">
-            登录您的51Talk名片账户
+          <CardDescription className="text-brand-gray" dir="rtl">
+            سجل دخولك إلى حساب بطاقة 51Talk
           </CardDescription>
         </CardHeader>
         
@@ -186,13 +186,13 @@ export default function LoginPage() {
           {!step.showPasswordInput && (
             <form onSubmit={handleEmailSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-brand-dark mb-2">
-                  51Talk邮箱
+                <label htmlFor="email" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  بريد 51Talk الإلكتروني
                 </label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your-name@51talk.com"
+                  placeholder="اسمك@51talk.com"
                   value={step.email}
                   onChange={(e) => setStep(prev => ({ ...prev, email: e.target.value }))}
                   disabled={loading}
@@ -205,7 +205,7 @@ export default function LoginPage() {
                 className="w-full btn-primary"
                 disabled={loading}
               >
-                {loading ? '检查账户中...' : '下一步'}
+                {loading ? 'جاري فحص الحساب...' : 'التالي'}
               </Button>
             </form>
           )}
@@ -219,7 +219,7 @@ export default function LoginPage() {
                 onClick={() => setStep(prev => ({ ...prev, showPasswordInput: true }))}
                 className="text-sm text-brand-primary hover:underline"
               >
-                使用密码登录
+                تسجيل الدخول بكلمة المرور
               </button>
             </div>
           )}
@@ -227,13 +227,13 @@ export default function LoginPage() {
           {step.showPasswordInput && !step.showVerificationInput && (
             <form onSubmit={handlePasswordLogin} className="space-y-4">
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-brand-dark mb-2">
-                  密码
+                <label htmlFor="password" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  كلمة المرور
                 </label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="请输入密码"
+                  placeholder="أدخل كلمة المرور"
                   value={step.password}
                   onChange={(e) => setStep(prev => ({ ...prev, password: e.target.value }))}
                   disabled={loading}
@@ -253,14 +253,14 @@ export default function LoginPage() {
                   disabled={loading}
                   className="flex-1"
                 >
-                  返回
+                  عودة
                 </Button>
                 <Button 
                   type="submit" 
                   className="flex-1 btn-primary"
                   disabled={loading}
                 >
-                  {loading ? '登录中...' : '登录'}
+                  {loading ? 'جاري تسجيل الدخول...' : 'تسجيل الدخول'}
                 </Button>
               </div>
             </form>
@@ -268,14 +268,14 @@ export default function LoginPage() {
 
           <div className="text-center text-sm text-brand-gray space-y-2">
             <div>
-              还没有账户？{' '}
-              <Link href="/register" className="text-brand-primary hover:underline font-medium">
-                立即注册
+              <span dir="rtl">ليس لديك حساب؟</span>{' '}
+              <Link href="/register" className="text-brand-primary hover:underline font-medium" dir="rtl">
+                سجل الآن
               </Link>
             </div>
             <div className="pt-2 border-t border-gray-200">
-              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium">
-                🔐 管理员登录
+              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium" dir="rtl">
+                🔐 تسجيل دخول المدير
               </Link>
             </div>
           </div>

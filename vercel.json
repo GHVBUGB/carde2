@@ -9,7 +9,14 @@
     "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key",
     "SUPABASE_SERVICE_ROLE_KEY": "@supabase_service_key",
     "REMOVE_BG_API_KEY": "@remove_bg_api_key",
-    "JWT_SECRET": "@jwt_secret"
+    "JWT_SECRET": "@jwt_secret",
+    "SMTP_HOST": "@smtp_host",
+    "SMTP_PORT": "@smtp_port",
+    "SMTP_USER": "@smtp_user",
+    "SMTP_PASS": "@smtp_pass",
+    "SMTP_FROM": "@smtp_from",
+    "ADMIN_EMAIL": "@admin_email",
+    "NEXT_PUBLIC_APP_URL": "@app_url"
   },
   "functions": {
     "src/app/api/**/*.ts": {
@@ -31,8 +38,38 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=()"
         }
       ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store, max-age=0"
+        }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/admin",
+      "destination": "/admin/login",
+      "permanent": false
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/health",
+      "destination": "/api/health"
     }
   ]
 }

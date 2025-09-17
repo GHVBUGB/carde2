@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导出尺寸修复测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        .fix-summary {
+            background: rgba(46, 204, 113, 0.2);
+            border: 2px solid #2ecc71;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .technical-details {
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid #3498db;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .before, .after {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .before {
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid #e74c3c;
+        }
+        .after {
+            background: rgba(46, 204, 113, 0.2);
+            border: 2px solid #2ecc71;
+        }
+        h1, h2, h3 {
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            margin: 10px 0;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .success {
+            background: rgba(46, 204, 113, 0.3);
+            border: 2px solid #2ecc71;
+        }
+        .info {
+            background: rgba(52, 152, 219, 0.3);
+            border: 2px solid #3498db;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 导出尺寸修复报告</h1>
+        
+        <div class="fix-summary">
+            <h2>✅ 问题诊断与修复</h2>
+            <p><strong>问题原因：</strong>导出的照片出现大量空白区域，名片只占据图片的一小部分。</p>
+            <p><strong>修复方案：</strong>优化DOM转图片的配置，确保容器尺寸正确，去除多余空白。</p>
+        </div>
+
+        <div class="before-after">
+            <div class="before">
+                <h3>❌ 修复前的问题</h3>
+                <ul>
+                    <li>大量空白区域</li>
+                    <li>名片只占图片一小部分</li>
+                    <li>尺寸配置错误</li>
+                    <li>文字可能变形</li>
+                </ul>
+            </div>
+            <div class="after">
+                <h3>✅ 修复后的改进</h3>
+                <ul>
+                    <li>正确的图片尺寸</li>
+                    <li>名片占满整个图片</li>
+                    <li>无多余空白</li>
+                    <li>文字清晰不变形</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="technical-details">
+            <h2>🔧 技术修复详情</h2>
+            
+            <h3>1. 容器尺寸优化</h3>
+            <div class="code">
+// 修复前：可能导致尺寸问题
+width: 350 * 3, // 3倍分辨率
+height: 500 * 3,
+
+// 修复后：正确的尺寸配置
+width: 350, // 使用原始尺寸
+height: 500,
+style: {
+  transform: 'scale(3)',
+  transformOrigin: '0 0',
+  width: '350px',
+  height: '500px'
+}
+            </div>
+
+            <h3>2. 容器样式优化</h3>
+            <div class="code">
+// 添加完整的容器样式
+tempContainer.style.margin = '0'
+tempContainer.style.padding = '0'
+tempContainer.style.border = 'none'
+tempContainer.style.boxSizing = 'border-box'
+            </div>
+
+            <h3>3. 文字渲染优化</h3>
+            <div class="code">
+// 确保文字样式正确保留
+el.style.direction = 'rtl'
+el.style.textAlign = 'center'
+el.style.fontFamily = 'Arial, sans-serif'
+el.style.fontSmoothing = 'antialiased'
+            </div>
+        </div>
+
+        <div class="status success">
+            <h2>🎯 修复内容</h2>
+            <p><strong>✅ 醒图级别增强：</strong>修复了容器尺寸和文字渲染</p>
+            <p><strong>✅ 专业级增强：</strong>优化了DOM转图片配置</p>
+            <p><strong>✅ 快速增强：</strong>改进了缩放和尺寸设置</p>
+            <p><strong>✅ 阿拉伯语文字：</strong>确保正确的文字方向和字体</p>
+            <p><strong>✅ 电话号码：</strong>保持清晰的文字渲染</p>
+        </div>
+
+        <div class="status info">
+            <h2>🧪 测试方法</h2>
+            <ol>
+                <li><strong>启动项目：</strong><code>npm run dev</code></li>
+                <li><strong>打开编辑器：</strong>访问名片编辑页面</li>
+                <li><strong>测试AI增强：</strong>
+                    <ul>
+                        <li>🔥 醒图级别增强</li>
+                        <li>🎨 专业级增强</li>
+                        <li>⚡ 快速增强</li>
+                    </ul>
+                </li>
+                <li><strong>检查导出结果：</strong>
+                    <ul>
+                        <li>图片尺寸应该是350x500像素</li>
+                        <li>名片应该占满整个图片</li>
+                        <li>没有多余的空白区域</li>
+                        <li>阿拉伯语文字应该正确显示</li>
+                        <li>电话号码应该清晰可见</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <div class="container">
+            <h2>📈 预期效果</h2>
+            <div class="code">
+修复后的AI增强功能将提供：
+
+1. 正确的图片尺寸（350x500像素）
+2. 名片占满整个图片区域
+3. 无多余空白区域
+4. 阿拉伯语文字正确显示
+5. 电话号码清晰可见
+6. 高质量的文字渲染
+7. 醒图级别的画质提升
+            </div>
+        </div>
+    </div>
+
+    <script>
+        console.log('🔧 导出尺寸修复测试页面已加载');
+        console.log('修复内容：');
+        console.log('1. 容器尺寸优化');
+        console.log('2. DOM转图片配置改进');
+        console.log('3. 文字渲染优化');
+        console.log('4. 阿拉伯语文字支持');
+        console.log('5. 去除多余空白区域');
+    </script>
+</body>
+</html>

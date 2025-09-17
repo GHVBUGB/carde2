@@ -30,7 +30,7 @@ export default function DashboardNav() {
           <div className="w-8 h-8 bg-brand-primary rounded-lg flex items-center justify-center">
             <span className="text-white font-bold text-sm">51</span>
           </div>
-          <span className="text-lg font-bold text-brand-dark">Talk名片</span>
+          <span className="text-lg font-bold text-brand-dark" dir="rtl">بطاقة Talk</span>
         </Link>
 
         {/* 导航链接 */}
@@ -39,25 +39,25 @@ export default function DashboardNav() {
             href="/dashboard" 
             className="text-brand-gray hover:text-brand-dark transition-colors"
           >
-            概览
+            نظرة عامة
           </Link>
           <Link 
             href="/dashboard/editor" 
             className="text-brand-gray hover:text-brand-dark transition-colors"
           >
-            编辑名片
+            تعديل البطاقة
           </Link>
           <Link 
             href="/dashboard/export" 
             className="text-brand-gray hover:text-brand-dark transition-colors"
           >
-            导出名片
+            تصدير البطاقة
           </Link>
           <Link 
             href="/dashboard/profile" 
             className="text-brand-gray hover:text-brand-dark transition-colors"
           >
-            个人设置
+            الإعدادات الشخصية
           </Link>
         </div>
 
@@ -71,7 +71,7 @@ export default function DashboardNav() {
               {user?.avatar_url ? (
                 <img 
                   src={user.avatar_url} 
-                  alt={user.name || '用户头像'}
+                  alt={user.name || 'صورة المستخدم'}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (
@@ -80,7 +80,7 @@ export default function DashboardNav() {
                 </span>
               )}
             </div>
-            <span className="hidden sm:block">{user?.name || '用户'}</span>
+            <span className="hidden sm:block" dir="rtl">{user?.name || 'المستخدم'}</span>
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -99,7 +99,7 @@ export default function DashboardNav() {
                 className="block px-4 py-2 text-sm text-brand-gray hover:bg-gray-50 hover:text-brand-dark"
                 onClick={() => setShowUserMenu(false)}
               >
-                个人设置
+                الإعدادات الشخصية
               </Link>
               
               <Link
@@ -107,7 +107,7 @@ export default function DashboardNav() {
                 className="block px-4 py-2 text-sm text-brand-gray hover:bg-gray-50 hover:text-brand-dark"
                 onClick={() => setShowUserMenu(false)}
               >
-                导出名片
+                تصدير البطاقة
               </Link>
               
               <div className="border-t border-gray-100 mt-2 pt-2">
@@ -115,7 +115,7 @@ export default function DashboardNav() {
                   onClick={handleLogout}
                   className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50"
                 >
-                  退出登录
+                  تسجيل الخروج
                 </button>
               </div>
             </div>
@@ -130,25 +130,25 @@ export default function DashboardNav() {
             href="/dashboard" 
             className="text-sm text-brand-gray hover:text-brand-dark"
           >
-            概览
+            نظرة عامة
           </Link>
           <Link 
             href="/dashboard/editor" 
             className="text-sm text-brand-gray hover:text-brand-dark"
           >
-            编辑
+            تعديل
           </Link>
           <Link 
             href="/dashboard/export" 
             className="text-sm text-brand-gray hover:text-brand-dark"
           >
-            导出
+            تصدير
           </Link>
           <Link 
             href="/dashboard/profile" 
             className="text-sm text-brand-gray hover:text-brand-dark"
           >
-            设置
+            إعدادات
           </Link>
         </div>
       </div>

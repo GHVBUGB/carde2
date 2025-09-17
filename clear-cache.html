@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清除缓存</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .btn-danger {
+            background: #dc3545;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>清除名片配置缓存</h1>
+        <p>这个工具可以清除所有旧的配置缓存，让新的默认配置生效。</p>
+        
+        <div id="status"></div>
+        
+        <button class="btn btn-danger" onclick="clearAllCache()">清除所有缓存</button>
+        <button class="btn" onclick="checkCache()">检查当前缓存</button>
+        <button class="btn" onclick="goToEditor()">打开编辑器</button>
+        
+        <div id="cache-info"></div>
+    </div>
+
+    <script>
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function clearAllCache() {
+            try {
+                // 清除所有可能的缓存键
+                const keysToRemove = [
+                    'card-storage',
+                    'card-storage-stable', 
+                    'card-storage-final',
+                    'auth-storage',
+                    'card-storage-v2'
+                ];
+                
+                let removedCount = 0;
+                keysToRemove.forEach(key => {
+                    if (localStorage.getItem(key)) {
+                        localStorage.removeItem(key);
+                        removedCount++;
+                    }
+                });
+                
+                // 清除所有包含card的键
+                for (let i = localStorage.length - 1; i >= 0; i--) {
+                    const key = localStorage.key(i);
+                    if (key && key.includes('card')) {
+                        localStorage.removeItem(key);
+                        removedCount++;
+                    }
+                }
+                
+                showStatus(`成功清除 ${removedCount} 个缓存项！现在新的默认配置将生效。`, 'success');
+                
+                setTimeout(() => {
+                    showStatus('请点击"打开编辑器"按钮查看效果。', 'info');
+                }, 2000);
+                
+            } catch (error) {
+                showStatus('清除缓存时出错: ' + error.message, 'error');
+            }
+        }
+
+        function checkCache() {
+            const cacheInfo = document.getElementById('cache-info');
+            let info = '<h3>当前缓存状态:</h3>';
+            
+            const keysToCheck = [
+                'card-storage',
+                'card-storage-stable', 
+                'card-storage-final',
+                'auth-storage'
+            ];
+            
+            keysToCheck.forEach(key => {
+                const value = localStorage.getItem(key);
+                if (value) {
+                    info += `<p><strong>${key}:</strong> 存在 (${value.length} 字符)</p>`;
+                } else {
+                    info += `<p><strong>${key}:</strong> 不存在</p>`;
+                }
+            });
+            
+            cacheInfo.innerHTML = info;
+        }
+
+        function goToEditor() {
+            window.open('/dashboard/editor', '_blank');
+        }
+
+        // 页面加载时检查缓存
+        window.onload = function() {
+            checkCache();
+        };
+    </script>
+</body>
+</html>

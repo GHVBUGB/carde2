@@ -290,7 +290,7 @@ export default function CleanDraggableCard({
         {/* 姓名 */}
         {renderDraggableText(
           'name',
-          textModules.name || user.name || 'أحمد',
+          textModules.name || 'أحمد',
           textStyles.name,
           textPositions.name,
           showCoordinates

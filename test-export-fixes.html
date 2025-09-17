@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>导出修复测试 - 服务标签位置和图片质量</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .header h1 {
+            color: #333;
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #666;
+            margin: 10px 0 0 0;
+            font-size: 1.2em;
+        }
+        
+        .fixes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .fix-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #28a745;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        
+        .fix-card h3 {
+            color: #28a745;
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .fix-card .icon {
+            font-size: 1.5em;
+        }
+        
+        .fix-card ul {
+            margin: 0;
+            padding-left: 20px;
+            color: #555;
+        }
+        
+        .fix-card li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .technical-details {
+            background: #e3f2fd;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border-left: 5px solid #2196f3;
+        }
+        
+        .technical-details h3 {
+            color: #2196f3;
+            margin: 0 0 15px 0;
+            font-size: 1.4em;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        .highlight {
+            background: #ffd700;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #000;
+            font-weight: bold;
+        }
+        
+        .quality-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .quality-item {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+        }
+        
+        .quality-item.before {
+            background: #ffebee;
+            border-color: #f44336;
+        }
+        
+        .quality-item.after {
+            background: #e8f5e8;
+            border-color: #4caf50;
+        }
+        
+        .quality-item h4 {
+            margin: 0 0 10px 0;
+            color: #333;
+        }
+        
+        .quality-item .scale {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .before .scale {
+            color: #f44336;
+        }
+        
+        .after .scale {
+            color: #4caf50;
+        }
+        
+        .test-instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+        
+        .test-instructions h3 {
+            color: #856404;
+            margin: 0 0 15px 0;
+        }
+        
+        .test-instructions ol {
+            margin: 0;
+            padding-left: 20px;
+            color: #856404;
+        }
+        
+        .test-instructions li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-fixed {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-improved {
+            background: #cce5ff;
+            color: #004085;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 导出功能修复报告</h1>
+            <p>服务标签位置偏移和DOM导出图片模糊问题修复</p>
+        </div>
+        
+        <div class="fixes-grid">
+            <div class="fix-card">
+                <h3>
+                    <span class="icon">🎯</span>
+                    服务标签位置修复
+                    <span class="status-badge status-fixed">已修复</span>
+                </h3>
+                <ul>
+                    <li><strong>问题描述：</strong>Canvas导出时服务标签位置偏移，与预览不一致</li>
+                    <li><strong>根本原因：</strong>getElementActualPosition函数未考虑变换矩阵和父元素偏移</li>
+                    <li><strong>修复方案：</strong>
+                        <ul>
+                            <li>添加变换矩阵计算支持</li>
+                            <li>特殊处理服务标签的父元素位置</li>
+                            <li>根据文本对齐方式调整坐标</li>
+                            <li>微调垂直位置以匹配DOM渲染</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="fix-card">
+                <h3>
+                    <span class="icon">📸</span>
+                    DOM导出图片质量提升
+                    <span class="status-badge status-improved">已优化</span>
+                </h3>
+                <ul>
+                    <li><strong>问题描述：</strong>DOM导出的图片模糊，清晰度不够</li>
+                    <li><strong>根本原因：</strong>html2canvas缩放比例过低，未充分利用设备像素比</li>
+                    <li><strong>优化方案：</strong>
+                        <ul>
+                            <li>将缩放比例从2倍提升到4倍</li>
+                            <li>考虑设备像素比进行动态调整</li>
+                            <li>优化Canvas尺寸计算</li>
+                            <li>保持所有导出方法的一致性</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="technical-details">
+            <h3>🔧 技术实现细节</h3>
+            
+            <h4>1. 服务标签位置计算优化</h4>
+            <div class="code-block">
+// 改进的位置计算函数
+const getElementActualPosition = (selector: string) => {
+  const element = cardElement?.querySelector(selector) as HTMLElement
+  if (!element) return null
+  
+  const rect = element.getBoundingClientRect()
+  const cardRect = cardElement!.getBoundingClientRect()
+  const computedStyle = window.getComputedStyle(element)
+  
+  // 获取变换矩阵以计算实际位置
+  const transform = computedStyle.transform
+  let actualX = rect.left - cardRect.left
+  let actualY = rect.top - cardRect.top
+  
+  // 如果有变换，需要调整位置
+  if (transform && transform !== 'none') {
+    const matrix = new DOMMatrix(transform)
+    actualX += matrix.m41
+    actualY += matrix.m42
+  }
+  
+  // 对于服务标签，需要特殊处理位置偏移
+  if (selector.includes('Label')) {
+    const parentElement = element.parentElement
+    if (parentElement) {
+      const parentRect = parentElement.getBoundingClientRect()
+      const parentCardRect = cardElement!.getBoundingClientRect()
+      actualX = parentRect.left - parentCardRect.left
+      actualY = parentRect.top - parentCardRect.top
+    }
+  }
+  
+  return { x: actualX, y: actualY, ... }
+}
+            </div>
+            
+            <h4>2. 服务标签渲染位置调整</h4>
+            <div class="code-block">
+abilityLabels.forEach(label => {
+  const labelPos = getElementActualPosition(label.selector)
+  if (labelPos) {
+    // 对于服务标签，需要调整位置以确保正确对齐
+    let adjustedX = labelPos.x
+    let adjustedY = labelPos.y
+    
+    // 根据文本对齐方式调整位置
+    if (labelPos.textAlign === 'center') {
+      adjustedX = labelPos.x + labelPos.width / 2
+    }
+    
+    // 调整Y位置以匹配DOM中的实际渲染位置
+    adjustedY = labelPos.y + labelPos.fontSize * 0.2 // 微调垂直位置
+    
+    drawMultilineText(label.text, adjustedX, adjustedY, ...)
+  }
+})
+            </div>
+            
+            <h4>3. 图片质量优化配置</h4>
+            <div class="code-block">
+// 获取设备像素比，确保高分辨率设备正确渲染
+const dpr = window.devicePixelRatio || 1
+const targetScale = Math.max(4, 4 * dpr) // 提高到4倍，确保高清输出
+
+// html2canvas配置优化
+const canvas = await html2canvas(clonedCard, {
+  backgroundColor: '#ffffff',
+  useCORS: true,
+  allowTaint: true,
+  scale: targetScale, // 使用高缩放比例确保高清输出
+  width: 350 * targetScale,
+  height: 500 * targetScale,
+  // ... 其他配置
+})
+            </div>
+        </div>
+        
+        <div class="quality-comparison">
+            <div class="quality-item before">
+                <h4>修复前</h4>
+                <div class="scale">2x 缩放</div>
+                <p>服务标签位置偏移<br>图片模糊不清</p>
+            </div>
+            <div class="quality-item after">
+                <h4>修复后</h4>
+                <div class="scale">4x 缩放</div>
+                <p>服务标签精确对齐<br>高清图片输出</p>
+            </div>
+        </div>
+        
+        <div class="test-instructions">
+            <h3>🧪 测试验证步骤</h3>
+            <ol>
+                <li><strong>服务标签位置测试：</strong>
+                    <ul>
+                        <li>在名片编辑器中启用"显示坐标"功能</li>
+                        <li>记录服务标签的坐标位置</li>
+                        <li>使用Canvas导出功能生成图片</li>
+                        <li>对比预览和导出图片中服务标签的位置是否一致</li>
+                    </ul>
+                </li>
+                <li><strong>图片质量测试：</strong>
+                    <ul>
+                        <li>使用DOM导出功能生成PNG和JPG图片</li>
+                        <li>检查图片的清晰度和细节表现</li>
+                        <li>对比不同缩放比例下的图片质量</li>
+                        <li>验证高分辨率设备上的渲染效果</li>
+                    </ul>
+                </li>
+                <li><strong>兼容性测试：</strong>
+                    <ul>
+                        <li>在不同浏览器中测试导出功能</li>
+                        <li>验证不同设备像素比下的表现</li>
+                        <li>测试各种屏幕尺寸的适配性</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 2px solid #f0f0f0;">
+            <p style="color: #666; margin: 0;">
+                ✅ 修复完成 | 🎯 服务标签位置精确 | 📸 图片质量显著提升
+            </p>
+        </div>
+    </div>
+</body>
+</html>

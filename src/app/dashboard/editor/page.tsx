@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -11,13 +11,20 @@ import DraggableBusinessCardPreview from '@/components/card/draggable-business-c
 import AvatarUpload from '@/components/editor/avatar-upload'
 import AbilitiesSelector from '@/components/editor/abilities-selector'
 import TextModulesEditor from '@/components/editor/text-modules-editor'
+import HtmlToImageExport from '@/components/export/html-to-image-export'
 
 export default function EditorPage() {
   const { user, updateUser } = useAuthStore()
-  const { cardData, avatarConfig, updateCardData, updateAvatarConfig, textModules, updateTextModules, textStyles, updateTextStyles, textPositions, updateTextPositions, setTextPositions, markAsSaved, hasUnsavedChanges } = useCardStore()
+  const { cardData, avatarConfig, logoConfig, updateCardData, updateAvatarConfig, updateLogoConfig, textModules, updateTextModules, textStyles, updateTextStyles, textPositions, updateTextPositions, setTextPositions, markAsSaved, hasUnsavedChanges, initializePositions } = useCardStore()
+  const cardRef = useRef<HTMLDivElement>(null) // 添加ref用于导出
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [backgroundImage, setBackgroundImage] = useState('/ditu.png')
+
+  // 确保位置配置始终稳定
+  useEffect(() => {
+    initializePositions()
+  }, [])
 
   useEffect(() => {
     if (user && !cardData.name) { // 只在初始化时执行一次
@@ -68,6 +75,8 @@ export default function EditorPage() {
     }
   }, [cardData.name, cardData.title, cardData.phone, cardData.studentsServed, cardData.rating, updateTextModules])
 
+
+
   const handleSave = async () => {
     if (!user) return
 
@@ -107,7 +116,7 @@ export default function EditorPage() {
 
     } catch (error) {
       console.error('Save failed:', error)
-      alert('保存失败，请稍后重试')
+      alert('فشل الحفظ، يرجى المحاولة لاحقاً')
     } finally {
       setSaving(false)
     }
@@ -141,10 +150,10 @@ export default function EditorPage() {
   }
 
   const titleOptions = [
-    { value: '首席成长伙伴', label: '首席成长伙伴' },
-    { value: '金牌成长顾问', label: '金牌成长顾问' },
-    { value: '五星服务官', label: '五星服务官' },
-    { value: '学习领航官', label: '学习领航官' },
+    { value: 'شريك النمو الرئيسي', label: 'شريك النمو الرئيسي' },
+    { value: 'مستشار النمو الذهبي', label: 'مستشار النمو الذهبي' },
+    { value: 'مسؤول الخدمة الخماسي', label: 'مسؤول الخدمة الخماسي' },
+    { value: 'مسؤول توجيه التعلم', label: 'مسؤول توجيه التعلم' },
   ]
 
   if (!user) {
@@ -160,8 +169,8 @@ export default function EditorPage() {
       {/* 页面标题 */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-brand-dark">编辑名片</h1>
-          <p className="text-brand-gray">完善您的个人信息，打造专业形象</p>
+          <h1 className="text-2xl font-bold text-brand-dark" dir="rtl">تعديل البطاقة</h1>
+          <p className="text-brand-gray" dir="rtl">أكمل معلوماتك الشخصية، واصنع صورة مهنية</p>
         </div>
         {/* 顶部保存按钮已移除 */}
       </div>
@@ -191,13 +200,14 @@ export default function EditorPage() {
         <div className="lg:sticky lg:top-6">
           <Card>
             <CardHeader>
-              <CardTitle>实时预览</CardTitle>
-              <CardDescription>
-                查看您的名片效果
+              <CardTitle dir="rtl">معاينة مباشرة</CardTitle>
+              <CardDescription dir="rtl">
+                شاهد نتيجة بطاقتك
               </CardDescription>
             </CardHeader>
             <CardContent>
               <DraggableBusinessCardPreview
+                cardRef={cardRef}
                 user={{
                   ...user,
                   name: cardData.name,
@@ -233,6 +243,12 @@ export default function EditorPage() {
                     position: { x, y }
                   })
                 }}
+                logoConfig={logoConfig}
+                onLogoPositionChange={(x, y) => {
+                  updateLogoConfig({
+                    position: { x, y }
+                  })
+                }}
               />
               
               <div className="mt-4 pt-4 border-t border-gray-100">
@@ -244,29 +260,30 @@ export default function EditorPage() {
                       // TODO: 实现分享功能
                     }}
                   >
-                    分享名片
+                    مشاركة البطاقة
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="flex-1"
-                    onClick={() => {
-                      // TODO: 实现导出功能
-                      window.location.href = '/dashboard/export'
-                    }}
-                  >
-                    导出图片
-                  </Button>
-                </div>
-                <div className="flex gap-2">
                   <Button
                     variant="outline"
                     className="flex-1"
                     onClick={handleResetPositions}
-                    title="将所有文字模块位置重置为初始位置"
+                    title="إعادة تعيين جميع مواضع النصوص إلى المواضع الأولية"
                   >
-                    🔄 重置位置
+                    🔄 إعادة تعيين المواضع
                   </Button>
                 </div>
+                
+                {/* HTML-to-Image导出功能 */}
+                 <div className="space-y-4 mt-4">
+                   <div className="text-center mb-4">
+                     <h3 className="text-lg font-semibold text-gray-800 mb-2">📸 导出名片</h3>
+                     <p className="text-sm text-gray-600">高质量HTML-to-Image导出</p>
+                   </div>
+                   
+                   {/* HTML-to-Image导出 - 现代DOM */}
+                   <HtmlToImageExport 
+                     cardRef={cardRef}
+                   />
+                 </div>
               </div>
             </CardContent>
           </Card>

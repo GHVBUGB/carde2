@@ -37,32 +37,32 @@ export default function RegisterPage() {
     setSuccess('')
 
     if (!step.email || !step.name || !step.password || !step.confirmPassword) {
-      setError('所有字段都不能为空')
+      setError('جميع الحقول مطلوبة')
       return
     }
 
     if (!isValidEmail(step.email)) {
-      setError('请输入有效的邮箱地址')
+      setError('يرجى إدخال عنوان بريد إلكتروني صحيح')
       return
     }
 
     if (!is51TalkEmail(step.email)) {
-      setError('只能使用51Talk邮箱注册')
+      setError('يمكن استخدام بريد 51Talk فقط للتسجيل')
       return
     }
 
     if (step.name.trim().length < 2) {
-      setError('姓名至少需要2个字符')
+      setError('يجب أن يكون الاسم حرفين على الأقل')
       return
     }
 
     if (step.password.length < 8) {
-      setError('密码至少需要8个字符')
+      setError('يجب أن تكون كلمة المرور 8 أحرف على الأقل')
       return
     }
 
     if (step.password !== step.confirmPassword) {
-      setError('两次输入的密码不一致')
+      setError('كلمات المرور غير متطابقة')
       return
     }
 
@@ -83,17 +83,17 @@ export default function RegisterPage() {
 
       if (!response.ok) {
         if (response.status === 409) {
-          setError('该邮箱已注册，请直接登录')
+          setError('هذا البريد الإلكتروني مسجل بالفعل، يرجى تسجيل الدخول مباشرة')
           return
         }
-        throw new Error(data.error || '注册失败')
+        throw new Error(data.error || 'فشل التسجيل')
       }
 
       setSuccess(data.message)
       setStep(prev => ({ ...prev, showVerificationInput: true }))
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : '网络错误，请稍后重试')
+      setError(err instanceof Error ? err.message : 'خطأ في الشبكة، يرجى المحاولة لاحقاً')
     } finally {
       setLoading(false)
     }
@@ -104,12 +104,12 @@ export default function RegisterPage() {
     setError('')
 
     if (!step.verificationCode) {
-      setError('请输入验证码')
+      setError('يرجى إدخال رمز التحقق')
       return
     }
 
     if (step.verificationCode.length !== 6) {
-      setError('验证码为6位数字')
+      setError('رمز التحقق هو 6 أرقام')
       return
     }
 
@@ -130,16 +130,16 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || '验证失败')
+        throw new Error(data.error || 'فشل التحقق')
       }
 
-      setSuccess('注册成功！即将跳转到登录页...')
+      setSuccess('تم التسجيل بنجاح! سيتم التوجه إلى صفحة تسجيل الدخول...')
       setTimeout(() => {
         router.push('/login')
       }, 2000)
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : '验证失败，请稍后重试')
+      setError(err instanceof Error ? err.message : 'فشل التحقق، يرجى المحاولة لاحقاً')
     } finally {
       setLoading(false)
     }
@@ -163,13 +163,13 @@ export default function RegisterPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || '重发失败')
+        throw new Error(data.error || 'فشل إعادة الإرسال')
       }
 
-      setSuccess('验证码已重新发送')
+      setSuccess('تم إعادة إرسال رمز التحقق')
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : '重发失败，请稍后重试')
+      setError(err instanceof Error ? err.message : 'فشل إعادة الإرسال، يرجى المحاولة لاحقاً')
     } finally {
       setLoading(false)
     }
@@ -179,11 +179,11 @@ export default function RegisterPage() {
     <div className="animate-fade-in">
       <Card className="shadow-lg border-0 bg-white/80 backdrop-blur">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-brand-dark">
-            创建账户
+          <CardTitle className="text-2xl font-bold text-brand-dark" dir="rtl">
+            إنشاء حساب
           </CardTitle>
-          <CardDescription className="text-brand-gray">
-            加入51Talk数字名片平台
+          <CardDescription className="text-brand-gray" dir="rtl">
+            انضم إلى منصة بطاقة 51Talk الرقمية
           </CardDescription>
         </CardHeader>
         
@@ -203,74 +203,74 @@ export default function RegisterPage() {
           {!step.showVerificationInput && (
             <form onSubmit={handleInitialSubmit} className="space-y-4">
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-brand-dark mb-2">
-                  51Talk邮箱 *
+                <label htmlFor="email" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  بريد 51Talk الإلكتروني *
                 </label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your-name@51talk.com"
+                  placeholder="اسمك@51talk.com"
                   value={step.email}
                   onChange={(e) => setStep(prev => ({ ...prev, email: e.target.value }))}
                   disabled={loading}
                   className="w-full"
                 />
-                <p className="text-xs text-brand-gray mt-1">
-                  请使用您的51Talk企业邮箱
+                <p className="text-xs text-brand-gray mt-1" dir="rtl">
+                  يرجى استخدام بريد 51Talk المؤسسي
                 </p>
               </div>
 
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-brand-dark mb-2">
-                  姓名 *
+                <label htmlFor="name" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  الاسم *
                 </label>
                 <Input
                   id="name"
                   type="text"
-                  placeholder="请输入您的真实姓名"
+                  placeholder="أدخل اسمك الحقيقي"
                   value={step.name}
                   onChange={(e) => setStep(prev => ({ ...prev, name: e.target.value }))}
                   disabled={loading}
                   className="w-full"
                 />
-                <p className="text-xs text-brand-gray mt-1">
-                  姓名将显示在您的数字名片上
+                <p className="text-xs text-brand-gray mt-1" dir="rtl">
+                  سيظهر الاسم على بطاقتك الرقمية
                 </p>
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-brand-dark mb-2">
-                  密码 *
+                <label htmlFor="password" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  كلمة المرور *
                 </label>
                 <Input
                   id="password"
                   type="password"
-                  placeholder="请输入密码（至少8位）"
+                  placeholder="أدخل كلمة المرور (8 أحرف على الأقل)"
                   value={step.password}
                   onChange={(e) => setStep(prev => ({ ...prev, password: e.target.value }))}
                   disabled={loading}
                   className="w-full"
                 />
-                <p className="text-xs text-brand-gray mt-1">
-                  密码至少8个字符，建议包含字母、数字
+                <p className="text-xs text-brand-gray mt-1" dir="rtl">
+                  كلمة المرور 8 أحرف على الأقل، يُنصح بتضمين أحرف وأرقام
                 </p>
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-brand-dark mb-2">
-                  确认密码 *
+                <label htmlFor="confirmPassword" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                  تأكيد كلمة المرور *
                 </label>
                 <Input
                   id="confirmPassword"
                   type="password"
-                  placeholder="请再次输入密码"
+                  placeholder="أدخل كلمة المرور مرة أخرى"
                   value={step.confirmPassword}
                   onChange={(e) => setStep(prev => ({ ...prev, confirmPassword: e.target.value }))}
                   disabled={loading}
                   className="w-full"
                 />
-                <p className="text-xs text-brand-gray mt-1">
-                  两次输入的密码必须一致
+                <p className="text-xs text-brand-gray mt-1" dir="rtl">
+                  يجب أن تتطابق كلمات المرور
                 </p>
               </div>
 
@@ -279,28 +279,28 @@ export default function RegisterPage() {
                 className="w-full btn-primary"
                 disabled={loading}
               >
-                {loading ? '发送中...' : '发送验证码'}
+                {loading ? 'جاري الإرسال...' : 'إرسال رمز التحقق'}
               </Button>
             </form>
           )}
 
           {step.showVerificationInput && (
             <div className="space-y-4">
-              <div className="text-sm text-brand-gray text-center p-3 bg-brand-light/50 rounded-lg">
-                验证码已发送至 <span className="font-medium text-brand-dark">{step.email}</span>
+              <div className="text-sm text-brand-gray text-center p-3 bg-brand-light/50 rounded-lg" dir="rtl">
+                تم إرسال رمز التحقق إلى <span className="font-medium text-brand-dark">{step.email}</span>
                 <br />
-                请查收邮件并输入6位验证码
+                يرجى فحص البريد الإلكتروني وإدخال رمز التحقق المكون من 6 أرقام
               </div>
 
               <form onSubmit={handleVerificationSubmit} className="space-y-4">
                 <div>
-                  <label htmlFor="code" className="block text-sm font-medium text-brand-dark mb-2">
-                    验证码 *
+                  <label htmlFor="code" className="block text-sm font-medium text-brand-dark mb-2" dir="rtl">
+                    رمز التحقق *
                   </label>
                   <Input
                     id="code"
                     type="text"
-                    placeholder="请输入6位验证码"
+                    placeholder="أدخل رمز التحقق المكون من 6 أرقام"
                     value={step.verificationCode}
                     onChange={(e) => {
                       const value = e.target.value.replace(/\D/g, '').slice(0, 6)
@@ -324,14 +324,14 @@ export default function RegisterPage() {
                     disabled={loading}
                     className="flex-1"
                   >
-                    返回修改
+                    العودة للتعديل
                   </Button>
                   <Button 
                     type="submit" 
                     className="flex-1 btn-primary"
                     disabled={loading || step.verificationCode.length !== 6}
                   >
-                    {loading ? '验证中...' : '完成注册'}
+                    {loading ? 'جاري التحقق...' : 'إكمال التسجيل'}
                   </Button>
                 </div>
               </form>
@@ -343,31 +343,31 @@ export default function RegisterPage() {
                   disabled={loading}
                   className="text-sm text-brand-primary hover:underline disabled:opacity-50"
                 >
-                  没收到邮件？重新发送
+                  لم تستلم البريد؟ إعادة الإرسال
                 </button>
               </div>
             </div>
           )}
 
           <div className="text-center text-sm text-brand-gray space-y-2">
-            <div>
-              已有账户？{' '}
+            <div dir="rtl">
+              <span>لديك حساب بالفعل؟</span>{' '}
               <Link href="/login" className="text-brand-primary hover:underline font-medium">
-                立即登录
+                تسجيل الدخول الآن
               </Link>
             </div>
             <div className="pt-2 border-t border-gray-200">
-              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium">
-                🔐 管理员登录
+              <Link href="/admin/login" className="text-gray-600 hover:text-brand-primary hover:underline font-medium" dir="rtl">
+                🔐 تسجيل دخول المدير
               </Link>
             </div>
           </div>
 
-          <div className="text-xs text-brand-gray/80 text-center leading-relaxed">
-            注册即表示您同意我们的
-            <a href="#" className="text-brand-primary hover:underline">用户协议</a>
-            和
-            <a href="#" className="text-brand-primary hover:underline">隐私政策</a>
+          <div className="text-xs text-brand-gray/80 text-center leading-relaxed" dir="rtl">
+            التسجيل يعني موافقتك على
+            <a href="#" className="text-brand-primary hover:underline">اتفاقية المستخدم</a>
+            و
+            <a href="#" className="text-brand-primary hover:underline">سياسة الخصوصية</a>
           </div>
         </CardContent>
       </Card>

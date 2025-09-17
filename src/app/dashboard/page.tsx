@@ -99,25 +99,27 @@ export default function DashboardPage() {
       <div className="bg-white rounded-lg shadow-sm border p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-brand-dark mb-2">
-              欢迎回来，{user.name || '用户'}！
+            <h1 className="text-2xl font-bold text-brand-dark mb-2" dir="rtl">
+              أهلاً وسهلاً، {user.name || 'المستخدم'}!
             </h1>
-            <p className="text-brand-gray">
-              管理您的数字名片，展示专业形象
+            <p className="text-brand-gray" dir="rtl">
+              إدارة بطاقتك الرقمية، عرض صورتك المهنية
             </p>
           </div>
           <div className="flex gap-3">
             <Button 
               onClick={() => router.push('/dashboard/editor')}
               className="btn-primary"
+              dir="rtl"
             >
-              编辑名片
+              تعديل البطاقة
             </Button>
             <Button 
               variant="outline"
               onClick={() => router.push('/dashboard/profile')}
+              dir="rtl"
             >
-              个人设置
+              الإعدادات الشخصية
             </Button>
             {user.is_admin && (
               <Button 
@@ -125,7 +127,7 @@ export default function DashboardPage() {
                 onClick={() => router.push('/admin')}
                 className="border-yellow-200 text-yellow-600 hover:bg-yellow-50"
               >
-                🔐 管理面板
+                🔐 لوحة الإدارة
               </Button>
             )}
           </div>

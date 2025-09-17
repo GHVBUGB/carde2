@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { LayoutModule } from '@/lib/types'
+import { MODULE_POSITIONS, TEXT_STYLES, TEXT_MODULES } from '../config/positions'
 
 interface CardState {
   // 布局配置
@@ -30,13 +31,20 @@ interface CardState {
     position: { x: number; y: number }
   }
   
+  // Logo配置
+  logoConfig: {
+    enabled: boolean
+    src: string
+    size: { width: number; height: number }
+    position: { x: number; y: number }
+  }
+  
   // 文字模块数据
   textModules: {
     companyName: string
     name: string
     title: string
     studentsServed: number
-    positiveRating: number
     phone: string
     // 业务能力标签文字
     teacherSelectionLabel: string
@@ -51,7 +59,6 @@ interface CardState {
     name: { fontSize: number; color: string; fontWeight: string }
     title: { fontSize: number; color: string; fontWeight: string }
     studentsServed: { fontSize: number; color: string; fontWeight: string }
-    positiveRating: { fontSize: number; color: string; fontWeight: string }
     phone: { fontSize: number; color: string; fontWeight: string }
     teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
     progressFeedbackLabel: { fontSize: number; color: string; fontWeight: string }
@@ -65,7 +72,6 @@ interface CardState {
     name: { x: number; y: number }
     title: { x: number; y: number }
     studentsServed: { x: number; y: number }
-    positiveRating: { x: number; y: number }
     phone: { x: number; y: number }
     teacherSelectionLabel: { x: number; y: number }
     progressFeedbackLabel: { x: number; y: number }
@@ -106,6 +112,10 @@ interface CardActions {
   updateAvatarConfig: (updates: Partial<CardState['avatarConfig']>) => void
   setAvatarConfig: (data: CardState['avatarConfig']) => void
   
+  // Logo配置操作
+  updateLogoConfig: (updates: Partial<CardState['logoConfig']>) => void
+  setLogoConfig: (data: CardState['logoConfig']) => void
+  
   // UI状态操作
   setPreviewMode: (isPreview: boolean) => void
   setIsEditing: (isEditing: boolean) => void
@@ -114,6 +124,9 @@ interface CardActions {
   
   // 重置
   reset: () => void
+  
+  // 初始化位置配置
+  initializePositions: () => void
 }
 
 const initialCardData = {
@@ -130,62 +143,29 @@ const initialCardData = {
   resourceSharing: false,
 }
 
-const initialTextModules = {
-  companyName: '51Talk',
-  name: 'أحمد',
-  title: 'SENIOR LANGUAGE COACH',
-  studentsServed: 5000,
-  positiveRating: 99,
-  phone: '050-XXXX-XXAB',
-  teacherSelectionLabel: 'اختيار\nالمعلم',
-  progressFeedbackLabel: 'تعليقات\nالتقدم',
-  planningLabel: 'خطة\nالدراسة',
-  resourceSharingLabel: 'موارد\nالتعلم'
-}
+const initialTextModules = TEXT_MODULES
 
-const initialTextStyles = {
-  companyName: { fontSize: 14, color: '#ffffff', fontWeight: 'bold' },
-  name: { fontSize: 20, color: '#000000', fontWeight: 'bold' },
-  title: { fontSize: 14, color: '#666666', fontWeight: 'normal' },
-  studentsServed: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
-  positiveRating: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
-  phone: { fontSize: 14, color: '#000000', fontWeight: 'bold' },
-  teacherSelectionLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
-  progressFeedbackLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
-  planningLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
-  resourceSharingLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' }
-}
+const initialTextStyles = TEXT_STYLES
 
-const initialTextPositions = {
-  companyName: { x: 16, y: 16 },
-  name: { x: 150, y: 241 },
-  title: { x: 267, y:126 },
-  studentsServed: { x: 121, y: 322 },
-  positiveRating: { x: 192, y: 322 },
-  phone: { x: 182, y: 431 },
-  teacherSelectionLabel: { x: 95, y: 402 },
-  progressFeedbackLabel: { x: 142, y: 402 },
-  planningLabel: { x: 190, y: 402 },
-  resourceSharingLabel: { x: 241, y: 402 }
-}
+const initialTextPositions = MODULE_POSITIONS.textPositions
 
-const initialAvatarConfig = {
-  size: 200, // 默认200px，更大的头像
-  position: { x: 73, y: 27 } // 默认位置：名片顶部居中，调整位置适应更大头像
-}
+const initialAvatarConfig = MODULE_POSITIONS.avatarConfig
+
+const initialLogoConfig = MODULE_POSITIONS.logoConfig
 
 export const useCardStore = create<CardState & CardActions>()(
   persist(
     (set, get) => ({
-      // 初始状态
+      // 初始状态 - 始终使用代码中的默认配置
       layouts: [],
       isDragMode: false,
       selectedModule: null,
       cardData: initialCardData,
       avatarConfig: initialAvatarConfig,
+      logoConfig: initialLogoConfig,
       textModules: initialTextModules,
       textStyles: initialTextStyles,
-      textPositions: initialTextPositions,
+      textPositions: initialTextPositions, // 始终使用默认位置
       isPreviewMode: false,
       isEditing: false,
       hasUnsavedChanges: false,
@@ -255,6 +235,16 @@ export const useCardStore = create<CardState & CardActions>()(
 
       setAvatarConfig: (data) => set({ avatarConfig: data, hasUnsavedChanges: true }),
 
+      // Logo配置操作
+      updateLogoConfig: (updates) => {
+        set(state => ({
+          logoConfig: { ...state.logoConfig, ...updates },
+          hasUnsavedChanges: true
+        }))
+      },
+
+      setLogoConfig: (data) => set({ logoConfig: data, hasUnsavedChanges: true }),
+
       // 重置
       reset: () => set({
         layouts: [],
@@ -262,6 +252,7 @@ export const useCardStore = create<CardState & CardActions>()(
         selectedModule: null,
         cardData: initialCardData,
         avatarConfig: initialAvatarConfig,
+        logoConfig: initialLogoConfig,
         textModules: initialTextModules,
         textStyles: initialTextStyles,
         textPositions: initialTextPositions,
@@ -269,16 +260,27 @@ export const useCardStore = create<CardState & CardActions>()(
         isEditing: false,
         hasUnsavedChanges: false,
       }),
+
+      // 强制使用配置文件中的默认位置
+      initializePositions: () => {
+        // 强制使用配置文件中的默认值，确保位置正确
+        set({
+          textPositions: initialTextPositions,
+          avatarConfig: initialAvatarConfig,
+          logoConfig: initialLogoConfig,
+        })
+      },
     }),
     {
-      name: 'card-storage',
+      name: 'card-storage-final', // 使用全新的存储名称，彻底清除旧数据
       partialize: (state) => ({
-        // 只持久化重要的配置数据，不持久化UI状态
-        avatarConfig: state.avatarConfig,
+        // 持久化用户自定义的配置，包括位置配置
         textModules: state.textModules,
         textStyles: state.textStyles,
-        textPositions: state.textPositions,
         cardData: state.cardData,
+        logoConfig: state.logoConfig, // 允许Logo位置被保存
+        textPositions: state.textPositions, // 允许文字位置被保存
+        avatarConfig: state.avatarConfig, // 允许头像位置被保存
       }),
     }
   )
