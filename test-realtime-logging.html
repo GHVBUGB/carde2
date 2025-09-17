@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实时日志记录测试</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .test-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .test-btn:hover {
+            background: #45a049;
+        }
+        .test-btn.danger {
+            background: #f44336;
+        }
+        .test-btn.danger:hover {
+            background: #da190b;
+        }
+        .test-btn.info {
+            background: #2196F3;
+        }
+        .test-btn.info:hover {
+            background: #0b7dda;
+        }
+        .log-area {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 16px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .status {
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            font-weight: bold;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 实时日志记录测试系统</h1>
+        <p>测试用户行为记录和统计数据的实时更新功能</p>
+        
+        <div id="status"></div>
+        
+        <h2>📊 当前统计数据</h2>
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-number" id="newUsers">-</div>
+                <div class="stat-label">今日新用户</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="downloads">-</div>
+                <div class="stat-label">今日下载</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="apiCalls">-</div>
+                <div class="stat-label">API调用</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="removeBg">-</div>
+                <div class="stat-label">抠图次数</div>
+            </div>
+        </div>
+        
+        <h2>🎮 模拟用户行为</h2>
+        <div class="button-grid">
+            <button class="test-btn" onclick="simulateUserRegistration()">👤 模拟用户注册</button>
+            <button class="test-btn" onclick="simulateDownload()">📥 模拟下载行为</button>
+            <button class="test-btn" onclick="simulateRemoveBg()">🖼️ 模拟抠图操作</button>
+            <button class="test-btn info" onclick="refreshStats()">🔄 刷新统计数据</button>
+            <button class="test-btn danger" onclick="clearData()">🗑️ 清空数据</button>
+            <button class="test-btn info" onclick="toggleAutoRefresh()">⏰ 自动刷新</button>
+        </div>
+        
+        <h2>📝 操作日志</h2>
+        <div class="log-area" id="logArea"></div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+        
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logArea = document.getElementById('logArea');
+            const prefix = type === 'error' ? '❌' : type === 'success' ? '✅' : 'ℹ️';
+            logArea.textContent += `[${timestamp}] ${prefix} ${message}\n`;
+            logArea.scrollTop = logArea.scrollHeight;
+        }
+        
+        function showStatus(message, type = 'info') {
+            const status = document.getElementById('status');
+            status.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        async function refreshStats() {
+            try {
+                log('正在获取统计数据...');
+                const response = await fetch('/api/admin/today-stats');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    document.getElementById('newUsers').textContent = data.todayNewUsers || 0;
+                    document.getElementById('downloads').textContent = data.todayDownloads || 0;
+                    document.getElementById('apiCalls').textContent = data.todayApiCalls || 0;
+                    document.getElementById('removeBg').textContent = data.todayRemoveBg || 0;
+                    
+                    log(`统计数据更新成功: 新用户${data.todayNewUsers}, 下载${data.todayDownloads}, API${data.todayApiCalls}, 抠图${data.todayRemoveBg}`, 'success');
+                    showStatus('统计数据已更新', 'success');
+                } else {
+                    throw new Error(result.error || '获取统计数据失败');
+                }
+            } catch (error) {
+                log(`获取统计数据失败: ${error.message}`, 'error');
+                showStatus(`获取统计数据失败: ${error.message}`, 'error');
+            }
+        }
+        
+        async function simulateUserRegistration() {
+            try {
+                log('正在模拟用户注册...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'user_registration',
+                        user_id: `test_user_${Date.now()}`,
+                        details: { source: 'test_page' }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    log('用户注册模拟成功', 'success');
+                    setTimeout(refreshStats, 1000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                log(`模拟用户注册失败: ${error.message}`, 'error');
+            }
+        }
+        
+        async function simulateDownload() {
+            try {
+                log('正在模拟下载行为...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'download',
+                        user_id: `test_user_${Date.now()}`,
+                        details: { file_type: 'business_card' }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    log('下载行为模拟成功', 'success');
+                    setTimeout(refreshStats, 1000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                log(`模拟下载失败: ${error.message}`, 'error');
+            }
+        }
+        
+        async function simulateRemoveBg() {
+            try {
+                log('正在模拟抠图操作...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'remove_background',
+                        user_id: `test_user_${Date.now()}`,
+                        details: { image_size: '1024x768' }
+                    })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    log('抠图操作模拟成功', 'success');
+                    setTimeout(refreshStats, 1000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                log(`模拟抠图失败: ${error.message}`, 'error');
+            }
+        }
+        
+        async function clearData() {
+            if (!confirm('确定要清空所有测试数据吗？')) return;
+            
+            try {
+                log('正在清空数据...');
+                const response = await fetch('/api/test/clear-data', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ confirm: true })
+                });
+                
+                const result = await response.json();
+                if (result.success) {
+                    log('数据清空成功', 'success');
+                    setTimeout(refreshStats, 1000);
+                } else {
+                    throw new Error(result.error);
+                }
+            } catch (error) {
+                log(`清空数据失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function toggleAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                log('自动刷新已停止');
+                showStatus('自动刷新已停止', 'info');
+            } else {
+                autoRefreshInterval = setInterval(refreshStats, 10000);
+                log('自动刷新已开启 (10秒间隔)');
+                showStatus('自动刷新已开启 (10秒间隔)', 'info');
+            }
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('load', function() {
+            log('实时日志记录测试系统已启动');
+            refreshStats();
+        });
+    </script>
+</body>
+</html>

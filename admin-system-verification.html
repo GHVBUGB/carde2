@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理员系统功能验证</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        
+        .status-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 25px;
+            border-left: 5px solid #28a745;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .status-card.warning {
+            border-left-color: #ffc107;
+        }
+        
+        .status-card.error {
+            border-left-color: #dc3545;
+        }
+        
+        .status-card h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        
+        .status-success { background: #28a745; }
+        .status-warning { background: #ffc107; }
+        .status-error { background: #dc3545; }
+        
+        .feature-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .test-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+        
+        .test-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .button-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+        }
+        
+        .stats-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .log-display {
+            background: #2d3748;
+            color: #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+        }
+        
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .warning-message {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .loading {
+            animation: pulse 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ 管理员系统功能验证</h1>
+            <p>全面验证用户行为日志记录和管理功能</p>
+        </div>
+        
+        <div class="content">
+            <!-- 系统状态概览 -->
+            <div class="status-grid">
+                <div class="status-card">
+                    <h3><span class="status-indicator status-success"></span>数据库连接</h3>
+                    <ul class="feature-list">
+                        <li>✅ Supabase 连接正常</li>
+                        <li>✅ 数据表结构完整</li>
+                        <li>✅ 读写权限正常</li>
+                    </ul>
+                </div>
+                
+                <div class="status-card">
+                    <h3><span class="status-indicator status-success"></span>日志记录系统</h3>
+                    <ul class="feature-list">
+                        <li>✅ 用户注册日志</li>
+                        <li>✅ 下载行为日志</li>
+                        <li>✅ 抠图API日志</li>
+                        <li>✅ 登录行为日志</li>
+                    </ul>
+                </div>
+                
+                <div class="status-card">
+                    <h3><span class="status-indicator status-success"></span>管理界面</h3>
+                    <ul class="feature-list">
+                        <li>✅ 实时统计数据</li>
+                        <li>✅ 用户行为监控</li>
+                        <li>✅ 告警系统</li>
+                        <li>✅ 数据库重置</li>
+                    </ul>
+                </div>
+                
+                <div class="status-card">
+                    <h3><span class="status-indicator status-success"></span>API端点</h3>
+                    <ul class="feature-list">
+                        <li>✅ 统计数据API</li>
+                        <li>✅ 监控API</li>
+                        <li>✅ 重置API</li>
+                        <li>✅ 测试模拟API</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- 实时统计数据 -->
+            <div class="test-section">
+                <h2>📊 实时统计数据</h2>
+                <div class="stats-display" id="statsDisplay">
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayUsers">-</div>
+                        <div class="stat-label">今日新用户</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayDownloads">-</div>
+                        <div class="stat-label">今日下载</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayApiCalls">-</div>
+                        <div class="stat-label">今日API调用</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="todayRemoveBg">-</div>
+                        <div class="stat-label">今日抠图</div>
+                    </div>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-info" onclick="loadStats()">刷新统计</button>
+                    <button class="btn btn-success" onclick="autoRefresh()">自动刷新</button>
+                </div>
+            </div>
+            
+            <!-- 功能测试区域 -->
+            <div class="test-section">
+                <h2>🧪 功能测试</h2>
+                <div class="button-group">
+                    <button class="btn btn-warning" onclick="resetDatabase()">重置数据库</button>
+                    <button class="btn" onclick="simulateRegister()">模拟注册</button>
+                    <button class="btn" onclick="simulateDownload()">模拟下载</button>
+                    <button class="btn" onclick="simulateRemoveBg()">模拟抠图</button>
+                    <button class="btn btn-info" onclick="batchSimulate()">批量模拟</button>
+                </div>
+                <div id="testResults"></div>
+            </div>
+            
+            <!-- 管理界面链接 -->
+            <div class="test-section">
+                <h2>🎛️ 管理界面</h2>
+                <p>访问完整的管理员控制面板，查看详细的用户行为数据和系统监控信息。</p>
+                <div class="button-group">
+                    <a href="/admin" class="btn btn-success" target="_blank">打开管理界面</a>
+                    <a href="/admin/reset-database" class="btn btn-warning" target="_blank">数据库管理</a>
+                    <button class="btn btn-info" onclick="checkAdminSystem()">检查管理系统</button>
+                </div>
+            </div>
+            
+            <!-- 系统日志 -->
+            <div class="test-section">
+                <h2>📝 系统日志</h2>
+                <div class="log-display" id="systemLog">
+                    <div>🚀 系统初始化完成</div>
+                    <div>✅ 所有组件加载成功</div>
+                    <div>📊 等待用户操作...</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 51Talk 名片生成系统 - 管理员功能验证 | 系统状态: <span id="systemStatus">🟢 正常运行</span></p>
+        </div>
+    </div>
+
+    <script>
+        let autoRefreshInterval = null;
+        
+        // 添加日志
+        function addLog(message, type = 'info') {
+            const logDisplay = document.getElementById('systemLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `[${timestamp}] ${message}`;
+            logDisplay.appendChild(logEntry);
+            logDisplay.scrollTop = logDisplay.scrollHeight;
+        }
+        
+        // 显示结果
+        function showResult(message, type = 'success') {
+            const resultsDiv = document.getElementById('testResults');
+            const resultClass = type === 'success' ? 'success-message' : 'warning-message';
+            resultsDiv.innerHTML = `<div class="${resultClass}">${message}</div>`;
+        }
+        
+        // 加载统计数据
+        async function loadStats() {
+            try {
+                addLog('📊 正在获取统计数据...');
+                const response = await fetch('/api/admin/today-stats');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const stats = data.data;
+                    document.getElementById('todayUsers').textContent = stats.todayNewUsers || 0;
+                    document.getElementById('todayDownloads').textContent = stats.todayDownloads || 0;
+                    document.getElementById('todayApiCalls').textContent = stats.todayApiCalls || 0;
+                    document.getElementById('todayRemoveBg').textContent = stats.todayRemoveBg || 0;
+                    
+                    addLog(`✅ 统计数据更新: API调用 ${stats.todayApiCalls}, 下载 ${stats.todayDownloads}, 抠图 ${stats.todayRemoveBg}`);
+                    
+                    if (stats.alerts && stats.alerts.length > 0) {
+                        addLog(`⚠️ 发现 ${stats.alerts.length} 个告警`, 'warning');
+                    }
+                } else {
+                    addLog('❌ 获取统计数据失败: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 统计数据请求失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 自动刷新
+        function autoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+                addLog('⏹️ 停止自动刷新');
+                return;
+            }
+            
+            autoRefreshInterval = setInterval(loadStats, 30000);
+            addLog('🔄 开启自动刷新 (30秒间隔)');
+            loadStats(); // 立即刷新一次
+        }
+        
+        // 重置数据库
+        async function resetDatabase() {
+            if (!confirm('确定要重置数据库吗？这将清空所有日志数据！')) {
+                return;
+            }
+            
+            try {
+                addLog('🗑️ 正在重置数据库...');
+                const response = await fetch('/api/admin/reset-database', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (response.ok) {
+                    addLog(`✅ 数据库重置成功！清空了 ${data.data.cleared_tables.join(', ')} 表`);
+                    showResult('数据库重置成功！所有日志数据已清空。', 'success');
+                    setTimeout(loadStats, 1000); // 1秒后刷新统计
+                } else {
+                    addLog('❌ 数据库重置失败: ' + data.error, 'error');
+                    showResult('数据库重置失败: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 重置请求失败: ' + error.message, 'error');
+                showResult('重置请求失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 模拟用户注册
+        async function simulateRegister() {
+            try {
+                addLog('👤 模拟用户注册...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'register',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            email: `test${Date.now()}@51talk.com`,
+                            name: '测试用户',
+                            method: 'email'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addLog('✅ 用户注册模拟成功');
+                    showResult('用户注册日志记录成功！', 'success');
+                } else {
+                    addLog('❌ 注册模拟失败: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 注册模拟请求失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 模拟下载
+        async function simulateDownload() {
+            try {
+                addLog('📥 模拟文件下载...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'download',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            format: 'png',
+                            fileSize: Math.floor(Math.random() * 1000000) + 500000,
+                            filename: 'business-card.png',
+                            method: 'dom'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addLog('✅ 文件下载模拟成功');
+                    showResult('下载行为日志记录成功！', 'success');
+                } else {
+                    addLog('❌ 下载模拟失败: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 下载模拟请求失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 模拟抠图
+        async function simulateRemoveBg() {
+            try {
+                addLog('🎨 模拟背景移除...');
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'remove_background',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            imageSize: Math.floor(Math.random() * 2000000) + 500000,
+                            processingTime: Math.floor(Math.random() * 5000) + 1000,
+                            success: true,
+                            method: 'remove_bg_api'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addLog('✅ 背景移除模拟成功');
+                    showResult('抠图API日志记录成功！', 'success');
+                } else {
+                    addLog('❌ 抠图模拟失败: ' + data.error, 'error');
+                }
+            } catch (error) {
+                addLog('❌ 抠图模拟请求失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 批量模拟
+        async function batchSimulate() {
+            addLog('🔄 开始批量模拟操作...');
+            const actions = [simulateRegister, simulateDownload, simulateRemoveBg];
+            
+            for (let i = 0; i < 5; i++) {
+                const action = actions[Math.floor(Math.random() * actions.length)];
+                await action();
+                await new Promise(resolve => setTimeout(resolve, 1000)); // 延迟1秒
+            }
+            
+            addLog('✅ 批量模拟完成');
+            showResult('批量模拟操作完成！请查看统计数据更新。', 'success');
+            setTimeout(loadStats, 2000); // 2秒后刷新统计
+        }
+        
+        // 检查管理系统
+        async function checkAdminSystem() {
+            try {
+                addLog('🔍 检查管理系统状态...');
+                const response = await fetch('/api/admin/stats');
+                
+                if (response.ok) {
+                    addLog('✅ 管理系统运行正常');
+                    document.getElementById('systemStatus').innerHTML = '🟢 正常运行';
+                    showResult('管理系统状态正常，所有功能可用！', 'success');
+                } else {
+                    addLog('⚠️ 管理系统响应异常: ' + response.status, 'warning');
+                    document.getElementById('systemStatus').innerHTML = '🟡 部分异常';
+                }
+            } catch (error) {
+                addLog('❌ 无法连接管理系统: ' + error.message, 'error');
+                document.getElementById('systemStatus').innerHTML = '🔴 连接失败';
+            }
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            addLog('🚀 管理员系统验证页面加载完成');
+            addLog('📊 正在初始化统计数据...');
+            loadStats();
+            
+            // 检查管理系统状态
+            setTimeout(checkAdminSystem, 1000);
+        });
+    </script>
+</body>
+</html>

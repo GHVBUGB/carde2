@@ -2,7 +2,11 @@ import { createAdminClient } from '@/lib/supabase/server'
 
 export interface ApiLogEntry {
   user_id?: string
-  action: 'download' | 'remove_background' | 'login' | 'register' | 'card_create'
+  action_type: 'download' | 'remove_background' | 'login' | 'register' | 'card_create' | 'api_call'
+  endpoint?: string
+  method?: string
+  status_code?: number
+  response_time?: number
   details?: any
   ip_address?: string
   user_agent?: string
@@ -26,8 +30,12 @@ export class ApiLogger {
         .from('api_logs')
         .insert({
           user_id: entry.user_id,
-          action: entry.action,
-          details: entry.details || {},
+          action_type: entry.action_type,
+          endpoint: entry.endpoint,
+          method: entry.method,
+          status_code: entry.status_code,
+          response_time: entry.response_time,
+          request_body: entry.details || {},
           ip_address: entry.ip_address,
           user_agent: entry.user_agent,
           created_at: new Date().toISOString()
@@ -56,7 +64,10 @@ export class ApiLogger {
 
     await this.log({
       user_id: userId,
-      action: 'download',
+      action_type: 'download',
+      endpoint: '/api/export',
+      method: 'POST',
+      status_code: 200,
       details: {
         format: details?.format || 'png',
         method: details?.method || 'dom',
@@ -79,7 +90,11 @@ export class ApiLogger {
 
     await this.log({
       user_id: userId,
-      action: 'remove_background',
+      action_type: 'remove_background',
+      endpoint: '/api/remove-background',
+      method: 'POST',
+      status_code: details?.success !== false ? 200 : 500,
+      response_time: details?.processingTime,
       details: {
         image_size: details?.imageSize,
         processing_time: details?.processingTime,
@@ -103,7 +118,10 @@ export class ApiLogger {
 
     await this.log({
       user_id: userId,
-      action: 'login',
+      action_type: 'login',
+      endpoint: '/api/auth/login',
+      method: 'POST',
+      status_code: 200,
       details: {
         login_method: details?.method || 'email',
         timestamp: new Date().toISOString(),
@@ -125,7 +143,10 @@ export class ApiLogger {
 
     await this.log({
       user_id: userId,
-      action: 'register',
+      action_type: 'register',
+      endpoint: '/api/auth/register',
+      method: 'POST',
+      status_code: 200,
       details: {
         registration_method: details?.method || 'email',
         timestamp: new Date().toISOString(),
@@ -147,10 +168,46 @@ export class ApiLogger {
 
     await this.log({
       user_id: userId,
-      action: 'card_create',
+      action_type: 'card_create',
+      endpoint: '/api/card/create',
+      method: 'POST',
+      status_code: 200,
       details: {
         template_used: details?.template,
         customization_level: details?.customizations || 'basic',
+        timestamp: new Date().toISOString(),
+        ...details
+      },
+      ip_address: ipAddress,
+      user_agent: userAgent
+    })
+  }
+
+  /**
+   * 记录通用API调用
+   */
+  static async logApiCall(
+    endpoint: string,
+    method: string,
+    statusCode: number,
+    responseTime?: number,
+    userId?: string,
+    details?: any,
+    request?: Request
+  ): Promise<void> {
+    const ipAddress = request?.headers.get('x-forwarded-for') || 
+                     request?.headers.get('x-real-ip') || 
+                     'unknown'
+    const userAgent = request?.headers.get('user-agent') || 'unknown'
+
+    await this.log({
+      user_id: userId,
+      action_type: 'api_call',
+      endpoint: endpoint,
+      method: method,
+      status_code: statusCode,
+      response_time: responseTime,
+      details: {
         timestamp: new Date().toISOString(),
         ...details
       },
@@ -179,7 +236,7 @@ export class ApiLogger {
 
       const { data: logs, error } = await supabase
         .from('api_logs')
-        .select('action')
+        .select('action_type')
         .gte('created_at', todayStart)
         .lt('created_at', todayEnd)
 
@@ -196,11 +253,11 @@ export class ApiLogger {
 
       if (logs) {
         stats.total = logs.length
-        stats.downloads = logs.filter(log => log.action === 'download').length
-        stats.removeBg = logs.filter(log => log.action === 'remove_background').length
-        stats.logins = logs.filter(log => log.action === 'login').length
-        stats.registers = logs.filter(log => log.action === 'register').length
-        stats.cardCreates = logs.filter(log => log.action === 'card_create').length
+        stats.downloads = logs.filter(log => log.action_type === 'download').length
+        stats.removeBg = logs.filter(log => log.action_type === 'remove_background').length
+        stats.logins = logs.filter(log => log.action_type === 'login').length
+        stats.registers = logs.filter(log => log.action_type === 'register').length
+        stats.cardCreates = logs.filter(log => log.action_type === 'card_create').length
       }
 
       return stats

@@ -96,6 +96,26 @@ export default function PerfectExportFix({
       const filename = `${user?.name || 'business-card'}-perfect-${quality}.${format}`
       saveAs(blob, filename)
 
+      // 记录下载日志
+      if (user?.id) {
+        try {
+          await fetch('/api/log-download', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user.id,
+              format: format,
+              fileSize: blob.size,
+              filename: filename
+            })
+          })
+        } catch (logError) {
+          console.warn('记录下载日志失败:', logError)
+        }
+      }
+
       const fileSizeKB = (blob.size / 1024).toFixed(1)
       const dimensions = `${canvas.width}×${canvas.height}`
       setStatus(`✅ 完美导出成功！尺寸: ${dimensions}, 大小: ${fileSizeKB}KB`)

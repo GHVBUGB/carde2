@@ -107,6 +107,24 @@ export default function LoginPage() {
       }
 
       setSuccess('登录成功，即将跳转...')
+      
+      // 记录登录使用统计
+      try {
+        await fetch('/api/track-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action_type: 'login',
+            details: {
+              method: 'password',
+              email: step.email
+            }
+          })
+        })
+      } catch (error) {
+        console.log('Failed to track login usage:', error)
+      }
+      
       setTimeout(() => {
         router.push('/dashboard')
       }, 1500)
@@ -147,6 +165,24 @@ export default function LoginPage() {
       }
 
       setSuccess('登录成功，即将跳转...')
+      
+      // 记录登录使用统计
+      try {
+        await fetch('/api/track-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action_type: 'login',
+            details: {
+              method: 'verification_code',
+              email: step.email
+            }
+          })
+        })
+      } catch (error) {
+        console.log('Failed to track login usage:', error)
+      }
+      
       setTimeout(() => {
         router.push('/dashboard')
       }, 1500)

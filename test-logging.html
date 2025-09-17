@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试日志记录功能</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        .test-section h3 {
+            color: #007bff;
+            margin-top: 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 日志记录功能测试</h1>
+        
+        <div class="test-section">
+            <h3>1. 数据库重置测试</h3>
+            <p>重置数据库，清空所有日志记录</p>
+            <button onclick="testDatabaseReset()">重置数据库</button>
+            <div id="reset-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 用户注册日志测试</h3>
+            <p>模拟用户注册，测试注册日志记录</p>
+            <button onclick="testUserRegistration()">测试注册日志</button>
+            <div id="register-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 抠图API日志测试</h3>
+            <p>模拟抠图API调用，测试抠图日志记录</p>
+            <button onclick="testRemoveBackground()">测试抠图日志</button>
+            <div id="removebg-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 下载日志测试</h3>
+            <p>模拟文件下载，测试下载日志记录</p>
+            <button onclick="testDownload()">测试下载日志</button>
+            <div id="download-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. 查看统计数据</h3>
+            <p>查看管理界面的统计数据</p>
+            <button onclick="viewStats()">查看统计</button>
+            <button onclick="openAdminPanel()">打开管理界面</button>
+            <div id="stats-result" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // 显示结果
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.className = `result ${type}`;
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        // 1. 测试数据库重置
+        async function testDatabaseReset() {
+            try {
+                showResult('reset-result', '正在重置数据库...', 'info');
+                
+                const response = await fetch('/api/admin/reset-database', {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('reset-result', `✅ 数据库重置成功！清空了 ${data.data.cleared_tables.join(', ')} 表`, 'success');
+                } else {
+                    showResult('reset-result', `❌ 重置失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('reset-result', `❌ 重置失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 2. 测试用户注册日志
+        async function testUserRegistration() {
+            try {
+                showResult('register-result', '正在测试注册日志...', 'info');
+                
+                const testEmail = `test${Date.now()}@51talk.com`;
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'register',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            email: testEmail,
+                            name: '测试用户',
+                            method: 'email'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('register-result', `✅ 注册日志记录成功！用户: ${testEmail}`, 'success');
+                } else {
+                    showResult('register-result', `❌ 注册日志失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('register-result', `❌ 注册日志失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 3. 测试抠图日志
+        async function testRemoveBackground() {
+            try {
+                showResult('removebg-result', '正在测试抠图日志...', 'info');
+                
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'remove_background',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            imageSize: 1024000,
+                            processingTime: 2500,
+                            success: true,
+                            method: 'remove_bg_api'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('removebg-result', '✅ 抠图日志记录成功！', 'success');
+                } else {
+                    showResult('removebg-result', `❌ 抠图日志失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('removebg-result', `❌ 抠图日志失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 4. 测试下载日志
+        async function testDownload() {
+            try {
+                showResult('download-result', '正在测试下载日志...', 'info');
+                
+                const response = await fetch('/api/test/simulate-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'download',
+                        user_id: `test-user-${Date.now()}`,
+                        details: {
+                            format: 'png',
+                            fileSize: 512000,
+                            filename: 'business-card.png',
+                            method: 'dom'
+                        }
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('download-result', '✅ 下载日志记录成功！', 'success');
+                } else {
+                    showResult('download-result', `❌ 下载日志失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('download-result', `❌ 下载日志失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 5. 查看统计数据
+        async function viewStats() {
+            try {
+                showResult('stats-result', '正在获取统计数据...', 'info');
+                
+                const response = await fetch('/api/admin/today-stats');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const stats = data.data;
+                    const message = `📊 今日统计:\n` +
+                        `• 新注册用户: ${stats.todayNewUsers}\n` +
+                        `• 下载次数: ${stats.todayDownloads}\n` +
+                        `• API调用: ${stats.todayApiCalls}\n` +
+                        `• 抠图次数: ${stats.todayRemoveBg}\n` +
+                        `• 告警数量: ${stats.alertCount}`;
+                    showResult('stats-result', message, 'success');
+                } else {
+                    showResult('stats-result', `❌ 获取统计失败: ${data.error}`, 'error');
+                }
+            } catch (error) {
+                showResult('stats-result', `❌ 获取统计失败: ${error.message}`, 'error');
+            }
+        }
+
+        // 打开管理界面
+        function openAdminPanel() {
+            window.open('/admin', '_blank');
+        }
+
+        // 页面加载完成后的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🧪 日志记录测试页面已加载');
+        });
+    </script>
+</body>
+</html>

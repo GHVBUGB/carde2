@@ -285,6 +285,26 @@ export default function DomToImageExport({
       const filename = `${user?.name || 'business-card'}-quick.${format}`
       saveAs(blob, filename)
 
+      // 记录下载日志
+      if (user?.id) {
+        try {
+          await fetch('/api/log-download', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: user.id,
+              format: format,
+              fileSize: blob.size,
+              filename: filename
+            })
+          })
+        } catch (logError) {
+          console.warn('记录下载日志失败:', logError)
+        }
+      }
+
       const duration = Date.now() - startTime
       const fileSizeKB = (blob.size / 1024).toFixed(1)
       setStatus(`✅ 快速导出成功！大小: ${fileSizeKB}KB, 耗时: ${duration}ms`)

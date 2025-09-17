@@ -60,6 +60,25 @@ export default function SimpleDomExport({
       const filename = `${user?.name || 'business-card'}-simple.${format}`
       saveAs(blob, filename)
 
+      // 记录使用统计
+      try {
+        await fetch('/api/track-usage', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action_type: 'download',
+            details: {
+              format,
+              filename,
+              fileSize: blob.size,
+              method: 'simple-dom-export'
+            }
+          })
+        })
+      } catch (error) {
+        console.log('Failed to track download usage:', error)
+      }
+
       const duration = Date.now() - startTime
       const fileSizeKB = (blob.size / 1024).toFixed(1)
       setStatus(`✅ 导出成功！大小: ${fileSizeKB}KB, 耗时: ${duration}ms`)

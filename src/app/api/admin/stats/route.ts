@@ -116,22 +116,44 @@ export async function GET(req: NextRequest) {
           throw new Error('Usage stats table not accessible')
         }
       } catch (usageError) {
-        console.log('Usage stats table also not found, using simulated data')
-        // 最后的回退：使用基于时间的模拟数据，让数据看起来更真实
-        const hour = new Date().getHours()
-        totalDownloads = Math.floor(hour * 1.5) + Math.floor(Math.random() * 10) + 15
-        todayDownloads = Math.floor(hour / 2) + Math.floor(Math.random() * 5)
-        totalApiCalls = Math.floor(hour * 2.5) + Math.floor(Math.random() * 15) + 25
-        todayApiCalls = Math.floor(hour / 1.5) + Math.floor(Math.random() * 8)
-        removeBgCalls = Math.floor(hour * 1.2) + Math.floor(Math.random() * 8) + 8
-        todayRemoveBg = Math.floor(hour / 3) + Math.floor(Math.random() * 3)
+        console.log('Usage stats table also not found, returning zero values for testing')
+        // 测试模式：返回0值以便观察实时记录
+        totalDownloads = 0
+        todayDownloads = 0
+        totalApiCalls = 0
+        todayApiCalls = 0
+        removeBgCalls = 0
+        todayRemoveBg = 0
       }
     }
 
-    // 5. 获取用户详细统计
-    const recentUsers = (allUsers || []).slice(0, 50).map(user => {
-      // 为每个用户生成一些模拟统计数据
-      // 在实际项目中，这些数据应该从相关的统计表中获取
+    // 5. 获取用户详细统计（使用真实数据）
+    const recentUsers = await Promise.all((allUsers || []).slice(0, 50).map(async (user) => {
+      // 获取每个用户的真实统计数据
+      let downloadCount = 0
+      let removeBgCount = 0
+      let totalApiCalls = 0
+      let loginCount = 0
+
+      try {
+        // 从 usage_stats 表获取用户真实数据
+        const { data: userStats } = await supabase
+          .from('usage_stats')
+          .select('action_type, created_at')
+          .eq('user_id', user.id)
+
+        if (userStats) {
+          downloadCount = userStats.filter(stat => stat.action_type === 'download').length
+          removeBgCount = userStats.filter(stat => 
+            stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
+          ).length
+          totalApiCalls = userStats.length
+          loginCount = userStats.filter(stat => stat.action_type === 'login').length
+        }
+      } catch (error) {
+        console.log(`获取用户 ${user.id} 统计数据失败:`, error)
+      }
+
       return {
         id: user.id,
         name: user.email?.split('@')[0] || '未知用户',
@@ -139,20 +161,25 @@ export async function GET(req: NextRequest) {
         title: '51Talk员工',
         created_at: user.created_at,
         last_login: user.last_login || user.created_at,
-        download_count: Math.floor(Math.random() * 8),
-        remove_bg_count: Math.floor(Math.random() * 5),
-        total_api_calls: Math.floor(Math.random() * 15),
-        login_count: Math.floor(Math.random() * 20) + 1
+        download_count: downloadCount,
+        remove_bg_count: removeBgCount,
+        total_api_calls: totalApiCalls,
+        login_count: loginCount || 1 // 至少登录1次
       }
-    })
+    }))
+
+    // 重新计算总体统计数据（基于用户详细数据）
+    const realTotalDownloads = recentUsers.reduce((sum, user) => sum + user.download_count, 0)
+    const realTotalApiCalls = recentUsers.reduce((sum, user) => sum + user.total_api_calls, 0)
+    const realRemoveBgCalls = recentUsers.reduce((sum, user) => sum + user.remove_bg_count, 0)
 
     // 构建响应数据
     const responseData = {
       totalUsers: allUsers?.length || 0,
       activeUsers: activeUsers?.length || 0,
-      totalDownloads,
-      totalApiCalls,
-      removeBgCalls,
+      totalDownloads: realTotalDownloads || totalDownloads,
+      totalApiCalls: realTotalApiCalls || totalApiCalls,
+      removeBgCalls: realRemoveBgCalls || removeBgCalls,
       todayRegistrations: todayUsers?.length || 0,
       todayDownloads,
       todayApiCalls,

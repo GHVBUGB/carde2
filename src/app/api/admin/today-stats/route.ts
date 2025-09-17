@@ -6,10 +6,12 @@ export async function GET(req: NextRequest) {
     // 使用管理员客户端，保证没有会话也能读取统计
     const supabase = createAdminClient()
 
-    // 获取当前日期的开始和结束时间
-    const today = new Date()
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
-    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString()
+    // 获取当前日期的开始和结束时间（使用UTC时间避免时区问题）
+    const now = new Date()
+    const todayStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).toISOString()
+    const todayEnd = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1)).toISOString()
+    
+    console.log('Today range:', { todayStart, todayEnd, currentTime: now.toISOString() })
 
     // 1. 获取今日新注册用户数
     const { data: todayNewUsers, error: newUsersError } = await supabase
@@ -62,12 +64,11 @@ export async function GET(req: NextRequest) {
           throw new Error('usage_stats not accessible')
         }
       } catch (fallbackErr) {
-        console.log('API logs and usage_stats unavailable, using simulated data')
-        // 最后回退：使用基于时间的模拟数据
-        const hour = new Date().getHours()
-        todayDownloads = Math.floor(hour / 3) + Math.floor(Math.random() * 3)
-        todayApiCalls = Math.floor(hour / 2) + Math.floor(Math.random() * 5)
-        todayRemoveBg = Math.floor(hour / 4) + Math.floor(Math.random() * 2)
+        console.log('API logs and usage_stats unavailable, returning zero values for testing')
+        // 测试模式：返回0值以便观察实时记录
+        todayDownloads = 0
+        todayApiCalls = 0
+        todayRemoveBg = 0
       }
     }
 
