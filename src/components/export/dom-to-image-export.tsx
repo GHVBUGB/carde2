@@ -232,7 +232,7 @@ export default function DomToImageExport({
         width: 350,  // 固定宽度
         height: 500, // 固定高度
         quality: format === 'png' ? 1.0 : 0.95,
-        backgroundColor: 'transparent',
+        bgcolor: '#ffffff',
         cacheBust: true,
         pixelRatio: 2,
         style: {

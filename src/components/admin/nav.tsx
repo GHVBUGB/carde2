@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth'
@@ -81,9 +82,11 @@ export default function AdminNav() {
           >
             <div className="w-8 h-8 bg-brand-primary/10 rounded-full flex items-center justify-center">
               {user?.avatar_url ? (
-                <img 
+                <Image 
                   src={user.avatar_url} 
                   alt={user.name || '管理员'}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full object-cover"
                 />
               ) : (

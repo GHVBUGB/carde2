@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
-import { RemoveApiLogger } from '@/lib/remove-api-logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -16,8 +15,10 @@ export async function GET(req: NextRequest) {
     const todayEndBeijing = new Date(beijingTime.getFullYear(), beijingTime.getMonth(), beijingTime.getDate() + 1, 0, 0, 0, 0)
     
     // 转换为UTC时间用于数据库查询
-    const todayStart = new Date(todayStartBeijing.getTime() - (8 * 60 * 60 * 1000)).toISOString() // 减去8小时时差
-    const todayEnd = new Date(todayEndBeijing.getTime() - (8 * 60 * 60 * 1000)).toISOString()
+    const todayStartDate = new Date(todayStartBeijing.getTime() - (8 * 60 * 60 * 1000))
+    const todayEndDate = new Date(todayEndBeijing.getTime() - (8 * 60 * 60 * 1000))
+    const todayStart = todayStartDate.toISOString() // 减去8小时时差
+    const todayEnd = todayEndDate.toISOString()
     
     console.log('🕐 时间范围调试:', {
       now: now.toISOString(),
@@ -28,11 +29,10 @@ export async function GET(req: NextRequest) {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     })
 
-    // 1. 获取总用户数 (使用Service Role绕过RLS)
+    // 1. 获取总用户数
     const { data: allUsers, error: usersError } = await supabase
       .from('users')
       .select('id, email, created_at, last_login')
-      .order('created_at', { ascending: false })
 
     if (usersError) {
       console.error('Error fetching users:', usersError)
@@ -91,9 +91,7 @@ export async function GET(req: NextRequest) {
         // 过滤今日记录
         const todayRecords = apiLogs.filter(log => {
           const logTime = new Date(log.created_at)
-          const startTime = new Date(todayStart)
-          const endTime = new Date(todayEnd)
-          return logTime >= startTime && logTime < endTime
+          return logTime >= todayStartDate && logTime < todayEndDate
         })
         
         console.log('今日记录:', todayRecords.map(r => ({ action: r.action, created_at: r.created_at })))
@@ -136,33 +134,25 @@ export async function GET(req: NextRequest) {
         if (!usageError && usageStats) {
           console.log('✅ 找到 usage_stats 数据:', usageStats.length, '条记录')
           totalApiCalls = usageStats.length
-          todayApiCalls = usageStats.filter(stat => {
-            const statTime = new Date(stat.created_at)
-            const startTime = new Date(todayStart)
-            const endTime = new Date(todayEnd)
-            return statTime >= startTime && statTime < endTime
-          }).length
+          todayApiCalls = usageStats.filter(stat => stat.created_at >= todayStart && stat.created_at < todayEnd).length
           
           // 统计下载和抠图（适配 usage_stats 字段名）
           totalDownloads = usageStats.filter(stat => stat.action_type === 'download').length
-          todayDownloads = usageStats.filter(stat => {
-            const statTime = new Date(stat.created_at)
-            const startTime = new Date(todayStart)
-            const endTime = new Date(todayEnd)
-            return stat.action_type === 'download' && statTime >= startTime && statTime < endTime
-          }).length
+          todayDownloads = usageStats.filter(stat => 
+            stat.action_type === 'download' && 
+            stat.created_at >= todayStart && 
+            stat.created_at < todayEnd
+          ).length
           
           // 抠图：兼容 action_type 命名差异
           removeBgCalls = usageStats.filter(stat => 
             stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
           ).length
-          todayRemoveBg = usageStats.filter(stat => {
-            const statTime = new Date(stat.created_at)
-            const startTime = new Date(todayStart)
-            const endTime = new Date(todayEnd)
-            return (stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api') && 
-                   statTime >= startTime && statTime < endTime
-          }).length
+          todayRemoveBg = usageStats.filter(stat => 
+            (stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api') && 
+            stat.created_at >= todayStart && 
+            stat.created_at < todayEnd
+          ).length
         } else {
           throw new Error('Usage stats table not accessible')
         }
@@ -187,15 +177,7 @@ export async function GET(req: NextRequest) {
       let loginCount = 0
 
       try {
-        // 优先从新的 remove_api_logs 表获取抠图统计
-        try {
-          const removeApiStats = await RemoveApiLogger.getUserUsageStats(user.id)
-          removeBgCount = removeApiStats.totalCalls
-        } catch (removeApiError) {
-          console.log(`从 remove_api_logs 获取用户 ${user.id} 抠图统计失败，降级到 usage_stats:`, removeApiError)
-        }
-
-        // 从 usage_stats 表获取其他统计数据
+        // 从 usage_stats 表获取用户真实数据
         const { data: userStats } = await supabase
           .from('usage_stats')
           .select('action_type, created_at')
@@ -203,12 +185,9 @@ export async function GET(req: NextRequest) {
 
         if (userStats) {
           downloadCount = userStats.filter(stat => stat.action_type === 'download').length
-          // 如果新的 remove_api_logs 表没有数据，则使用 usage_stats 的抠图统计
-          if (removeBgCount === 0) {
-            removeBgCount = userStats.filter(stat => 
-              stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
-            ).length
-          }
+          removeBgCount = userStats.filter(stat => 
+            stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
+          ).length
           totalApiCalls = userStats.length
           loginCount = userStats.filter(stat => stat.action_type === 'login').length
         }

@@ -21,12 +21,8 @@ export const createAdminClient = () => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-  if (!supabaseUrl) {
-    throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL environment variable')
-  }
-
-  if (!serviceRoleKey) {
-    throw new Error('Missing SUPABASE_SERVICE_ROLE_KEY environment variable')
+  if (!supabaseUrl || !serviceRoleKey) {
+    throw new Error('Missing required environment variables: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY')
   }
 
   // Use the service role key for privileged server-side operations only.
@@ -44,7 +40,7 @@ export const emailVerificationService = {
 
     // 检查环境变量是否存在
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase环境变量未配置，请检查.env.local文件')
+      console.warn('Supabase环境变量未配置，使用默认值')
     }
 
     const supabase = createAdminClient()
@@ -81,7 +77,7 @@ export const emailVerificationService = {
   async verifyCode(email: string, code: string): Promise<boolean> {
     // 检查环境变量是否存在
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
-      throw new Error('Supabase环境变量未配置，请检查.env.local文件')
+      console.warn('Supabase环境变量未配置，使用默认值')
     }
 
     const supabase = createAdminClient()

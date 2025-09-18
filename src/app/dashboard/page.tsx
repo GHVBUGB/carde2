@@ -18,13 +18,6 @@ export default function DashboardPage() {
     cardViews: 0,
   })
 
-  useEffect(() => {
-    checkAuth()
-    if (user) {
-      loadUserStats()
-    }
-  }, [user])
-
   const checkAuth = async () => {
     try {
       const { data: { user: authUser } } = await supabase.auth.getUser()
@@ -77,6 +70,13 @@ export default function DashboardPage() {
       console.error('Failed to load stats:', error)
     }
   }
+
+  useEffect(() => {
+    checkAuth()
+    if (user) {
+      loadUserStats()
+    }
+  }, [user, checkAuth, loadUserStats])
 
   if (loading) {
     return (

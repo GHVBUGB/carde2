@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth'
@@ -69,11 +70,7 @@ export default function DashboardNav() {
           >
             <div className="w-8 h-8 bg-brand-primary/10 rounded-full flex items-center justify-center">
               {user?.avatar_url ? (
-                <img 
-                  src={user.avatar_url} 
-                  alt={user.name || 'صورة المستخدم'}
-                  className="w-8 h-8 rounded-full object-cover"
-                />
+                <Image src={user.avatar_url} alt={user.name || 'صورة المستخدم'} className="w-8 h-8 rounded-full object-cover" width={32} height={32} />
               ) : (
                 <span className="text-brand-primary font-medium text-sm">
                   {user?.name?.charAt(0) || 'U'}

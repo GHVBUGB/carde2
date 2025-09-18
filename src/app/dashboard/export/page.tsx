@@ -43,13 +43,6 @@ export default function ExportPage() {
   
   const cardRef = useRef<HTMLDivElement>(null)
 
-  // 加载导出历史
-  useEffect(() => {
-    if (user) {
-      loadExportHistory()
-    }
-  }, [user])
-
   const loadExportHistory = async () => {
     try {
       const { data } = await supabase
@@ -65,6 +58,13 @@ export default function ExportPage() {
       console.error('Failed to load export history:', error)
     }
   }
+
+  // 加载导出历史
+  useEffect(() => {
+    if (user) {
+      loadExportHistory()
+    }
+  }, [user, loadExportHistory])
 
   const handleExport = async () => {
     // 导出功能已移至实时预览模块，此页面导出功能已禁用

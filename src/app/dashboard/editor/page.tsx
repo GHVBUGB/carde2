@@ -24,7 +24,7 @@ export default function EditorPage() {
   // 确保位置配置始终稳定
   useEffect(() => {
     initializePositions()
-  }, [])
+  }, [initializePositions])
 
   useEffect(() => {
     if (user && !cardData.name) { // 只在初始化时执行一次
@@ -52,7 +52,7 @@ export default function EditorPage() {
         positiveRating: Math.round((user.rating || 0) * 20) || 99, // 转换5分制为百分制
       })
     }
-  }, [user]) // 移除其他依赖项避免循环
+  }, [user, cardData.name, updateCardData, updateTextModules]) // 添加所有依赖项
 
   // 确保姓名默认值为“أحمد”，并避免邮箱作为默认显示
   useEffect(() => {
