@@ -3,6 +3,28 @@ import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   try {
+    // 检查环境变量是否存在
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn('Supabase环境变量未配置，返回默认数据')
+      return NextResponse.json({
+        success: true,
+        data: {
+          totalUsers: 0,
+          activeUsers: 0,
+          totalDownloads: 0,
+          totalApiCalls: 0,
+          removeBgCalls: 0,
+          todayRegistrations: 0,
+          todayDownloads: 0,
+          todayApiCalls: 0,
+          todayRemoveBg: 0,
+          recentUsers: [],
+          lastUpdated: new Date().toISOString()
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
     // 使用管理员客户端，确保在无登录会话和RLS开启时也能读取真实数据
     const supabase = createAdminClient()
 

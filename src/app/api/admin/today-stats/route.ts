@@ -3,6 +3,29 @@ import { createAdminClient } from '@/lib/supabase/server'
 
 export async function GET(req: NextRequest) {
   try {
+    // 检查环境变量是否存在
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.warn('Supabase环境变量未配置，返回默认数据')
+      return NextResponse.json({
+        success: true,
+        data: {
+          todayNewUsers: 0,
+          todayDownloads: 0,
+          todayApiCalls: 0,
+          todayRemoveBg: 0,
+          alerts: [],
+          alertCount: 0,
+          hasAlerts: false,
+          lastUpdated: new Date().toISOString(),
+          dateRange: {
+            start: new Date().toISOString(),
+            end: new Date().toISOString()
+          }
+        },
+        timestamp: new Date().toISOString()
+      })
+    }
+
     // 使用管理员客户端，保证没有会话也能读取统计
     const supabase = createAdminClient()
 
