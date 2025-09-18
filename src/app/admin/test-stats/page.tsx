@@ -241,7 +241,7 @@ export default function TestStatsPage() {
       {!stats && !loading && (
         <Card>
           <CardContent className="text-center py-8">
-            <p className="text-gray-500">点击"刷新数据"获取统计信息</p>
+            <p className="text-gray-500">点击&quot;刷新数据&quot;获取统计信息</p>
           </CardContent>
         </Card>
       )}

@@ -196,7 +196,7 @@ export default function ImportConfigPage() {
             ) : (
               <div className="text-center py-8 text-gray-500">
                 <p>暂无预览数据</p>
-                <p className="text-sm">请输入配置数据并点击"预览数据"</p>
+                <p className="text-sm">请输入配置数据并点击&quot;预览数据&quot;</p>
               </div>
             )}
           </CardContent>
@@ -224,8 +224,8 @@ export default function ImportConfigPage() {
             <ol className="list-decimal list-inside space-y-1 text-gray-600">
               <li>准备符合格式的 JSON 配置数据</li>
               <li>粘贴到左侧文本框中</li>
-              <li>点击"预览数据"检查格式是否正确</li>
-              <li>确认无误后点击"导入配置"</li>
+              <li>点击&quot;预览数据&quot;检查格式是否正确</li>
+              <li>确认无误后点击&quot;导入配置&quot;</li>
             </ol>
           </div>
         </CardContent>
