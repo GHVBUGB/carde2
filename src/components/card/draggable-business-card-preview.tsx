@@ -2453,18 +2453,18 @@ export default function DraggableBusinessCardPreview({
 
   return (
     <div className={`space-y-4 ${className}`}>
-      {/* 工具栏 */}
+      {/* 工具栏 - 隐藏上传底图和显示坐标按钮 */}
       <div className="flex gap-2 p-3 bg-gray-100 rounded-lg">
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
+          className="hidden px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600 transition-colors"
         >
           上传底图
         </button>
         <div className="flex gap-2 flex-wrap"></div>
           <button
           onClick={() => setShowCoordinates(!showCoordinates)}
-          className={`px-3 py-1 rounded text-sm transition-colors ${
+          className={`hidden px-3 py-1 rounded text-sm transition-colors ${
             showCoordinates 
               ? 'bg-yellow-400 text-black hover:bg-yellow-500' 
               : 'bg-gray-500 text-white hover:bg-gray-600'
