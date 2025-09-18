@@ -91,7 +91,9 @@ export async function GET(req: NextRequest) {
         // 过滤今日记录
         const todayRecords = apiLogs.filter(log => {
           const logTime = new Date(log.created_at)
-          return logTime >= todayStart && logTime < todayEnd
+          const startTime = new Date(todayStart)
+          const endTime = new Date(todayEnd)
+          return logTime >= startTime && logTime < endTime
         })
         
         console.log('今日记录:', todayRecords.map(r => ({ action: r.action, created_at: r.created_at })))
@@ -134,25 +136,33 @@ export async function GET(req: NextRequest) {
         if (!usageError && usageStats) {
           console.log('✅ 找到 usage_stats 数据:', usageStats.length, '条记录')
           totalApiCalls = usageStats.length
-          todayApiCalls = usageStats.filter(stat => stat.created_at >= todayStart && stat.created_at < todayEnd).length
+          todayApiCalls = usageStats.filter(stat => {
+            const statTime = new Date(stat.created_at)
+            const startTime = new Date(todayStart)
+            const endTime = new Date(todayEnd)
+            return statTime >= startTime && statTime < endTime
+          }).length
           
           // 统计下载和抠图（适配 usage_stats 字段名）
           totalDownloads = usageStats.filter(stat => stat.action_type === 'download').length
-          todayDownloads = usageStats.filter(stat => 
-            stat.action_type === 'download' && 
-            stat.created_at >= todayStart && 
-            stat.created_at < todayEnd
-          ).length
+          todayDownloads = usageStats.filter(stat => {
+            const statTime = new Date(stat.created_at)
+            const startTime = new Date(todayStart)
+            const endTime = new Date(todayEnd)
+            return stat.action_type === 'download' && statTime >= startTime && statTime < endTime
+          }).length
           
           // 抠图：兼容 action_type 命名差异
           removeBgCalls = usageStats.filter(stat => 
             stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
           ).length
-          todayRemoveBg = usageStats.filter(stat => 
-            (stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api') && 
-            stat.created_at >= todayStart && 
-            stat.created_at < todayEnd
-          ).length
+          todayRemoveBg = usageStats.filter(stat => {
+            const statTime = new Date(stat.created_at)
+            const startTime = new Date(todayStart)
+            const endTime = new Date(todayEnd)
+            return (stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api') && 
+                   statTime >= startTime && statTime < endTime
+          }).length
         } else {
           throw new Error('Usage stats table not accessible')
         }
