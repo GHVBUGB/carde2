@@ -73,7 +73,7 @@ export default function HDPerfectExport({
         imageTimeout: 15000,
         
         // 字体和文本优化
-        letterRendering: true,
+        // letterRendering 属性不存在于 html2canvas Options 中，移除
         logging: false, // 关闭调试日志
         
         // 忽略某些元素以避免干扰

@@ -234,7 +234,13 @@ export function compressImage(
       ctx?.drawImage(img, 0, 0, width, height)
       
       // 导出为Blob
-      canvas.toBlob(resolve, 'image/jpeg', quality)
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(blob)
+        } else {
+          reject(new Error('Failed to create blob'))
+        }
+      }, 'image/jpeg', quality)
     }
     
     img.onerror = reject

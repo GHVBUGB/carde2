@@ -45,6 +45,7 @@ interface CardState {
     name: string
     title: string
     studentsServed: number
+    positiveRating: number
     phone: string
     // 业务能力标签文字
     teacherSelectionLabel: string
@@ -59,6 +60,7 @@ interface CardState {
     name: { fontSize: number; color: string; fontWeight: string }
     title: { fontSize: number; color: string; fontWeight: string }
     studentsServed: { fontSize: number; color: string; fontWeight: string }
+    positiveRating: { fontSize: number; color: string; fontWeight: string }
     phone: { fontSize: number; color: string; fontWeight: string }
     teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
     progressFeedbackLabel: { fontSize: number; color: string; fontWeight: string }
@@ -72,6 +74,7 @@ interface CardState {
     name: { x: number; y: number }
     title: { x: number; y: number }
     studentsServed: { x: number; y: number }
+    positiveRating: { x: number; y: number }
     phone: { x: number; y: number }
     teacherSelectionLabel: { x: number; y: number }
     progressFeedbackLabel: { x: number; y: number }

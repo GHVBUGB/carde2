@@ -53,7 +53,7 @@ export default function CanvasPerfectExport({
       // 设置高质量渲染
       ctx.imageSmoothingEnabled = true
       ctx.imageSmoothingQuality = 'high'
-      ctx.textRenderingOptimization = 'optimizeQuality'
+      // 移除不存在的 textRenderingOptimization 属性
       
       // 绘制白色背景
       ctx.fillStyle = '#ffffff'
