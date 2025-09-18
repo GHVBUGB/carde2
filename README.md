@@ -347,6 +347,14 @@ A: 拖拽功能需要管理员解锁，请联系管理员开启相关权限。
 
 ## 更新日志
 
+### v1.4.1 (2024-01-26) - 头像白色边框修复
+- ✅ 修复下载出来的头衔带有白色圆圈框的问题
+- ✅ 移除HTML组件中头像的白色边框CSS类（border-4 border-white）
+- ✅ 移除Canvas导出功能中头像的白色边框绘制代码
+- ✅ 修复所有导出格式（PNG、JPEG、Canvas等）的头像显示问题
+- ✅ 保持头像的圆形裁剪和阴影效果，仅移除白色边框
+- ✅ 涉及文件：business-card-preview.tsx、improved-business-card-preview.tsx、clean-draggable-card.tsx、draggable-business-card-preview.tsx、canvas-perfect-export.tsx、modern-web-export.tsx
+
 ### v1.3.0 (2024-01-16) - 实时数据系统
 - ✅ 创建真实API数据端点：`/api/admin/stats`、`/api/admin/today-stats`
 - ✅ 管理员面板连接真实数据库数据

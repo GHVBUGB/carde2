@@ -251,8 +251,8 @@ export default function CleanDraggableCard({
             }}
             onMouseDown={handleAvatarMouseDown}
           >
-            <div 
-              className="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-lg"
+              <div 
+                className="w-full h-full rounded-full overflow-hidden shadow-lg"
               style={{
                 width: `${avatarConfig.size}px`,
                 height: `${avatarConfig.size}px`

@@ -45,11 +45,11 @@ export default function HtmlToImageExport({
       const width = 350
       const height = 500
       
-      // html-to-image 配置 - 修复偏移问题
+      // html-to-image 配置 - 修复偏移问题和白色边框
       const options = {
         quality: 1.0,
         pixelRatio: scale,
-        backgroundColor: '#ffffff',
+        backgroundColor: 'transparent',
         width: width,
         height: height,
         style: {

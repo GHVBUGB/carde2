@@ -906,12 +906,7 @@ export default function DraggableBusinessCardPreview({
               // 恢复状态
               ctx.restore()
 
-              // 绘制白色边框
-              ctx.strokeStyle = '#ffffff'
-              ctx.lineWidth = 4 * scale
-              ctx.beginPath()
-              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-              ctx.stroke()
+              // 移除白色边框绘制
 
               resolve()
             } catch (error) {
@@ -2556,7 +2551,7 @@ export default function DraggableBusinessCardPreview({
               onMouseDown={handleAvatarMouseDown}
             >
               <div 
-                className="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-lg"
+                className="w-full h-full rounded-full overflow-hidden shadow-lg"
                 style={{
                   width: `${avatarConfig.size}px`,
                   height: `${avatarConfig.size}px`

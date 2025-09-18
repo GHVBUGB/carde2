@@ -246,13 +246,8 @@ export default function CanvasPerfectExport({
         // 绘制头像图片
         ctx.drawImage(img, x, y, size, size)
         
-        // 绘制白色边框
+        // 移除白色边框绘制
         ctx.restore()
-        ctx.strokeStyle = '#ffffff'
-        ctx.lineWidth = 4 * scale
-        ctx.beginPath()
-        ctx.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2)
-        ctx.stroke()
         
         resolve()
       }

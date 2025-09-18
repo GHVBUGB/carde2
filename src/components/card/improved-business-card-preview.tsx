@@ -160,7 +160,7 @@ export default function ImprovedBusinessCardPreview({
                 height: '96px'
               }}
             >
-              <div className="w-full h-full rounded-full overflow-hidden border-4 border-white shadow-lg">
+              <div className="w-full h-full rounded-full overflow-hidden shadow-lg">
                 <img 
                   src={user.avatar_url} 
                   alt="Avatar" 

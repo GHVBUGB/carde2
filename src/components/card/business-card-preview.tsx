@@ -201,12 +201,7 @@ export default function BusinessCardPreview({
               // 恢复状态
               ctx.restore()
 
-              // 绘制白色边框
-              ctx.strokeStyle = '#ffffff'
-              ctx.lineWidth = 4 * scale
-              ctx.beginPath()
-              ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI)
-              ctx.stroke()
+              // 移除白色边框绘制
 
               resolve()
           } catch (error) {
@@ -448,7 +443,7 @@ export default function BusinessCardPreview({
           {/* 头像 - 中上部位置 */}
           {user.avatar_url && (
             <div className="absolute top-16 left-1/2 transform -translate-x-1/2">
-              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-lg">
+              <div className="w-24 h-24 rounded-full overflow-hidden shadow-lg">
                 <img 
                   src={user.avatar_url} 
                   alt="Avatar" 

@@ -49,7 +49,7 @@ export default function DomToImageExport({
         width: 350,  // 固定宽度
         height: 500, // 固定高度
         quality: 1.0,
-        bgcolor: '#ffffff',
+        backgroundColor: 'transparent',
         cacheBust: true,
         pixelRatio: ratio,
         style: {
@@ -232,7 +232,7 @@ export default function DomToImageExport({
         width: 350,  // 固定宽度
         height: 500, // 固定高度
         quality: format === 'png' ? 1.0 : 0.95,
-        bgcolor: '#ffffff',
+        backgroundColor: 'transparent',
         cacheBust: true,
         pixelRatio: 2,
         style: {

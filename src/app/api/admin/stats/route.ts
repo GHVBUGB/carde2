@@ -6,26 +6,50 @@ export async function GET(req: NextRequest) {
     // 使用管理员客户端，确保在无登录会话和RLS开启时也能读取真实数据
     const supabase = createAdminClient()
 
-    // 获取当前日期的开始和结束时间
-    const today = new Date()
-    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate()).toISOString()
-    const todayEnd = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1).toISOString()
+    // 获取当前日期的开始和结束时间（使用UTC时间确保时区一致性）
+    const now = new Date()
+    
+    // 获取北京时间的今日开始和结束时间
+    const beijingTime = new Date(now.toLocaleString("en-US", {timeZone: "Asia/Shanghai"}))
+    const todayStartBeijing = new Date(beijingTime.getFullYear(), beijingTime.getMonth(), beijingTime.getDate(), 0, 0, 0, 0)
+    const todayEndBeijing = new Date(beijingTime.getFullYear(), beijingTime.getMonth(), beijingTime.getDate() + 1, 0, 0, 0, 0)
+    
+    // 转换为UTC时间用于数据库查询
+    const todayStart = new Date(todayStartBeijing.getTime() - (8 * 60 * 60 * 1000)).toISOString() // 减去8小时时差
+    const todayEnd = new Date(todayEndBeijing.getTime() - (8 * 60 * 60 * 1000)).toISOString()
+    
+    console.log('🕐 时间范围调试:', {
+      now: now.toISOString(),
+      localTime: now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+      beijingTime: beijingTime.toISOString(),
+      todayStart,
+      todayEnd,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+    })
 
-    // 1. 获取总用户数
+    // 1. 获取总用户数 (使用Service Role绕过RLS)
     const { data: allUsers, error: usersError } = await supabase
       .from('users')
       .select('id, email, created_at, last_login')
+      .order('created_at', { ascending: false })
 
     if (usersError) {
       console.error('Error fetching users:', usersError)
     }
 
     // 2. 获取今日新注册用户
+    console.log('查询今日注册用户，时间范围:', { todayStart, todayEnd })
     const { data: todayUsers, error: todayUsersError } = await supabase
       .from('users')
-      .select('id')
+      .select('id, email, created_at')
       .gte('created_at', todayStart)
       .lt('created_at', todayEnd)
+
+    console.log('今日注册用户查询结果:', { 
+      count: todayUsers?.length || 0, 
+      users: todayUsers?.map(u => ({ email: u.email, created_at: u.created_at })) || [],
+      error: todayUsersError 
+    })
 
     if (todayUsersError) {
       console.error('Error fetching today users:', todayUsersError)
@@ -56,25 +80,41 @@ export async function GET(req: NextRequest) {
       const { data: apiLogs, error: apiLogsError } = await supabase
         .from('api_logs')
         .select('action, created_at')
+        .order('created_at', { ascending: false })
 
       if (!apiLogsError && apiLogs) {
-        totalApiCalls = apiLogs.length
-        todayApiCalls = apiLogs.filter(log => log.created_at >= todayStart && log.created_at < todayEnd).length
+        console.log('API日志统计调试:')
+        console.log('总记录数:', apiLogs.length)
+        console.log('时间范围:', { todayStart, todayEnd })
         
-        // 统计下载和抠图
-        totalDownloads = apiLogs.filter(log => log.action === 'download').length
-        todayDownloads = apiLogs.filter(log => 
-          log.action === 'download' && 
-          log.created_at >= todayStart && 
-          log.created_at < todayEnd
+        // 过滤今日记录
+        const todayRecords = apiLogs.filter(log => {
+          const logTime = new Date(log.created_at)
+          return logTime >= todayStart && logTime < todayEnd
+        })
+        
+        console.log('今日记录:', todayRecords.map(r => ({ action: r.action, created_at: r.created_at })))
+        
+        // 统计API调用次数
+        const apiCallsCount = apiLogs.length
+        const downloadCount = apiLogs.filter(log => log.action === 'download').length
+        const removeBgCount = apiLogs.filter(log => 
+          log.action === 'remove_background' || log.action === 'remove_bg_api'
         ).length
         
-        removeBgCalls = apiLogs.filter(log => log.action === 'remove_background').length
-        todayRemoveBg = apiLogs.filter(log => 
-          log.action === 'remove_background' && 
-          log.created_at >= todayStart && 
-          log.created_at < todayEnd
-        ).length
+        // 统计今日数据
+         const todayApiCallsCount = todayRecords.length
+         const todayDownloadsCount = todayRecords.filter(log => log.action === 'download').length
+         const todayRemoveBgCount = todayRecords.filter(log => 
+           log.action === 'remove_background' || log.action === 'remove_bg_api'
+         ).length
+         
+         totalApiCalls = apiCallsCount
+         totalDownloads = downloadCount
+         removeBgCalls = removeBgCount
+         todayApiCalls = todayApiCallsCount
+         todayDownloads = todayDownloadsCount
+         todayRemoveBg = todayRemoveBgCount
         
         // 如果 api_logs 存在但为空，降级到 usage_stats 统计
         if (apiLogs.length === 0) {

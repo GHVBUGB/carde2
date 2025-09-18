@@ -41,7 +41,7 @@ export default function SimpleDomExport({
         width: 350,
         height: 500,
         quality: format === 'png' ? 1.0 : 0.95,
-        bgcolor: '#ffffff',
+        backgroundColor: 'transparent',
         cacheBust: true,
         pixelRatio: 1, // 使用1倍像素比，避免复杂问题
       }
