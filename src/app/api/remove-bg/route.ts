@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createRouteClient } from '@/lib/supabase/server'
 import { ApiLogger } from '@/lib/api-logger'
+import { RemoveApiLogger } from '@/lib/remove-api-logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,6 +13,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: '未授权访问' },
         { status: 401 }
+      )
+    }
+
+    // 获取用户信息
+    const { data: userData } = await supabase
+      .from('users')
+      .select('name, email')
+      .eq('id', user.id)
+      .single()
+
+    // 检查用户使用限制
+    const usageLimit = await RemoveApiLogger.checkUserUsageLimit(user.id, 5)
+    if (!usageLimit.canUse) {
+      return NextResponse.json(
+        { 
+          error: `今日抠图次数已达上限（${usageLimit.dailyCount}/5），请明天再试` 
+        },
+        { status: 429 }
       )
     }
 
@@ -45,6 +64,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const startTime = Date.now()
+    let success = false
+    let errorMessage = ''
+    let errorCode = ''
+    let processedImageBuffer: ArrayBuffer | null = null
+
     try {
       // 调用Remove.bg API
       const removeBgFormData = new FormData()
@@ -59,9 +84,28 @@ export async function POST(request: NextRequest) {
         body: removeBgFormData,
       })
 
+      const processingTime = Date.now() - startTime
+
       if (!response.ok) {
         const error = await response.text()
         console.error('Remove.bg API error:', error)
+        
+        errorMessage = error
+        errorCode = response.status.toString()
+        
+        // 记录失败的API调用
+        await RemoveApiLogger.logRemoveApiCall({
+          userId: user.id,
+          userEmail: userData?.email || user.email || '',
+          userName: userData?.name,
+          apiProvider: 'remove_bg',
+          originalFileSize: imageFile.size,
+          originalFileType: imageFile.type,
+          processingTime,
+          success: false,
+          errorMessage,
+          errorCode
+        }, request)
         
         // 根据不同错误返回友好提示
         if (response.status === 402) {
@@ -82,10 +126,12 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      const processedImageBuffer = await response.arrayBuffer()
+      processedImageBuffer = await response.arrayBuffer()
+      success = true
 
-      // 记录API调用统计和日志
+      // 记录成功的API调用
       await Promise.all([
+        // 原有的usage_stats记录（保持兼容性）
         supabase
           .from('usage_stats')
           .insert({
@@ -97,8 +143,21 @@ export async function POST(request: NextRequest) {
               file_type: imageFile.type,
             },
           } as any),
+        // 原有的ApiLogger记录（保持兼容性）
         ApiLogger.logRemoveBackground(user.id, {
           imageSize: imageFile.size,
+          success: true
+        }, request),
+        // 新的RemoveApiLogger记录
+        RemoveApiLogger.logRemoveApiCall({
+          userId: user.id,
+          userEmail: userData?.email || user.email || '',
+          userName: userData?.name,
+          apiProvider: 'remove_bg',
+          originalFileSize: imageFile.size,
+          originalFileType: imageFile.type,
+          processedFileSize: processedImageBuffer.byteLength,
+          processingTime,
           success: true
         }, request)
       ])
@@ -112,7 +171,26 @@ export async function POST(request: NextRequest) {
       })
 
     } catch (apiError) {
+      const processingTime = Date.now() - startTime
       console.error('Remove.bg API call failed:', apiError)
+      
+      errorMessage = apiError instanceof Error ? apiError.message : 'Unknown error'
+      errorCode = '500'
+      
+      // 记录失败的API调用
+      await RemoveApiLogger.logRemoveApiCall({
+        userId: user.id,
+        userEmail: userData?.email || user.email || '',
+        userName: userData?.name,
+        apiProvider: 'remove_bg',
+        originalFileSize: imageFile.size,
+        originalFileType: imageFile.type,
+        processingTime,
+        success: false,
+        errorMessage,
+        errorCode
+      }, request)
+      
       return NextResponse.json(
         { error: 'AI抠图处理失败，请稍后重试' },
         { status: 500 }

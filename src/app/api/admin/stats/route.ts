@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/lib/supabase/server'
+import { RemoveApiLogger } from '@/lib/remove-api-logger'
 
 export async function GET(req: NextRequest) {
   try {
@@ -176,7 +177,15 @@ export async function GET(req: NextRequest) {
       let loginCount = 0
 
       try {
-        // 从 usage_stats 表获取用户真实数据
+        // 优先从新的 remove_api_logs 表获取抠图统计
+        try {
+          const removeApiStats = await RemoveApiLogger.getUserUsageStats(user.id)
+          removeBgCount = removeApiStats.totalCalls
+        } catch (removeApiError) {
+          console.log(`从 remove_api_logs 获取用户 ${user.id} 抠图统计失败，降级到 usage_stats:`, removeApiError)
+        }
+
+        // 从 usage_stats 表获取其他统计数据
         const { data: userStats } = await supabase
           .from('usage_stats')
           .select('action_type, created_at')
@@ -184,9 +193,12 @@ export async function GET(req: NextRequest) {
 
         if (userStats) {
           downloadCount = userStats.filter(stat => stat.action_type === 'download').length
-          removeBgCount = userStats.filter(stat => 
-            stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
-          ).length
+          // 如果新的 remove_api_logs 表没有数据，则使用 usage_stats 的抠图统计
+          if (removeBgCount === 0) {
+            removeBgCount = userStats.filter(stat => 
+              stat.action_type === 'remove_background' || stat.action_type === 'remove_bg_api'
+            ).length
+          }
           totalApiCalls = userStats.length
           loginCount = userStats.filter(stat => stat.action_type === 'login').length
         }

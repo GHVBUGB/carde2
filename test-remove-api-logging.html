@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Remove API 日志系统测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-title {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .status.info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .data-display {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .user-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .stat-card {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Remove API 日志系统测试</h1>
+        <p><strong>测试时间：</strong><span id="testTime"></span></p>
+        
+        <div class="test-section">
+            <div class="test-title">📊 总体统计测试</div>
+            <button class="button" onclick="testOverallStats()">获取总体统计</button>
+            <button class="button" onclick="testTodayStats()">获取今日统计</button>
+            <div id="overallStatus"></div>
+            <div id="overallData" class="data-display"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">👤 用户统计测试</div>
+            <input type="text" id="userIdInput" placeholder="输入用户ID" style="padding: 8px; margin: 5px; border: 1px solid #ddd; border-radius: 4px;">
+            <button class="button" onclick="testUserStats()">获取用户统计</button>
+            <button class="button" onclick="testUserLimit()">检查使用限制</button>
+            <div id="userStatus"></div>
+            <div id="userData" class="data-display"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">📈 数据对比分析</div>
+            <button class="button" onclick="compareData()">对比新旧数据</button>
+            <div id="compareStatus"></div>
+            <div id="compareData" class="data-display"></div>
+        </div>
+
+        <div class="test-section">
+            <div class="test-title">🗄️ 数据库表状态</div>
+            <button class="button" onclick="checkTableStatus()">检查表状态</button>
+            <div id="tableStatus"></div>
+            <div id="tableData" class="data-display"></div>
+        </div>
+    </div>
+
+    <script>
+        // 设置测试时间
+        document.getElementById('testTime').textContent = new Date().toLocaleString('zh-CN');
+
+        async function testOverallStats() {
+            const statusEl = document.getElementById('overallStatus');
+            const dataEl = document.getElementById('overallData');
+            
+            statusEl.innerHTML = '<div class="status info">正在获取总体统计...</div>';
+            
+            try {
+                const response = await fetch('/api/admin/remove-api-stats?type=overall');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.innerHTML = '<div class="status success">✅ 总体统计获取成功</div>';
+                    
+                    // 显示统计卡片
+                    const statsHtml = `
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.totalCalls}</div>
+                                <div class="stat-label">总调用次数</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.successfulCalls}</div>
+                                <div class="stat-label">成功调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.failedCalls}</div>
+                                <div class="stat-label">失败调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.uniqueUsers}</div>
+                                <div class="stat-label">使用用户数</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.removeBgCalls}</div>
+                                <div class="stat-label">Remove.bg调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${Math.round(data.data.avgProcessingTime || 0)}ms</div>
+                                <div class="stat-label">平均处理时间</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    dataEl.innerHTML = statsHtml + '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ 获取失败: ' + data.error + '</div>';
+                    dataEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 请求失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        async function testTodayStats() {
+            const statusEl = document.getElementById('overallStatus');
+            const dataEl = document.getElementById('overallData');
+            
+            statusEl.innerHTML = '<div class="status info">正在获取今日统计...</div>';
+            
+            try {
+                const response = await fetch('/api/admin/remove-api-stats?type=today');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.innerHTML = '<div class="status success">✅ 今日统计获取成功</div>';
+                    
+                    // 显示统计卡片
+                    const statsHtml = `
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.totalCalls}</div>
+                                <div class="stat-label">今日总调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.successfulCalls}</div>
+                                <div class="stat-label">今日成功</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.uniqueUsers}</div>
+                                <div class="stat-label">今日用户</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.removeBgCalls}</div>
+                                <div class="stat-label">今日Remove.bg</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    dataEl.innerHTML = statsHtml + '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ 获取失败: ' + data.error + '</div>';
+                    dataEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 请求失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        async function testUserStats() {
+            const userId = document.getElementById('userIdInput').value;
+            if (!userId) {
+                alert('请输入用户ID');
+                return;
+            }
+            
+            const statusEl = document.getElementById('userStatus');
+            const dataEl = document.getElementById('userData');
+            
+            statusEl.innerHTML = '<div class="status info">正在获取用户统计...</div>';
+            
+            try {
+                const response = await fetch(`/api/admin/remove-api-stats?type=user&userId=${userId}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.innerHTML = '<div class="status success">✅ 用户统计获取成功</div>';
+                    
+                    // 显示统计卡片
+                    const statsHtml = `
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.totalCalls}</div>
+                                <div class="stat-label">总调用次数</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.successfulCalls}</div>
+                                <div class="stat-label">成功调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${data.data.removeBgCalls}</div>
+                                <div class="stat-label">Remove.bg调用</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${Math.round(data.data.avgProcessingTime || 0)}ms</div>
+                                <div class="stat-label">平均处理时间</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    dataEl.innerHTML = statsHtml + '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ 获取失败: ' + data.error + '</div>';
+                    dataEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 请求失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        async function testUserLimit() {
+            const userId = document.getElementById('userIdInput').value;
+            if (!userId) {
+                alert('请输入用户ID');
+                return;
+            }
+            
+            const statusEl = document.getElementById('userStatus');
+            const dataEl = document.getElementById('userData');
+            
+            statusEl.innerHTML = '<div class="status info">正在检查使用限制...</div>';
+            
+            try {
+                const response = await fetch('/api/admin/remove-api-stats', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: userId,
+                        dailyLimit: 5
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const limitData = data.data.usageLimit;
+                    const canUse = limitData.canUse ? '✅ 可以使用' : '❌ 已达限制';
+                    const statusClass = limitData.canUse ? 'success' : 'error';
+                    
+                    statusEl.innerHTML = `<div class="status ${statusClass}">${canUse}</div>`;
+                    
+                    const limitHtml = `
+                        <div class="user-stats">
+                            <div class="stat-card">
+                                <div class="stat-value">${limitData.dailyCount}</div>
+                                <div class="stat-label">今日使用次数</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${limitData.remaining}</div>
+                                <div class="stat-label">剩余次数</div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    dataEl.innerHTML = limitHtml + '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ 检查失败: ' + data.error + '</div>';
+                    dataEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 请求失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        async function compareData() {
+            const statusEl = document.getElementById('compareStatus');
+            const dataEl = document.getElementById('compareData');
+            
+            statusEl.innerHTML = '<div class="status info">正在对比数据...</div>';
+            
+            try {
+                // 获取新的remove API统计
+                const newStatsResponse = await fetch('/api/admin/remove-api-stats?type=overall');
+                const newStats = await newStatsResponse.json();
+                
+                // 获取旧的管理员统计
+                const oldStatsResponse = await fetch('/api/admin/stats');
+                const oldStats = await oldStatsResponse.json();
+                
+                if (newStats.success && oldStats.success) {
+                    statusEl.innerHTML = '<div class="status success">✅ 数据对比完成</div>';
+                    
+                    const comparison = {
+                        timestamp: new Date().toISOString(),
+                        newRemoveApiStats: {
+                            totalCalls: newStats.data.totalCalls,
+                            successfulCalls: newStats.data.successfulCalls,
+                            failedCalls: newStats.data.failedCalls,
+                            uniqueUsers: newStats.data.uniqueUsers,
+                            removeBgCalls: newStats.data.removeBgCalls
+                        },
+                        oldAdminStats: {
+                            removeBgCalls: oldStats.data.removeBgCalls,
+                            totalApiCalls: oldStats.data.totalApiCalls,
+                            totalUsers: oldStats.data.totalUsers
+                        },
+                        comparison: {
+                            removeBgCallsMatch: newStats.data.removeBgCalls === oldStats.data.removeBgCalls,
+                            difference: Math.abs(newStats.data.removeBgCalls - oldStats.data.removeBgCalls)
+                        }
+                    };
+                    
+                    dataEl.innerHTML = '<pre>' + JSON.stringify(comparison, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ 数据获取失败</div>';
+                    dataEl.textContent = '新统计: ' + JSON.stringify(newStats, null, 2) + '\n\n旧统计: ' + JSON.stringify(oldStats, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 对比失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        async function checkTableStatus() {
+            const statusEl = document.getElementById('tableStatus');
+            const dataEl = document.getElementById('tableData');
+            
+            statusEl.innerHTML = '<div class="status info">正在检查数据库表状态...</div>';
+            
+            try {
+                // 尝试获取新表的数据
+                const response = await fetch('/api/admin/remove-api-stats?type=overall');
+                const data = await response.json();
+                
+                if (data.success) {
+                    statusEl.innerHTML = '<div class="status success">✅ remove_api_logs 表存在且可访问</div>';
+                    
+                    const tableStatus = {
+                        tableExists: true,
+                        accessible: true,
+                        recordCount: data.data.totalCalls,
+                        lastCheck: new Date().toISOString(),
+                        sampleData: {
+                            totalCalls: data.data.totalCalls,
+                            successfulCalls: data.data.successfulCalls,
+                            failedCalls: data.data.failedCalls,
+                            uniqueUsers: data.data.uniqueUsers
+                        }
+                    };
+                    
+                    dataEl.innerHTML = '<pre>' + JSON.stringify(tableStatus, null, 2) + '</pre>';
+                } else {
+                    statusEl.innerHTML = '<div class="status error">❌ remove_api_logs 表可能不存在或不可访问</div>';
+                    dataEl.textContent = JSON.stringify(data, null, 2);
+                }
+            } catch (error) {
+                statusEl.innerHTML = '<div class="status error">❌ 检查失败: ' + error.message + '</div>';
+                dataEl.textContent = error.message;
+            }
+        }
+
+        // 页面加载时自动检查表状态
+        window.onload = function() {
+            checkTableStatus();
+        };
+    </script>
+</body>
+</html>
