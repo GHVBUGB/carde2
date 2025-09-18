@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase/server'
+import { createRouteClient } from '@/lib/supabase/server'
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
       }, { status: 400 })
     }
 
-    const supabase = createClient()
+    const supabase = createRouteClient()
     
     // 获取当前用户
     const { data: { user }, error: authError } = await supabase.auth.getUser()

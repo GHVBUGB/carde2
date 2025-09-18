@@ -28,8 +28,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 记录下载日志
-    const logger = new ApiLogger()
-    await logger.logDownload(userId, {
+    await ApiLogger.logDownload(userId, {
       format: format || 'png',
       fileSize: fileSize || 0,
       filename: filename || 'business-card'
