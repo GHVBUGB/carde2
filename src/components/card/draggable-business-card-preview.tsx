@@ -20,8 +20,6 @@ interface TextModules {
   companyName: string
   name: string
   title: string
-  studentsServed: number
-  studentsServedLabel: string
   positiveRating: number
   phone: string
   teacherSelectionLabel: string
@@ -34,8 +32,6 @@ interface TextStyles {
   companyName: { fontSize: number; color: string; fontWeight: string }
   name: { fontSize: number; color: string; fontWeight: string }
   title: { fontSize: number; color: string; fontWeight: string }
-  studentsServed: { fontSize: number; color: string; fontWeight: string }
-  studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
   positiveRating: { fontSize: number; color: string; fontWeight: string }
   phone: { fontSize: number; color: string; fontWeight: string }
   teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -48,8 +44,6 @@ interface TextPositions {
   companyName: { x: number; y: number }
   name: { x: number; y: number }
   title: { x: number; y: number }
-  studentsServed: { x: number; y: number }
-  studentsServedLabel: { x: number; y: number }
   positiveRating: { x: number; y: number }
   phone: { x: number; y: number }
   teacherSelectionLabel: { x: number; y: number }
@@ -1009,7 +1003,6 @@ export default function DraggableBusinessCardPreview({
         const result = {
           name: '',
           title: '',
-          studentsText: '',
           positiveText: '',
           phone: '',
           abilities: [] as Array<{text: string, x: number, y: number}>
@@ -1075,34 +1068,6 @@ export default function DraggableBusinessCardPreview({
           titlePos.x, titlePos.y,
           titlePos.fontSize, titlePos.color, titlePos.fontWeight, titlePos.textAlign as any
         )
-      }
-
-      // 🎯 直接从DOM读取统计数据的实际位置和样式
-      const studentsContainerPos = getElementActualPosition('[data-module-id="studentsServed"]')
-      const studentsText = textModules.studentsServed >= 1000 
-        ? `${Math.floor(textModules.studentsServed / 1000)}K+`
-        : textModules.studentsServed.toString()
-
-      if (studentsContainerPos) {
-        // 获取数值元素的位置
-        const studentsValuePos = getElementActualPosition('[data-module-id="studentsServed"] > div:first-child')
-        if (studentsValuePos) {
-      drawText(
-        studentsText,
-            studentsValuePos.x, studentsValuePos.y,
-            studentsValuePos.fontSize, studentsValuePos.color, studentsValuePos.fontWeight, studentsValuePos.textAlign as any
-      )
-        }
-        
-        // 获取标签元素的位置
-        const studentsLabelPos = getElementActualPosition('[data-module-id="studentsServed"] > div:last-child')
-        if (studentsLabelPos) {
-      drawText(
-        'الطلاب المخدومون',
-            studentsLabelPos.x, studentsLabelPos.y,
-            studentsLabelPos.fontSize, studentsLabelPos.color, 'normal', studentsLabelPos.textAlign as any
-      )
-        }
       }
 
       // 🎯 直接从DOM读取正面评分的实际位置和样式
@@ -1202,7 +1167,6 @@ export default function DraggableBusinessCardPreview({
       console.log('🎯 DOM实际位置:')
       console.log('  姓名位置:', namePos)
       console.log('  职位位置:', titlePos)
-      console.log('  学员数容器:', studentsContainerPos)
       console.log('  好评率容器:', positiveContainerPos)
       console.log('  电话位置:', phonePos)
       console.log('✨ 现在Canvas导出使用DOM实际位置和样式，应该与编辑页面完全一致!')
@@ -2371,7 +2335,7 @@ export default function DraggableBusinessCardPreview({
   }
 
   // 仅允许拖拽：名字、头衔和服务人数（头像拖拽逻辑独立保留）
-  const canDrag = (id: string): boolean => id === 'name' || id === 'title' || id === 'studentsServed' || id === 'positiveRating'
+  const canDrag = (id: string): boolean => id === 'name' || id === 'title' || id === 'positiveRating'
   const isDraggable = (id: string): boolean => canDrag(id)
 
   // 渲染可拖拽的文字元素
@@ -2616,73 +2580,7 @@ export default function DraggableBusinessCardPreview({
             showCoordinates
           )}
 
-          {/* 统计数据 - 拆分为上下两个独立模块 */}
-          <div
-            className={`absolute ${isDraggable('studentsServed') ? 'cursor-move' : 'cursor-default'} select-none ${
-              draggedElement === 'studentsServed' ? 'z-50' : 'z-10'
-            }`}
-            data-module-id="studentsServed"
-            style={{
-              left: textPositions.studentsServed.x,
-              top: textPositions.studentsServed.y,
-              pointerEvents: isDraggable('studentsServed') ? 'auto' : 'none',
-              transform: draggedElement === 'studentsServed' ? 'scale(1.05)' : 'scale(1)',
-              transition: draggedElement === 'studentsServed' ? 'none' : 'transform 0.2s ease'
-            }}
-            onMouseDown={isDraggable('studentsServed') ? (e) => handleMouseDown(e, 'studentsServed') : undefined}
-          >
-            <div className="flex flex-col items-center justify-center text-center">
-              {/* 上模块：数字 */}
-              <div 
-                style={{
-                  fontSize: `${textStyles.studentsServed?.fontSize || 16}px`,
-                  color: textStyles.studentsServed?.color || '#000000',
-                  fontWeight: textStyles.studentsServed?.fontWeight || 'bold',
-                  textAlign: 'center'
-                }}
-              >
-                {textModules.studentsServed >= 1000 
-                  ? `${Math.floor(textModules.studentsServed / 1000)}K+`
-                  : textModules.studentsServed
-                }
-              </div>
-              
-              {/* 下模块：标签文字 */}
-              <div 
-                className="leading-tight"
-                style={{
-                  fontSize: `${textStyles.studentsServedLabel?.fontSize || 6}px`,
-                  color: textStyles.studentsServedLabel?.color || '#ffffff',
-                  fontWeight: textStyles.studentsServedLabel?.fontWeight || 'normal',
-                  whiteSpace: 'nowrap',
-                  direction: 'rtl',
-                  textAlign: 'center'
-                }}
-              >
-                {textModules.studentsServedLabel || 'الطلاب المخدومون'}
-              </div>
-              {showCoordinates && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: '100%',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    fontSize: '10px',
-                    color: '#666',
-                    background: 'rgba(255, 255, 255, 0.8)',
-                    padding: '2px 4px',
-                    borderRadius: '3px',
-                    whiteSpace: 'nowrap',
-                    zIndex: 1000,
-                    pointerEvents: 'none'
-                  }}
-                >
-                  ({Math.round(textPositions.studentsServed.x)}, {Math.round(textPositions.studentsServed.y)})
-                </div>
-              )}
-            </div>
-          </div>
+
 
           <div
             className={`absolute ${isDraggable('positiveRating') ? 'cursor-move' : 'cursor-default'} select-none ${

@@ -55,10 +55,10 @@ export default function EditorPage() {
     }
   }, [user, cardData.name, updateCardData, updateTextModules]) // 添加所有依赖项
 
-  // 确保姓名默认值为配置文件中的默认值，并避免邮箱作为默认显示
+  // 避免邮箱作为姓名显示，但允许用户删除名字
   useEffect(() => {
     const looksLikeEmail = (v: string | undefined) => !!v && v.includes('@')
-    if (!textModules.name || looksLikeEmail(textModules.name) || (user?.email && textModules.name === user.email)) {
+    if (looksLikeEmail(textModules.name) || (user?.email && textModules.name === user.email)) {
       updateTextModules({ name: TEXT_MODULES.name })
     }
   }, [textModules.name, user?.email, updateTextModules])

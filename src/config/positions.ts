@@ -7,8 +7,6 @@ export const MODULE_POSITIONS = {
     companyName: { x: 16, y: 16 },      // 公司名
     name: { x: 160, y: 246 },           // 姓名 - Lycan
     title: { x: 129, y: 274 },          // 职位/头衔 - 根据图片显示的正确初始位置
-    studentsServed: { x: 122, y: 325 }, // 学生服务数量（数字部分） - 根据第二张图坐标设置
-    studentsServedLabel: { x: 122, y: 331 }, // 学生服务标签（文字部分） - 数字下方6px
     positiveRating: { x: 200, y: 325 }, // 好评率 - 根据第二张图坐标设置
     phone: { x: 182, y: 431 },          // 电话号码 - هاتف: 030-۸۸۸۸-۸AAD
     teacherSelectionLabel: { x: 95, y: 402 },    // 教师筛选标签 - اختيار المعلم
@@ -37,8 +35,6 @@ export const TEXT_STYLES = {
   companyName: { fontSize: 14, color: '#ffffff', fontWeight: 'bold' },
   name: { fontSize: 20, color: '#000000', fontWeight: 'bold' },
   title: { fontSize: 14, color: '#666666', fontWeight: 'normal', textAlign: 'center' },
-  studentsServed: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
-  studentsServedLabel: { fontSize: 6, color: '#ffffff', fontWeight: 'normal' },
   positiveRating: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
   phone: { fontSize: 14, color: '#000000', fontWeight: 'bold' },
   teacherSelectionLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
@@ -50,11 +46,10 @@ export const TEXT_STYLES = {
 // 文字内容配置 - 优化默认值
 export const TEXT_MODULES = {
   companyName: '51Talk',
-  name: 'أحمد',                     // 默认显示的名字 - 使用阿拉伯文
-  title: 'شريك النمو الرئيسي',     // 默认显示的头衔 - 使用阿拉伯文
-  studentsServed: 5000,             // 默认显示的学生数量 - 设为初始默认值
-  studentsServedLabel: 'الطلاب المخدومون', // 默认显示的学生数量标签
-  positiveRating: 95,               // 默认显示的好评率 - 设为初始默认值
+  name: 'أحمد',                    // 默认显示的姓名
+  title: 'شريك النمو الرئيسي',      // 默认显示的职位
+  positiveRating: 98,              // 默认显示的好评率
+  positiveRatingLabel: 'تقييم إيجابي', // 默认显示的好评率标签
   phone: 'هاتف: 050-XXXX-XXAB',    // 默认显示的电话号码 - 使用阿拉伯文
   teacherSelectionLabel: 'اختيار\nالمعلم',
   progressFeedbackLabel: 'تعليقات\nالتقدم',
