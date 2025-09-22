@@ -10,6 +10,7 @@ export const MODULE_POSITIONS = {
     studentsServed: { x: 122, y: 325 }, // 学生服务数量（数字部分） - 根据第二张图坐标设置
     studentsServedLabel: { x: 122, y: 331 }, // 学生服务标签（文字部分） - 数字下方6px
     positiveRating: { x: 200, y: 325 }, // 好评率 - 根据第二张图坐标设置
+    positiveRatingLabel: { x: 200, y: 331 }, // 好评率标签（文字部分） - 数字下方6px
     phone: { x: 182, y: 431 },          // 电话号码 - هاتف: 030-۸۸۸۸-۸AAD
     teacherSelectionLabel: { x: 95, y: 402 },    // 教师筛选标签 - اختيار المعلم
     progressFeedbackLabel: { x: 142, y: 402 },   // 进度反馈标签 - تعليقات التقدم
