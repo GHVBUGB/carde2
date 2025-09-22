@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { useAuthStore } from '@/store/auth'
 import { useCardStore } from '@/store/card'
 import { supabase } from '@/lib/supabase/client'
-import BusinessCardPreview from '@/components/card/business-card-preview'
+import DraggableBusinessCardPreview from '@/components/card/draggable-business-card-preview'
 import ExportOptions from '@/components/export/export-options'
 import SimpleExportOptions from '@/components/export/simple-export-options'
 import ExportProgress from '@/components/export/export-progress'
@@ -572,10 +572,12 @@ export default function ExportPage() {
                 }}
                 className="mx-auto border rounded-lg overflow-hidden"
               >
-                <BusinessCardPreview
+                <DraggableBusinessCardPreview
                   user={user}
+                  avatarConfig={avatarConfig}
                   textModules={textModules}
                   textStyles={textStyles}
+                  textPositions={textPositions}
                   abilities={{
                     teacherScreening: cardData.teacherScreening,
                     feedbackAbility: cardData.feedbackAbility,
