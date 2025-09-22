@@ -175,9 +175,15 @@ export default function ModernWebExport({
       img.crossOrigin = 'anonymous'
       
       img.onload = () => {
-        const size = 120 * scale
-        const x = (350 * scale - size) / 2
-        const y = 80 * scale
+        // 使用配置文件中的头像位置，而不是硬编码居中
+        const avatarConfig = {
+          size: 200,
+          position: { x: 73, y: 27 }
+        }
+        
+        const size = avatarConfig.size * scale
+        const x = avatarConfig.position.x * scale
+        const y = avatarConfig.position.y * scale
         
         // 绘制圆形头像
         ctx.save()
@@ -192,7 +198,11 @@ export default function ModernWebExport({
         resolve()
       }
       
-      img.onerror = () => resolve()
+      img.onerror = () => {
+        console.warn('头像加载失败')
+        resolve()
+      }
+      
       img.src = user.avatar_url!
     })
   }

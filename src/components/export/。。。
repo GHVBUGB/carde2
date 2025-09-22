@@ -1,0 +1,111 @@
+修复17:03:56.907 Running build in Washington, D.C., USA (East) – iad1
+17:03:56.907 Build machine configuration: 2 cores, 8 GB
+17:03:56.921 Cloning github.com/GHVBUGB/carde2 (Branch: main, Commit: 4f285a9)
+17:03:57.042 Previous build caches not available
+17:03:57.393 Cloning completed: 471.000ms
+17:03:57.716 Running "vercel build"
+17:03:58.094 Vercel CLI 48.0.2
+17:03:58.406 Warning: Detected "engines": { "node": ">=18.0.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: http://vercel.link/node-version
+17:03:58.415 Running "install" command: `npm install`...
+17:04:00.904 npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+17:04:03.479 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+17:04:04.713 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+17:04:06.324 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+17:04:06.875 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+17:04:07.955 npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
+17:04:08.267 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+17:04:09.427 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+17:04:09.643 npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+17:04:10.136 npm warn deprecated @types/html2canvas@1.0.0: This is a stub types definition. html2canvas provides its own type definitions, so you do not need this installed.
+17:04:10.390 npm warn deprecated @supabase/auth-helpers-react@0.4.2: This package is now deprecated - please use the @supabase/ssr package instead.
+17:04:10.397 npm warn deprecated @supabase/auth-helpers-shared@0.6.3: This package is now deprecated - please use the @supabase/ssr package instead.
+17:04:10.450 npm warn deprecated @supabase/auth-helpers-nextjs@0.8.7: This package is now deprecated - please use the @supabase/ssr package instead.
+17:04:12.070 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+17:04:12.082 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+17:04:13.290 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+17:04:19.297 
+17:04:19.297 added 738 packages, and audited 739 packages in 21s
+17:04:19.298 
+17:04:19.298 165 packages are looking for funding
+17:04:19.298   run `npm fund` for details
+17:04:19.366 
+17:04:19.366 1 critical severity vulnerability
+17:04:19.366 
+17:04:19.367 To address all issues, run:
+17:04:19.367   npm audit fix --force
+17:04:19.367 
+17:04:19.367 Run `npm audit` for details.
+17:04:19.426 Detected Next.js version: 14.2.5
+17:04:19.426 Running "npm run build"
+17:04:19.698 
+17:04:19.698 > 51talk-business-card@1.0.0 build
+17:04:19.702 > next build
+17:04:19.702 
+17:04:20.234 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+17:04:20.234 This information is used to shape Next.js' roadmap and prioritize features.
+17:04:20.234 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+17:04:20.234 https://nextjs.org/telemetry
+17:04:20.235 
+17:04:20.291   ▲ Next.js 14.2.5
+17:04:20.292 
+17:04:20.360    Creating an optimized production build ...
+17:04:40.806  ✓ Compiled successfully
+17:04:40.807    Linting and checking validity of types ...
+17:04:49.458 
+17:04:49.458 ./src/app/dashboard/editor/page.tsx
+17:04:49.459 27:6  Warning: React Hook useEffect has a missing dependency: 'initializePositions'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+17:04:49.459 55:6  Warning: React Hook useEffect has missing dependencies: 'cardData.name', 'updateCardData', and 'updateTextModules'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+17:04:49.459 
+17:04:49.460 ./src/app/dashboard/export/page.tsx
+17:04:49.460 51:6  Warning: React Hook useEffect has a missing dependency: 'loadExportHistory'. Either include it or remove the dependency array.  react-hooks/exhaustive-deps
+17:04:49.460 
+17:04:49.460 ./src/app/dashboard/page.tsx
+17:04:49.460 26:6  Warning: React Hook useEffect has missing dependencies: 'checkAuth' and 'loadUserStats'. Either include them or remove the dependency array.  react-hooks/exhaustive-deps
+17:04:49.460 
+17:04:49.461 ./src/components/admin/nav.tsx
+17:04:49.461 84:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.461 
+17:04:49.461 ./src/components/card/business-card-preview.tsx
+17:04:49.461 447:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.461 
+17:04:49.461 ./src/components/card/clean-draggable-card.tsx
+17:04:49.470 261:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.471 
+17:04:49.471 ./src/components/card/draggable-business-card-preview.tsx
+17:04:49.471 2525:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.471 2560:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.471 3021:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.471 
+17:04:49.471 ./src/components/card/improved-business-card-preview.tsx
+17:04:49.471 164:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.472 
+17:04:49.472 ./src/components/dashboard/nav.tsx
+17:04:49.472 72:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.472 
+17:04:49.472 ./src/components/editor/avatar-upload.tsx
+17:04:49.472 220:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:04:49.472 
+17:04:49.472 ./src/types/dom-to-image-more.d.ts
+17:04:49.472 22:3  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+17:04:49.472 
+17:04:49.472 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+17:04:54.934    Collecting page data ...
+17:04:55.382 Error: supabaseUrl is required.
+17:04:55.382     at /vercel/path0/.next/server/chunks/9498.js:21:82538
+17:04:55.382     at new ax (/vercel/path0/.next/server/chunks/9498.js:21:82789)
+17:04:55.383     at aI (/vercel/path0/.next/server/chunks/9498.js:21:87049)
+17:04:55.383     at 3387 (/vercel/path0/.next/server/app/api/admin/import-config/route.js:1:735)
+17:04:55.383     at t (/vercel/path0/.next/server/webpack-runtime.js:1:128)
+17:04:55.383     at r (/vercel/path0/.next/server/app/api/admin/import-config/route.js:25:1603)
+17:04:55.383     at /vercel/path0/.next/server/app/api/admin/import-config/route.js:25:1641
+17:04:55.383     at t.X (/vercel/path0/.next/server/webpack-runtime.js:1:1206)
+17:04:55.383     at /vercel/path0/.next/server/app/api/admin/import-config/route.js:25:1616
+17:04:55.384     at Object.<anonymous> (/vercel/path0/.next/server/app/api/admin/import-config/route.js:25:1668)
+17:04:55.392 
+17:04:55.393 > Build error occurred
+17:04:55.393 Error: Failed to collect page data for /api/admin/import-config
+17:04:55.393     at /vercel/path0/node_modules/next/dist/build/utils.js:1268:15
+17:04:55.393     at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
+17:04:55.393   type: 'Error'
+17:04:55.393 }
+17:04:55.418 Error: Command "npm run build" exited with 1

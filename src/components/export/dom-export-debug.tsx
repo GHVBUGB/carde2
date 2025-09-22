@@ -163,12 +163,15 @@ export default function DomExportDebug({
           console.log('✅ 已修复头衔为阿拉伯语默认值')
         }
 
-        // 阿拉伯语渲染修正：强制单行、RTL 与单词内断行
+        // 阿拉伯语渲染修正：强制单行、RTL 与单词内断行，并强制居中对齐
         if (titleEl && titleEl.style) {
           titleEl.style.whiteSpace = 'nowrap'
           titleEl.style.direction = 'rtl'
           titleEl.style.wordBreak = 'keep-all'
           titleEl.style.lineHeight = '1.2'
+          titleEl.style.textAlign = 'center'  // 强制居中对齐
+          titleEl.style.width = '100px'       // 设置固定宽度
+          titleEl.style.transform = 'translateX(-50%)'  // 居中偏移
         }
       })
       

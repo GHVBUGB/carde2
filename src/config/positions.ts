@@ -6,9 +6,10 @@ export const MODULE_POSITIONS = {
   textPositions: {
     companyName: { x: 16, y: 16 },      // 公司名
     name: { x: 160, y: 246 },           // 姓名 - Lycan
-    title: { x: 132, y: 270 },          // 职位/头衔 - شريك الزمن الرئيسي
-    studentsServed: { x: 125, y: 324 }, // 学生服务数量 - 保存当前位置为初始值
-    positiveRating: { x: 198, y: 324 }, // 好评率 - 保存当前位置为初始值
+    title: { x: 129, y: 274 },          // 职位/头衔 - 根据图片显示的正确初始位置
+    studentsServed: { x: 122, y: 325 }, // 学生服务数量（数字部分） - 根据第二张图坐标设置
+    studentsServedLabel: { x: 122, y: 331 }, // 学生服务标签（文字部分） - 数字下方6px
+    positiveRating: { x: 200, y: 325 }, // 好评率 - 根据第二张图坐标设置
     phone: { x: 182, y: 431 },          // 电话号码 - هاتف: 030-۸۸۸۸-۸AAD
     teacherSelectionLabel: { x: 95, y: 402 },    // 教师筛选标签 - اختيار المعلم
     progressFeedbackLabel: { x: 142, y: 402 },   // 进度反馈标签 - تعليقات التقدم
@@ -19,7 +20,7 @@ export const MODULE_POSITIONS = {
   // 头像配置
   avatarConfig: {
     size: 200,                          // 头像大小（像素）
-    position: { x: 73, y: 27 }          // 头像位置 (x, y)
+    position: { x: 73, y: 27 }          // 头像位置 (x, y) - 恢复原来的位置
   },
 
   // Logo配置 - 可拖拽移动
@@ -35,8 +36,9 @@ export const MODULE_POSITIONS = {
 export const TEXT_STYLES = {
   companyName: { fontSize: 14, color: '#ffffff', fontWeight: 'bold' },
   name: { fontSize: 20, color: '#000000', fontWeight: 'bold' },
-  title: { fontSize: 14, color: '#666666', fontWeight: 'normal' },
+  title: { fontSize: 14, color: '#666666', fontWeight: 'normal', textAlign: 'center' },
   studentsServed: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
+  studentsServedLabel: { fontSize: 6, color: '#ffffff', fontWeight: 'normal' },
   positiveRating: { fontSize: 12, color: '#ffffff', fontWeight: 'bold' },
   phone: { fontSize: 14, color: '#000000', fontWeight: 'bold' },
   teacherSelectionLabel: { fontSize: 8, color: '#000000', fontWeight: 'normal' },
@@ -50,8 +52,9 @@ export const TEXT_MODULES = {
   companyName: '51Talk',
   name: 'أحمد',                     // 默认显示的名字 - 使用阿拉伯文
   title: 'شريك النمو الرئيسي',     // 默认显示的头衔 - 使用阿拉伯文
-  studentsServed: 5000,             // 默认显示的学生数量 - 更真实的数值
-  positiveRating: 95,               // 默认显示的好评率 - 95%
+  studentsServed: 5000,             // 默认显示的学生数量 - 设为初始默认值
+  studentsServedLabel: 'الطلاب المخدومون', // 默认显示的学生数量标签
+  positiveRating: 95,               // 默认显示的好评率 - 设为初始默认值
   phone: 'هاتف: 050-XXXX-XXAB',    // 默认显示的电话号码 - 使用阿拉伯文
   teacherSelectionLabel: 'اختيار\nالمعلم',
   progressFeedbackLabel: 'تعليقات\nالتقدم',
@@ -73,14 +76,16 @@ export const CANVAS_SIZE = {
 // 5. 坐标系说明：(0,0) 是左上角，x向右增加，y向下增加
 // 6. 保存文件后，刷新浏览器查看效果
 // 
-// 当前配置（已锁定，无需再修改）：
+// 当前配置（已调整为最佳位置）：
 // - 名字：Lycan
 // - 头衔：شريك الزمن الرئيسي (阿拉伯文)
 // - Logo位置：(52, 45) - 51Talk绿色Logo
 // - 姓名位置：(160, 246) - 已调整
 // - 头衔位置：(132, 270) - 已调整
-// - 学生数量：0 (121, 322)
+// - 服务人数：(110, 320) - 调整后的默认位置
+// - 服务人数标签：(110, 326) - 数字下方6px
+// - 好评率：(210, 320) - 调整后的默认位置，与服务人数对称
 // - 电话号码：هاتف: 030-۸۸۸۸-۸AAD (182, 431)
 // - 功能标签：(95, 402), (142, 402), (190, 402), (241, 402)
 // 
-// 注意：所有位置已锁定为当前显示状态，Logo可拖拽移动
+// 注意：所有位置已调整为最佳显示效果，Logo可拖拽移动

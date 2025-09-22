@@ -45,6 +45,7 @@ interface CardState {
     name: string
     title: string
     studentsServed: number
+    studentsServedLabel: string
     positiveRating: number
     phone: string
     // 业务能力标签文字
@@ -60,6 +61,7 @@ interface CardState {
     name: { fontSize: number; color: string; fontWeight: string }
     title: { fontSize: number; color: string; fontWeight: string }
     studentsServed: { fontSize: number; color: string; fontWeight: string }
+    studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
     positiveRating: { fontSize: number; color: string; fontWeight: string }
     phone: { fontSize: number; color: string; fontWeight: string }
     teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -74,6 +76,7 @@ interface CardState {
     name: { x: number; y: number }
     title: { x: number; y: number }
     studentsServed: { x: number; y: number }
+    studentsServedLabel: { x: number; y: number }
     positiveRating: { x: number; y: number }
     phone: { x: number; y: number }
     teacherSelectionLabel: { x: number; y: number }
@@ -277,13 +280,14 @@ export const useCardStore = create<CardState & CardActions>()(
     {
       name: 'card-storage-final', // 使用全新的存储名称，彻底清除旧数据
       partialize: (state) => ({
-        // 持久化用户自定义的配置，包括位置配置
+        // 持久化用户自定义的配置，但不包括位置配置
         textModules: state.textModules,
         textStyles: state.textStyles,
         cardData: state.cardData,
-        logoConfig: state.logoConfig, // 允许Logo位置被保存
-        textPositions: state.textPositions, // 允许文字位置被保存
-        avatarConfig: state.avatarConfig, // 允许头像位置被保存
+        // 不持久化位置相关配置，确保每次都使用配置文件的默认值
+        // logoConfig: state.logoConfig, 
+        // textPositions: state.textPositions, 
+        // avatarConfig: state.avatarConfig, 
       }),
     }
   )

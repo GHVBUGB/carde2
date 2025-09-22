@@ -10,6 +10,7 @@ interface TextModules {
   name: string
   title: string
   studentsServed: number
+  studentsServedLabel: string
   positiveRating: number
   phone: string
   teacherSelectionLabel: string
@@ -23,6 +24,7 @@ interface TextStyles {
   name: { fontSize: number; color: string; fontWeight: string }
   title: { fontSize: number; color: string; fontWeight: string }
   studentsServed: { fontSize: number; color: string; fontWeight: string }
+  studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
   positiveRating: { fontSize: number; color: string; fontWeight: string }
   phone: { fontSize: number; color: string; fontWeight: string }
   teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -36,6 +38,7 @@ interface TextPositions {
   name: { x: number; y: number }
   title: { x: number; y: number }
   studentsServed: { x: number; y: number }
+  studentsServedLabel: { x: number; y: number }
   positiveRating: { x: number; y: number }
   phone: { x: number; y: number }
   teacherSelectionLabel: { x: number; y: number }
@@ -252,7 +255,7 @@ export default function CleanDraggableCard({
             onMouseDown={handleAvatarMouseDown}
           >
               <div 
-                className="w-full h-full rounded-full overflow-hidden shadow-lg"
+                className="w-full h-full rounded-full overflow-hidden"
               style={{
                 width: `${avatarConfig.size}px`,
                 height: `${avatarConfig.size}px`

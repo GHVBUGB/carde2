@@ -233,9 +233,15 @@ export default function CanvasPerfectExport({
       img.crossOrigin = 'anonymous'
       
       img.onload = () => {
-        const size = 120 * scale
-        const x = (350 * scale - size) / 2
-        const y = 80 * scale
+        // 使用配置文件中的头像位置，而不是硬编码
+        const avatarConfig = {
+          size: 200,
+          position: { x: 73, y: 27 }
+        }
+        
+        const size = avatarConfig.size * scale
+        const x = avatarConfig.position.x * scale
+        const y = avatarConfig.position.y * scale
         
         // 绘制圆形头像
         ctx.save()
@@ -275,11 +281,12 @@ export default function CanvasPerfectExport({
     ctx.shadowOffsetY = 2 * scale
     ctx.fillText(user?.name || 'أحمد', 350 * scale / 2, 220 * scale)
     
-    // 绘制职位
+    // 绘制职位 - 强制居中对齐
     ctx.fillStyle = 'rgba(255, 255, 255, 0.9)'
     ctx.font = `${16 * scale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif`
+    ctx.textAlign = 'center'  // 强制居中对齐
     ctx.shadowBlur = 2 * scale
-    ctx.fillText(user?.title || 'SENIOR LANGUAGE COACH', 350 * scale / 2, 260 * scale)
+    ctx.fillText(user?.title || 'شريك النمو الرئيسي', 350 * scale / 2, 260 * scale)
     
     // 绘制电话号码
     ctx.fillStyle = '#ffffff'

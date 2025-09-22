@@ -11,6 +11,7 @@ interface TextModulesEditorProps {
     name: string
     title: string
     studentsServed: number
+    studentsServedLabel: string
     positiveRating: number
     phone: string
     teacherSelectionLabel: string
@@ -23,6 +24,7 @@ interface TextModulesEditorProps {
     name: { fontSize: number; color: string; fontWeight: string }
     title: { fontSize: number; color: string; fontWeight: string }
     studentsServed: { fontSize: number; color: string; fontWeight: string }
+    studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
     positiveRating: { fontSize: number; color: string; fontWeight: string }
     phone: { fontSize: number; color: string; fontWeight: string }
     teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -155,9 +157,53 @@ export default function TextModulesEditor({
             </div>
           </div>
 
-          {/* عدد الطلاب المخدومين */}
+          {/* عدد الطلاب المخدومين - النص */}
           <div className="space-y-2">
-            <label className="text-xs text-gray-600">عدد الطلاب المخدومين</label>
+            <label className="text-xs text-gray-600">نص عدد الطلاب المخدومين</label>
+            <Input
+              value={textModules.studentsServedLabel || 'الطلاب المخدومين'}
+              onChange={(e) => handleTextChange('studentsServedLabel', e.target.value)}
+              placeholder="يرجى إدخال نص عدد الطلاب المخدومين"
+              className="w-full"
+            />
+            <div className="grid grid-cols-3 gap-2 hidden">
+              <div>
+                <label className="text-xs text-gray-600">حجم الخط</label>
+                <input
+                  type="range"
+                  min="8"
+                  max="20"
+                  value={textStyles.studentsServedLabel?.fontSize || 12}
+                  onChange={(e) => handleStyleChange('studentsServedLabel', 'fontSize', Number(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-gray-600">اللون</label>
+                <input
+                  type="color"
+                  value={textStyles.studentsServedLabel?.color || '#000000'}
+                  onChange={(e) => handleStyleChange('studentsServedLabel', 'color', e.target.value)}
+                  className="w-full h-8 rounded border"
+                />
+              </div>
+              <div>
+                <label className="text-xs text-gray-600">السمك</label>
+                <select
+                  value={textStyles.studentsServedLabel?.fontWeight || 'bold'}
+                  onChange={(e) => handleStyleChange('studentsServedLabel', 'fontWeight', e.target.value)}
+                  className="w-full text-xs border rounded px-2 py-1"
+                >
+                  <option value="normal">عادي</option>
+                  <option value="bold">غامق</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* عدد الطلاب المخدومين - الرقم */}
+          <div className="space-y-2">
+            <label className="text-xs text-gray-600">رقم الطلاب المخدومين</label>
             <Input
               type="number"
               min="0"
@@ -170,7 +216,7 @@ export default function TextModulesEditor({
                   handleTextChange('studentsServed', numValue)
                 }
               }}
-              placeholder="يرجى إدخال عدد الأشخاص المخدومين (حد أقصى 5000 شخص)"
+              placeholder="يرجى إدخال عدد الطلاب المخدومين (حد أقصى 5000)"
               className="w-full"
             />
             <div className="grid grid-cols-3 gap-2 hidden">

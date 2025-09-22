@@ -2367,8 +2367,8 @@ export default function DraggableBusinessCardPreview({
     setDraggedElement(null)
   }
 
-  // 仅允许拖拽：名字与头衔（头像拖拽逻辑独立保留）
-  const canDrag = (id: string): boolean => id === 'name' || id === 'title'
+  // 仅允许拖拽：名字、头衔和服务人数（头像拖拽逻辑独立保留）
+  const canDrag = (id: string): boolean => id === 'name' || id === 'title' || id === 'studentsServed' || id === 'positiveRating'
   const isDraggable = (id: string): boolean => canDrag(id)
 
   // 渲染可拖拽的文字元素
@@ -2391,9 +2391,17 @@ export default function DraggableBusinessCardPreview({
           fontSize: `${style.fontSize}px`,
           color: style.color,
           fontWeight: style.fontWeight,
-          // 阿拉伯语显示优化：title 保持单行且从右到左
+          // 阿拉伯语显示优化：title 保持单行且从右到左，并强制居中对齐
           ...(moduleId === 'title'
-            ? { whiteSpace: 'nowrap', direction: 'rtl', wordBreak: 'keep-all', lineHeight: '1.2' }
+            ? { 
+                whiteSpace: 'nowrap', 
+                direction: 'rtl', 
+                wordBreak: 'keep-all', 
+                lineHeight: '1.2',
+                textAlign: 'center',
+                width: '100px',
+                transform: 'translateX(-50%)'
+              }
             : {}),
           pointerEvents: 'auto',
           transform: draggedElement === moduleId ? 'scale(1.05)' : 'scale(1)',
@@ -2456,10 +2464,10 @@ export default function DraggableBusinessCardPreview({
         >
           上传底图
         </button>
-        <div className="flex gap-2 flex-wrap"></div>
+        <div className="flex gap-2 flex-wrap">
           <button
           onClick={() => setShowCoordinates(!showCoordinates)}
-          className={`hidden px-3 py-1 rounded text-sm transition-colors ${
+          className={`px-3 py-1 rounded text-sm transition-colors ${
             showCoordinates 
               ? 'bg-yellow-400 text-black hover:bg-yellow-500' 
               : 'bg-gray-500 text-white hover:bg-gray-600'
@@ -2467,6 +2475,7 @@ export default function DraggableBusinessCardPreview({
         >
           {showCoordinates ? '隐藏坐标' : '显示坐标'}
           </button>
+        </div>
         <div className="text-xs text-gray-600 flex items-center">
           拖拽文字模块调整位置
         </div>
@@ -2551,7 +2560,7 @@ export default function DraggableBusinessCardPreview({
               onMouseDown={handleAvatarMouseDown}
             >
               <div 
-                className="w-full h-full rounded-full overflow-hidden shadow-lg"
+                className="w-full h-full rounded-full overflow-hidden"
                 style={{
                   width: `${avatarConfig.size}px`,
                   height: `${avatarConfig.size}px`
@@ -2604,7 +2613,7 @@ export default function DraggableBusinessCardPreview({
             showCoordinates
           )}
 
-          {/* 统计数据 - 无边框横排显示 */}
+          {/* 统计数据 - 拆分为上下两个独立模块 */}
           <div
             className={`absolute ${isDraggable('studentsServed') ? 'cursor-move' : 'cursor-default'} select-none ${
               draggedElement === 'studentsServed' ? 'z-50' : 'z-10'
@@ -2620,7 +2629,7 @@ export default function DraggableBusinessCardPreview({
             onMouseDown={isDraggable('studentsServed') ? (e) => handleMouseDown(e, 'studentsServed') : undefined}
           >
             <div className="flex flex-col items-center justify-center text-center">
-              {/* 主要数字显示 */}
+              {/* 上模块：数字 */}
               <div 
                 style={{
                   fontSize: `${textStyles.studentsServed?.fontSize || 16}px`,
@@ -2635,18 +2644,19 @@ export default function DraggableBusinessCardPreview({
                 }
               </div>
               
-              {/* 阿拉伯语标签 */}
+              {/* 下模块：标签文字 */}
               <div 
-                className="text-[6px] leading-tight"
+                className="leading-tight"
                 style={{
-                  color: textStyles.studentsServed?.color || '#000000',
-                  fontWeight: textStyles.studentsServed?.fontWeight || 'normal',
+                  fontSize: `${textStyles.studentsServedLabel?.fontSize || 6}px`,
+                  color: textStyles.studentsServedLabel?.color || '#ffffff',
+                  fontWeight: textStyles.studentsServedLabel?.fontWeight || 'normal',
                   whiteSpace: 'nowrap',
                   direction: 'rtl',
                   textAlign: 'center'
                 }}
               >
-                الطلاب المخدومون
+                {textModules.studentsServedLabel || 'الطلاب المخدومون'}
               </div>
               {showCoordinates && (
                 <div

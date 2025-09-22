@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useAuthStore } from '@/store/auth'
 import { useCardStore } from '@/store/card'
+import { TEXT_MODULES, MODULE_POSITIONS } from '@/config/positions'
 import { supabase } from '@/lib/supabase/client'
 import DraggableBusinessCardPreview from '@/components/card/draggable-business-card-preview'
 import AvatarUpload from '@/components/editor/avatar-upload'
@@ -43,22 +44,22 @@ export default function EditorPage() {
         resourceSharing: user.resource_sharing || false,
       })
       
-      // 初始化文字模块数据
+      // 初始化文字模块数据 - 使用配置文件的默认值
       updateTextModules({
-        name: user.name || 'أحمد',
-        title: user.title || 'SENIOR LANGUAGE COACH',
-        phone: user.phone || '050-XXXX-XXAB',
-        studentsServed: user.students_served || 5000,
-        positiveRating: Math.round((user.rating || 0) * 20) || 99, // 转换5分制为百分制
+        name: user.name || TEXT_MODULES.name,
+        title: user.title || TEXT_MODULES.title,
+        phone: user.phone || TEXT_MODULES.phone,
+        studentsServed: user.students_served || TEXT_MODULES.studentsServed,
+        positiveRating: Math.round((user.rating || 0) * 20) || TEXT_MODULES.positiveRating, // 转换5分制为百分制，使用配置默认值
       })
     }
   }, [user, cardData.name, updateCardData, updateTextModules]) // 添加所有依赖项
 
-  // 确保姓名默认值为“أحمد”，并避免邮箱作为默认显示
+  // 确保姓名默认值为配置文件中的默认值，并避免邮箱作为默认显示
   useEffect(() => {
     const looksLikeEmail = (v: string | undefined) => !!v && v.includes('@')
     if (!textModules.name || looksLikeEmail(textModules.name) || (user?.email && textModules.name === user.email)) {
-      updateTextModules({ name: 'أحمد' })
+      updateTextModules({ name: TEXT_MODULES.name })
     }
   }, [textModules.name, user?.email, updateTextModules])
 
@@ -132,21 +133,9 @@ export default function EditorPage() {
     reader.readAsDataURL(file)
   }
 
-  // 重置文字模块位置到初始位置
+  // 重置文字模块位置到初始位置 - 使用配置文件的默认位置
   const handleResetPositions = () => {
-    const initialPositions = {
-      companyName: { x: 16, y: 16 },
-      name: { x: 175, y: 176 },
-      title: { x: 175, y: 200 },
-      studentsServed: { x: 135, y: 288 },
-      positiveRating: { x: 195, y: 288 },
-      phone: { x: 175, y: 460 },
-      teacherSelectionLabel: { x: 40, y: 400 },
-      progressFeedbackLabel: { x: 120, y: 400 },
-      planningLabel: { x: 200, y: 400 },
-      resourceSharingLabel: { x: 280, y: 400 }
-    }
-    setTextPositions(initialPositions)
+    setTextPositions(MODULE_POSITIONS.textPositions)
   }
 
   const titleOptions = [

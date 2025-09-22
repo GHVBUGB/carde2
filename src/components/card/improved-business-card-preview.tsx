@@ -9,6 +9,7 @@ interface TextModules {
   name: string
   title: string
   studentsServed: number
+  studentsServedLabel: string
   positiveRating: number
   phone: string
   teacherSelectionLabel: string
@@ -22,6 +23,7 @@ interface TextStyles {
   name: { fontSize: number; color: string; fontWeight: string }
   title: { fontSize: number; color: string; fontWeight: string }
   studentsServed: { fontSize: number; color: string; fontWeight: string }
+  studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
   positiveRating: { fontSize: number; color: string; fontWeight: string }
   phone: { fontSize: number; color: string; fontWeight: string }
   teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -101,6 +103,7 @@ export default function ImprovedBusinessCardPreview({
     name: { fontSize: 20, color: '#000000', fontWeight: 'bold' },
     title: { fontSize: 14, color: '#666666', fontWeight: 'normal' },
     studentsServed: { fontSize: 16, color: '#000000', fontWeight: 'bold' },
+    studentsServedLabel: { fontSize: 6, color: '#666666', fontWeight: 'normal' },
     positiveRating: { fontSize: 16, color: '#000000', fontWeight: 'bold' },
     phone: { fontSize: 14, color: '#000000', fontWeight: 'bold' },
     teacherSelectionLabel: { fontSize: 8, color: '#666666', fontWeight: 'normal' },
@@ -160,7 +163,7 @@ export default function ImprovedBusinessCardPreview({
                 height: '96px'
               }}
             >
-              <div className="w-full h-full rounded-full overflow-hidden shadow-lg">
+              <div className="w-full h-full rounded-full overflow-hidden">
                 <img 
                   src={user.avatar_url} 
                   alt="Avatar" 
@@ -204,11 +207,12 @@ export default function ImprovedBusinessCardPreview({
             {textModules.title || user.title || 'شريك النمو الرئيسي'}
           </div>
 
-          {/* 数据统计区域 - 简洁设计 */}
+          {/* 数据统计区域 - 拆分为上下两个模块 */}
           <div className="absolute" style={{ left: '50%', top: '288px', transform: 'translateX(-50%)' }}>
             <div className="flex gap-16">
-              {/* 学员数量 */}
+              {/* 学员数量 - 拆分为上下两个独立模块 */}
               <div className="flex flex-col items-center text-center">
+                {/* 上模块：数字 */}
                 <div 
                   style={{
                     fontSize: `${finalTextStyles.studentsServed.fontSize}px`,
@@ -222,17 +226,18 @@ export default function ImprovedBusinessCardPreview({
                     : textModules.studentsServed
                   }
                 </div>
+                {/* 下模块：标签文字 */}
                 <div 
                   className="leading-tight"
                   style={{
-                    fontSize: '6px',
-                    color: finalTextStyles.studentsServed.color,
-                    fontWeight: 'normal',
+                    fontSize: `${finalTextStyles.studentsServedLabel.fontSize}px`,
+                    color: finalTextStyles.studentsServedLabel.color,
+                    fontWeight: finalTextStyles.studentsServedLabel.fontWeight,
                     textAlign: 'center',
                     marginTop: '2px'
                   }}
                 >
-                  الطلاب المخدومون
+                  {textModules.studentsServedLabel || 'الطلاب المخدومون'}
                 </div>
               </div>
               

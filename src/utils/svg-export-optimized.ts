@@ -5,6 +5,7 @@ interface TextModules {
   name: string
   title: string
   studentsServed: number
+  studentsServedLabel: string
   positiveRating: number
   phone: string
   teacherSelectionLabel: string
@@ -18,6 +19,7 @@ interface TextStyles {
   name: { fontSize: number; color: string; fontWeight: string }
   title: { fontSize: number; color: string; fontWeight: string }
   studentsServed: { fontSize: number; color: string; fontWeight: string }
+  studentsServedLabel: { fontSize: number; color: string; fontWeight: string }
   positiveRating: { fontSize: number; color: string; fontWeight: string }
   phone: { fontSize: number; color: string; fontWeight: string }
   teacherSelectionLabel: { fontSize: number; color: string; fontWeight: string }
@@ -31,6 +33,7 @@ interface TextPositions {
   name: { x: number; y: number }
   title: { x: number; y: number }
   studentsServed: { x: number; y: number }
+  studentsServedLabel: { x: number; y: number }
   positiveRating: { x: number; y: number }
   phone: { x: number; y: number }
   teacherSelectionLabel: { x: number; y: number }
@@ -155,6 +158,7 @@ export function generateOptimizedSVG(options: SvgExportOptions): string {
   
   <!-- 统计数据 -->
   <g transform="translate(${textPositions.studentsServed.x * scale}, ${textPositions.studentsServed.y * scale})">
+    <!-- 数字模块 -->
     <text x="0" y="0" 
           font-family="Arial, sans-serif" 
           font-size="${textStyles.studentsServed.fontSize * scale}" 
@@ -167,21 +171,15 @@ export function generateOptimizedSVG(options: SvgExportOptions): string {
         : textModules.studentsServed
       }
     </text>
-    <text x="0" y="${textStyles.studentsServed.fontSize * scale * 0.6}" 
+    <!-- 标签模块 -->
+    <text x="0" y="${(textStyles.studentsServed.fontSize + 4) * scale}" 
           font-family="Arial, sans-serif" 
-          font-size="${textStyles.studentsServed.fontSize * 0.4 * scale}" 
-          fill="${textStyles.studentsServed.color}" 
+          font-size="${textStyles.studentsServedLabel.fontSize * scale}" 
+          font-weight="${textStyles.studentsServedLabel.fontWeight}" 
+          fill="${textStyles.studentsServedLabel.color}" 
           text-anchor="middle"
           filter="url(#textShadow)">
-      STUDENTS
-    </text>
-    <text x="0" y="${textStyles.studentsServed.fontSize * scale * 1.2}" 
-          font-family="Arial, sans-serif" 
-          font-size="${textStyles.studentsServed.fontSize * 0.4 * scale}" 
-          fill="${textStyles.studentsServed.color}" 
-          text-anchor="middle"
-          filter="url(#textShadow)">
-      SERVED
+      ${textModules.studentsServedLabel || 'الطلاب المخدومون'}
     </text>
   </g>
   

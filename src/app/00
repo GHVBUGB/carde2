@@ -1,0 +1,250 @@
+17:47:02.940 Running build in Washington, D.C., USA (East) – iad1
+17:47:02.941 Build machine configuration: 2 cores, 8 GB
+17:47:02.968 Cloning github.com/GHVBUGB/carde2 (Branch: main, Commit: 2fc0422)
+17:47:03.097 Previous build caches not available
+17:47:03.514 Cloning completed: 546.000ms
+17:47:03.883 Running "vercel build"
+17:47:04.273 Vercel CLI 48.0.2
+17:47:04.616 Warning: Detected "engines": { "node": ">=18.0.0" } in your `package.json` that will automatically upgrade when a new major Node.js Version is released. Learn More: http://vercel.link/node-version
+17:47:04.629 Running "install" command: `npm install`...
+17:47:07.336 npm warn deprecated w3c-hr-time@1.0.2: Use your platform's native performance.now() and performance.timeOrigin.
+17:47:09.772 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+17:47:10.917 npm warn deprecated npmlog@5.0.1: This package is no longer supported.
+17:47:12.346 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+17:47:12.921 npm warn deprecated gauge@3.0.2: This package is no longer supported.
+17:47:13.899 npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
+17:47:14.236 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+17:47:15.339 npm warn deprecated are-we-there-yet@2.0.0: This package is no longer supported.
+17:47:15.497 npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
+17:47:16.011 npm warn deprecated @types/html2canvas@1.0.0: This is a stub types definition. html2canvas provides its own type definitions, so you do not need this installed.
+17:47:16.307 npm warn deprecated @supabase/auth-helpers-shared@0.6.3: This package is now deprecated - please use the @supabase/ssr package instead.
+17:47:16.310 npm warn deprecated @supabase/auth-helpers-react@0.4.2: This package is now deprecated - please use the @supabase/ssr package instead.
+17:47:16.403 npm warn deprecated @supabase/auth-helpers-nextjs@0.8.7: This package is now deprecated - please use the @supabase/ssr package instead.
+17:47:17.993 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+17:47:18.010 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+17:47:18.978 npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+17:47:27.613 
+17:47:27.613 added 738 packages, and audited 739 packages in 23s
+17:47:27.613 
+17:47:27.614 165 packages are looking for funding
+17:47:27.616   run `npm fund` for details
+17:47:27.672 
+17:47:27.672 1 critical severity vulnerability
+17:47:27.672 
+17:47:27.672 To address all issues, run:
+17:47:27.673   npm audit fix --force
+17:47:27.673 
+17:47:27.673 Run `npm audit` for details.
+17:47:27.858 Detected Next.js version: 14.2.5
+17:47:27.858 Running "npm run build"
+17:47:27.978 
+17:47:27.978 > 51talk-business-card@1.0.0 build
+17:47:27.978 > next build
+17:47:27.978 
+17:47:29.103 Attention: Next.js now collects completely anonymous telemetry regarding usage.
+17:47:29.104 This information is used to shape Next.js' roadmap and prioritize features.
+17:47:29.104 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+17:47:29.105 https://nextjs.org/telemetry
+17:47:29.105 
+17:47:29.252   ▲ Next.js 14.2.5
+17:47:29.253   - Environments: .env.production
+17:47:29.253 
+17:47:29.501    Creating an optimized production build ...
+17:47:50.367  ✓ Compiled successfully
+17:47:50.368    Linting and checking validity of types ...
+17:47:59.563 
+17:47:59.563 ./src/app/dashboard/export/page.tsx
+17:47:59.563 46:9  Warning: The 'loadExportHistory' function makes the dependencies of useEffect Hook (at line 67) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'loadExportHistory' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+17:47:59.564 
+17:47:59.564 ./src/app/dashboard/page.tsx
+17:47:59.564 21:9  Warning: The 'checkAuth' function makes the dependencies of useEffect Hook (at line 79) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'checkAuth' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+17:47:59.564 50:9  Warning: The 'loadUserStats' function makes the dependencies of useEffect Hook (at line 79) change on every render. Move it inside the useEffect callback. Alternatively, wrap the definition of 'loadUserStats' in its own useCallback() Hook.  react-hooks/exhaustive-deps
+17:47:59.564 
+17:47:59.564 ./src/components/card/business-card-preview.tsx
+17:47:59.564 447:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.564 
+17:47:59.564 ./src/components/card/clean-draggable-card.tsx
+17:47:59.564 261:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.564 
+17:47:59.564 ./src/components/card/draggable-business-card-preview.tsx
+17:47:59.564 2525:13  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.564 2560:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.564 3021:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.564 
+17:47:59.565 ./src/components/card/improved-business-card-preview.tsx
+17:47:59.565 164:17  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.565 
+17:47:59.565 ./src/components/editor/avatar-upload.tsx
+17:47:59.565 220:15  Warning: Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+17:47:59.565 
+17:47:59.565 ./src/types/dom-to-image-more.d.ts
+17:47:59.565 22:3  Warning: Assign object to a variable before exporting as module default  import/no-anonymous-default-export
+17:47:59.565 
+17:47:59.565 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/basic-features/eslint#disabling-rules
+17:48:05.241    Collecting page data ...
+17:48:07.104    Generating static pages (0/39) ...
+17:48:08.515 🕐 时间范围调试: {
+17:48:08.516   now: '2025-09-18T09:48:07.759Z',
+17:48:08.516   localTime: '2025/9/18 17:48:07',
+17:48:08.516   beijingTime: '2025-09-18T17:48:07.000Z',
+17:48:08.517   todayStart: '2025-09-17T16:00:00.000Z',
+17:48:08.517   todayEnd: '2025-09-18T16:00:00.000Z',
+17:48:08.520   timezone: 'UTC'
+17:48:08.521 }
+17:48:08.567 Error fetching users: {
+17:48:08.567   message: 'TypeError: fetch failed',
+17:48:08.568   details: 'TypeError: fetch failed\n' +
+17:48:08.568     '    at node:internal/deps/undici/undici:13510:13\n' +
+17:48:08.568     '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+17:48:08.568     '    at async c (/vercel/path0/.next/server/app/api/admin/stats/route.js:1:1628)\n' +
+17:48:08.569     '    at async /vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36258\n' +
+17:48:08.569     '    at async eR.execute (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:26874)\n' +
+17:48:08.569     '    at async eR.handle (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37512)\n' +
+17:48:08.569     '    at async exportAppRoute (/vercel/path0/node_modules/next/dist/export/routes/app-route.js:77:26)\n' +
+17:48:08.570     '    at async exportPageImpl (/vercel/path0/node_modules/next/dist/export/worker.js:175:20)\n' +
+17:48:08.570     '    at async Span.traceAsyncFn (/vercel/path0/node_modules/next/dist/trace/trace.js:154:20)\n' +
+17:48:08.570     '    at async Object.exportPage (/vercel/path0/node_modules/next/dist/export/worker.js:236:20)',
+17:48:08.570   hint: '',
+17:48:08.571   code: ''
+17:48:08.571 }
+17:48:08.572 Error fetching today users: {
+17:48:08.572   message: 'TypeError: fetch failed',
+17:48:08.572   details: 'TypeError: fetch failed\n' +
+17:48:08.573     '    at node:internal/deps/undici/undici:13510:13\n' +
+17:48:08.573     '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+17:48:08.573     '    at async c (/vercel/path0/.next/server/app/api/admin/stats/route.js:1:1814)\n' +
+17:48:08.574     '    at async /vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36258\n' +
+17:48:08.574     '    at async eR.execute (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:26874)\n' +
+17:48:08.574     '    at async eR.handle (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37512)\n' +
+17:48:08.575     '    at async exportAppRoute (/vercel/path0/node_modules/next/dist/export/routes/app-route.js:77:26)\n' +
+17:48:08.575     '    at async exportPageImpl (/vercel/path0/node_modules/next/dist/export/worker.js:175:20)\n' +
+17:48:08.575     '    at async Span.traceAsyncFn (/vercel/path0/node_modules/next/dist/trace/trace.js:154:20)\n' +
+17:48:08.575     '    at async Object.exportPage (/vercel/path0/node_modules/next/dist/export/worker.js:236:20)',
+17:48:08.575   hint: '',
+17:48:08.576   code: ''
+17:48:08.576 }
+17:48:08.576 Error fetching active users: {
+17:48:08.576   message: 'TypeError: fetch failed',
+17:48:08.576   details: 'TypeError: fetch failed\n' +
+17:48:08.577     '    at node:internal/deps/undici/undici:13510:13\n' +
+17:48:08.577     '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+17:48:08.577     '    at async c (/vercel/path0/.next/server/app/api/admin/stats/route.js:1:2141)\n' +
+17:48:08.577     '    at async /vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36258\n' +
+17:48:08.578     '    at async eR.execute (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:26874)\n' +
+17:48:08.578     '    at async eR.handle (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37512)\n' +
+17:48:08.578     '    at async exportAppRoute (/vercel/path0/node_modules/next/dist/export/routes/app-route.js:77:26)\n' +
+17:48:08.578     '    at async exportPageImpl (/vercel/path0/node_modules/next/dist/export/worker.js:175:20)\n' +
+17:48:08.578     '    at async Span.traceAsyncFn (/vercel/path0/node_modules/next/dist/trace/trace.js:154:20)\n' +
+17:48:08.579     '    at async Object.exportPage (/vercel/path0/node_modules/next/dist/export/worker.js:236:20)',
+17:48:08.579   hint: '',
+17:48:08.579   code: ''
+17:48:08.579 }
+17:48:08.582 查询今日注册用户，时间范围: {
+17:48:08.582   todayStart: '2025-09-17T16:00:00.000Z',
+17:48:08.582   todayEnd: '2025-09-18T16:00:00.000Z'
+17:48:08.582 }
+17:48:08.582 今日注册用户查询结果: {
+17:48:08.583   count: 0,
+17:48:08.583   users: [],
+17:48:08.584   error: {
+17:48:08.584     message: 'TypeError: fetch failed',
+17:48:08.584     details: 'TypeError: fetch failed\n' +
+17:48:08.585       '    at node:internal/deps/undici/undici:13510:13\n' +
+17:48:08.585       '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+17:48:08.585       '    at async c (/vercel/path0/.next/server/app/api/admin/stats/route.js:1:1814)\n' +
+17:48:08.586       '    at async /vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36258\n' +
+17:48:08.586       '    at async eR.execute (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:26874)\n' +
+17:48:08.587       '    at async eR.handle (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37512)\n' +
+17:48:08.587       '    at async exportAppRoute (/vercel/path0/node_modules/next/dist/export/routes/app-route.js:77:26)\n' +
+17:48:08.588       '    at async exportPageImpl (/vercel/path0/node_modules/next/dist/export/worker.js:175:20)\n' +
+17:48:08.588       '    at async Span.traceAsyncFn (/vercel/path0/node_modules/next/dist/trace/trace.js:154:20)\n' +
+17:48:08.588       '    at async Object.exportPage (/vercel/path0/node_modules/next/dist/export/worker.js:236:20)',
+17:48:08.588     hint: '',
+17:48:08.589     code: ''
+17:48:08.591   }
+17:48:08.591 }
+17:48:08.679 Today range: {
+17:48:08.690   todayStart: '2025-09-18T00:00:00.000Z',
+17:48:08.690   todayEnd: '2025-09-19T00:00:00.000Z',
+17:48:08.690   currentTime: '2025-09-18T09:48:08.589Z'
+17:48:08.690 }
+17:48:08.691    Generating static pages (9/39) 
+17:48:08.691 Error fetching today new users: {
+17:48:08.691   message: 'TypeError: fetch failed',
+17:48:08.691   details: 'TypeError: fetch failed\n' +
+17:48:08.691     '    at node:internal/deps/undici/undici:13510:13\n' +
+17:48:08.691     '    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)\n' +
+17:48:08.691     '    at async c (/vercel/path0/.next/server/app/api/admin/today-stats/route.js:1:1368)\n' +
+17:48:08.691     '    at async /vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:36258\n' +
+17:48:08.691     '    at async eR.execute (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:26874)\n' +
+17:48:08.691     '    at async eR.handle (/vercel/path0/node_modules/next/dist/compiled/next-server/app-route.runtime.prod.js:6:37512)\n' +
+17:48:08.691     '    at async exportAppRoute (/vercel/path0/node_modules/next/dist/export/routes/app-route.js:77:26)\n' +
+17:48:08.691     '    at async exportPageImpl (/vercel/path0/node_modules/next/dist/export/worker.js:175:20)\n' +
+17:48:08.691     '    at async Span.traceAsyncFn (/vercel/path0/node_modules/next/dist/trace/trace.js:154:20)\n' +
+17:48:08.691     '    at async Object.exportPage (/vercel/path0/node_modules/next/dist/export/worker.js:236:20)',
+17:48:08.691   hint: '',
+17:48:08.691   code: ''
+17:48:08.691 }
+17:48:08.833    Generating static pages (19/39) 
+17:48:09.376    Generating static pages (29/39) 
+17:48:10.448  ✓ Generating static pages (39/39)
+17:48:10.653    Finalizing page optimization ...
+17:48:10.654    Collecting build traces ...
+17:48:13.381 
+17:48:13.391 Route (app)                              Size     First Load JS
+17:48:13.391 ┌ ○ /                                    177 B          94.1 kB
+17:48:13.392 ├ ○ /_not-found                          871 B            88 kB
+17:48:13.392 ├ ○ /admin                               654 B          87.8 kB
+17:48:13.392 ├ ○ /admin-portal                        178 B          94.1 kB
+17:48:13.392 ├ ○ /admin/dashboard                     7.58 kB         101 kB
+17:48:13.392 ├ ○ /admin/import-config                 2.75 kB        99.2 kB
+17:48:13.392 ├ ○ /admin/login                         3.96 kB        97.8 kB
+17:48:13.393 ├ ○ /admin/reset-database                2.56 kB          99 kB
+17:48:13.393 ├ ○ /admin/test-stats                    4.21 kB         101 kB
+17:48:13.393 ├ ƒ /api/admin/import-config             0 B                0 B
+17:48:13.393 ├ ƒ /api/admin/monitor                   0 B                0 B
+17:48:13.393 ├ ƒ /api/admin/remove-api-stats          0 B                0 B
+17:48:13.393 ├ ƒ /api/admin/reset-database            0 B                0 B
+17:48:13.393 ├ ƒ /api/admin/send-alert                0 B                0 B
+17:48:13.393 ├ ○ /api/admin/stats                     0 B                0 B
+17:48:13.393 ├ ○ /api/admin/today-stats               0 B                0 B
+17:48:13.394 ├ ƒ /api/auth/check-user                 0 B                0 B
+17:48:13.394 ├ ƒ /api/auth/login                      0 B                0 B
+17:48:13.394 ├ ƒ /api/auth/logout                     0 B                0 B
+17:48:13.399 ├ ƒ /api/auth/register                   0 B                0 B
+17:48:13.399 ├ ƒ /api/auth/reset-password             0 B                0 B
+17:48:13.399 ├ ƒ /api/finalize                        0 B                0 B
+17:48:13.399 ├ ○ /api/health                          0 B                0 B
+17:48:13.399 ├ ƒ /api/log-download                    0 B                0 B
+17:48:13.399 ├ ƒ /api/remove-bg                       0 B                0 B
+17:48:13.399 ├ ƒ /api/test/clear-data                 0 B                0 B
+17:48:13.399 ├ ƒ /api/test/simulate-action            0 B                0 B
+17:48:13.399 ├ ƒ /api/track-usage                     0 B                0 B
+17:48:13.400 ├ ƒ /api/upscale                         0 B                0 B
+17:48:13.400 ├ ○ /dashboard                           5.27 kB         146 kB
+17:48:13.400 ├ ○ /dashboard/editor                    83 kB           227 kB
+17:48:13.400 ├ ○ /dashboard/export                    9.87 kB         154 kB
+17:48:13.400 ├ ○ /dashboard/profile                   4.45 kB         145 kB
+17:48:13.400 ├ ○ /login                               4.24 kB         105 kB
+17:48:13.400 ├ ○ /register                            4.9 kB          106 kB
+17:48:13.400 ├ ○ /reset-password                      3.77 kB         104 kB
+17:48:13.400 └ ○ /test-connection                     1.04 kB         133 kB
+17:48:13.400 + First Load JS shared by all            87.1 kB
+17:48:13.400   ├ chunks/23-3fb0db1a89b10a84.js        31.5 kB
+17:48:13.400   ├ chunks/fd9d1056-a409e443dec49373.js  53.6 kB
+17:48:13.400   └ other shared chunks (total)          1.96 kB
+17:48:13.400 
+17:48:13.400 
+17:48:13.401 ○  (Static)   prerendered as static content
+17:48:13.401 ƒ  (Dynamic)  server-rendered on demand
+17:48:13.401 
+17:48:13.524 Traced Next.js server files in: 31.265ms
+17:48:13.664 Created all serverless functions in: 139.502ms
+17:48:13.679 Collected static files (public/, static/, .next/static): 5.765ms
+17:48:13.773 Build Completed in /vercel/output [1m]
+17:48:13.944 Deploying outputs...
+17:48:21.548 Deployment completed
+17:48:22.397 Creating build cache...
+17:48:37.081 Created build cache: 14.678s
+17:48:37.082 Uploading build cache [165.25 MB]
+17:48:40.301 Build cache uploaded: 3.223s
